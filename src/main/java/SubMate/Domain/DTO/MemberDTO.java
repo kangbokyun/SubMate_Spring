@@ -14,9 +14,13 @@ public class MemberDTO  {
 	private String mpw;
 	private String mname;
 	private String mnickname;
+	private String mbirth;
+	private String mgender;
 	private String mphone;
 	private String maddress;
 	private Role mrole;
 	private LocalDateTime createddate;
+	private String mplatform;
+	private String mager;
 	private String token;
 }

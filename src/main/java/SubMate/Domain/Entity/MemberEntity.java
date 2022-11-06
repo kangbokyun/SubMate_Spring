@@ -27,6 +27,14 @@ public class MemberEntity extends BaseTimeEntity {
 	private String mphone;
 	@Column
 	private String maddress;
+	@Column
+	private String mbirth;
+	@Column
+	private String mgender;
+	@Column
+	private String mplatform;
+	@Column
+	private String mager;
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;

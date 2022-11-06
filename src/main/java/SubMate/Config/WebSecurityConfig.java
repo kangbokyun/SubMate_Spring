@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() // /와 /auth/** 경로는 인증 안해도
 //                .antMatchers("/").access("hasRole('ADMIN') or hasRole('USER')")
                //  .antMatchers("/auth/signup","/auth/signin","/auth/useridcheck","/auth/emailcheck","/auth/passwordfind","/auth/temporary","/api/**","/video/**").permitAll()
-                .antMatchers("/Auth/SignUp", "/Auth/Login").permitAll()
+                .antMatchers("/Auth/SignUp", "/Auth/Login", "/Auth/KakaoLogin").permitAll()
 //                .antMatchers("/user/**").hasRole("ADMIN")
                 .anyRequest() // /와 /auth/** 이외의 모든 경로는 인증 해야 됨
                 .authenticated();

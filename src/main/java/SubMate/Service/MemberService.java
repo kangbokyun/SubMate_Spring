@@ -54,14 +54,8 @@ public class MemberService {
 	}
 
 	// 카카오 로그인
-	public boolean KakaoLogin(String kakaoData) {
-		String jsonData0 = kakaoData.replace("[{\"", " ");
-		String jsonData1 = jsonData0.replace("\"}]", " ");
-		String jsonData2 = jsonData1.replace("\":\"", " ");
-		String jsonData3 = jsonData2.replace("\",\"", "\n");
-		String[] socialMember = jsonData3.split("\n");
-		String kid = socialMember[3].split(" ")[1];
-		MemberEntity memberEntity = memberRepository.findByMid(kid);
+	public boolean KakaoLogin(MemberDTO memberDTO) {
+		MemberEntity memberEntity = memberRepository.findByMid(memberDTO.getMid());
 		if(memberEntity == null) {
 			return false;
 		} else {

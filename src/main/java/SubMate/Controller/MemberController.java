@@ -64,30 +64,29 @@ public class MemberController {
 
 	@PostMapping("/KakaoLogin")
 	public ResponseEntity<?> KakaoLoginTest(@RequestBody String kakaoData) {
-		boolean result = memberService.KakaoLogin(kakaoData);
+		String jsonData0 = kakaoData.replace("[{\"", " ");
+		String jsonData1 = jsonData0.replace("\"}]", " ");
+		String jsonData2 = jsonData1.replace("\":\"", " ");
+		String jsonData3 = jsonData2.replace("\",\"", "\n");
+		String[] socialMember = jsonData3.split("\n"); String ktoken = socialMember[0].split(" ")[1];
+		String kager = socialMember[1].split(" ")[1]; String kbirth = socialMember[2].split(" ")[1];
+		String kid = socialMember[3].split(" ")[1]; String kgender = socialMember[4].split(" ")[1];
+		String knickname = socialMember[5].split(" ")[1]; String kprofileimg = socialMember[6].split(" ")[1];
+		String kthumbnail = socialMember[7].split(" ")[1]; String kplatform = socialMember[8].split(" ")[1];
+
+		MemberDTO memberDTO = MemberDTO.builder()
+			.mid(kid).mnickname(knickname).mager(kager).mbirth(kbirth)
+			.mgender(kgender).mplatform(kplatform).build();
+
+		boolean result = memberService.KakaoLogin(memberDTO);
 		if(result) {
 			System.out.println("기존 가입된 카카오 아이디");
-			return ResponseEntity.ok().body(true);
+			return ResponseEntity.ok().body(memberDTO);
 		} else {
 			System.out.println("새로 가입할 카카오 아이디");
-			String jsonData0 = kakaoData.replace("[{\"", " ");
-			String jsonData1 = jsonData0.replace("\"}]", " ");
-			String jsonData2 = jsonData1.replace("\":\"", " ");
-			String jsonData3 = jsonData2.replace("\",\"", "\n");
-			String[] socialMember = jsonData3.split("\n"); String ktoken = socialMember[0].split(" ")[1];
-			String kager = socialMember[1].split(" ")[1]; String kbirth = socialMember[2].split(" ")[1];
-			String kid = socialMember[3].split(" ")[1]; String kgender = socialMember[4].split(" ")[1];
-			String knickname = socialMember[5].split(" ")[1]; String kprofileimg = socialMember[6].split(" ")[1];
-			String kthumbnail = socialMember[7].split(" ")[1]; String kplatform = socialMember[8].split(" ")[1];
-
-			System.out.println(kplatform);
-
-			MemberDTO memberDTO = MemberDTO.builder()
-				.mid(kid).mnickname(knickname).mager(kager).mbirth(kbirth)
-				.mgender(kgender).mplatform(kplatform).build();
 			memberService.SignUp(memberDTO);
 
-			return ResponseEntity.ok().body(false);
+			return ResponseEntity.ok().body(memberDTO);
 		}
 	}
 }

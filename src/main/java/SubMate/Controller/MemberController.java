@@ -78,6 +78,7 @@ public class MemberController {
 			.mid(kid).mnickname(knickname).mager(kager).mbirth(kbirth)
 			.mgender(kgender).mplatform(kplatform).build();
 
+		// 커밋 주석
 		boolean result = memberService.KakaoLogin(memberDTO);
 		if(result) {
 			System.out.println("기존 가입된 카카오 아이디");

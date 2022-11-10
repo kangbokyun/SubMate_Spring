@@ -35,7 +35,15 @@ public class MemberEntity extends BaseTimeEntity {
 	private String mplatform;
 	@Column
 	private String mager;
+	@Column
+	private String mhobby;
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
+	@Column
+	private String profileimg;
+
+	// 회원 한 명당 여러개의 게시글 작성
+	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
+	private List<BoardEntity> boardEntityList = new ArrayList<>();
 }

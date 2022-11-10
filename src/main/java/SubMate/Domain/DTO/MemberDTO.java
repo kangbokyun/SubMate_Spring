@@ -23,5 +23,6 @@ public class MemberDTO  {
 	private String mplatform;
 	private String mager;
 	private String mbti;
+	private String mhobby;
 	private String token;
 }

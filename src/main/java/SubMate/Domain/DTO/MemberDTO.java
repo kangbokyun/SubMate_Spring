@@ -22,5 +22,6 @@ public class MemberDTO  {
 	private LocalDateTime createddate;
 	private String mplatform;
 	private String mager;
+	private String mbti;
 	private String token;
 }

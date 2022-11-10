@@ -28,6 +28,7 @@ public class MemberController {
 	// 회원가입
 	@PostMapping("/SignUp")
 	public boolean SignUp(@RequestBody MemberDTO member) {
+		System.out.println("member : " + member);
 		boolean result = memberService.SignUp(member);
 		if (result) {
 			return true;

@@ -23,25 +23,24 @@ public class MemberService {
 	// 회원가입
 	public boolean SignUp(MemberDTO memberDTO) {
 		MemberEntity memberEntityCheck = memberRepository.findByMid(memberDTO.getMid());
-		if(memberEntityCheck != null) {
-			return false;
-		} else {
+
+		if(memberEntityCheck == null || memberEntityCheck.equals("null")) {
 			if(memberDTO.getMplatform().equals("Kakao")) {
 				MemberEntity memberEntity = MemberEntity.builder()
-						.mid(memberDTO.getMid())
-						.mpw(passwordEncoder.encode(memberDTO.getMpw()))
-						.mname(memberDTO.getMname())
-						.mnickname(memberDTO.getMnickname())
-						.mphone(memberDTO.getMphone())
-						.maddress(memberDTO.getMaddress())
-						.mbirth(memberDTO.getMbirth())
-						.mgender(memberDTO.getMgender())
-						.mager(memberDTO.getMager())
-						.mplatform("kakaoPlatform")
-						.role(Role.USER)
-						.build();
+					.mid(memberDTO.getMid())
+					.mpw(passwordEncoder.encode(memberDTO.getMpw()))
+					.mname(memberDTO.getMname())
+					.mnickname(memberDTO.getMnickname())
+					.mphone(memberDTO.getMphone())
+					.maddress(memberDTO.getMaddress())
+					.mbirth(memberDTO.getMbirth())
+					.mgender(memberDTO.getMgender())
+					.mager(memberDTO.getMager())
+					.mplatform("kakaoPlatform")
+					.role(Role.USER)
+					.build();
 				memberRepository.save(memberEntity);
-			} else if(memberDTO.getMplatform() == "null" || memberDTO.getMplatform() == "null" || memberDTO.getMplatform() == "") {
+			} else if(memberDTO.getMplatform().equals("SubMate")) {
 				// 나이대
 				Date date = new Date();
 				SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
@@ -63,15 +62,17 @@ public class MemberService {
 					.mnickname(memberDTO.getMnickname())
 					.mphone(memberDTO.getMphone())
 					.maddress(memberDTO.getMaddress())
-					.mbirth(memberDTO.getMbirth().substring(2, 4))
+					.mbirth(memberDTO.getMbirth().substring(2, 6))
 					.mgender(memberDTO.getMgender())
 					.mager(memberDTO.getMager())
-					.mplatform("SubMate")
+					.mplatform(memberDTO.getMplatform())
 					.role(Role.USER)
 					.build();
 				memberRepository.save(memberEntity);
 			}
 			return true;
+		} else {
+			return false;
 		}
 	}
 

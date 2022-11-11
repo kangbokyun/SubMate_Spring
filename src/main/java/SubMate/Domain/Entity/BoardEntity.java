@@ -10,13 +10,15 @@ import javax.persistence.*;
 @Entity @Table(name = "board")
 public class BoardEntity extends BaseTimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String bno;
+	private int bno;
 	@Column
 	private String btitle;
 	@Column
 	private String bcontents;
 	@Column
 	private String bimg;
+	@Column
+	private String bview;
 	@Column
 	private String becho;
 

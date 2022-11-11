@@ -22,22 +22,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // http 시큐리티 빌더
         http
-                // .cors() // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정
+                .cors() // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정
+                .and()
                 .csrf().disable() // csrf는 현재 사용하지 않으므로 disable
                 .httpBasic().disable() // token을 사용하므로 basic 인증 disable
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 기반이 아님을 선언
             .and()
                 .authorizeRequests() // /와 /auth/** 경로는 인증 안해도
-//                .antMatchers("/").access("hasRole('ADMIN') or hasRole('USER')")
-               //  .antMatchers("/auth/signup","/auth/signin","/auth/useridcheck","/auth/emailcheck","/auth/passwordfind","/auth/temporary","/api/**","/video/**").permitAll()
                 .antMatchers("/Auth/SignUp", "/Auth/Login", "/Auth/KakaoLogin").permitAll()
 //                .antMatchers("/user/**").hasRole("ADMIN")
                 .anyRequest() // /와 /auth/** 이외의 모든 경로는 인증 해야 됨
                 .authenticated();
         // filter 등록
-        // 매 요청마다
-        // CorsFilter 실행한 후에
-        // jwtAuthenticationFilter 실행한다.
+        // 매 요청마다 CorsFilter 실행한 후에 jwtAuthenticationFilter 실행한다.
         http.addFilterAfter(
                 jwtAuthenticationFilter,
                 CorsFilter.class

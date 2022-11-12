@@ -17,20 +17,20 @@ public class BoardService {
 
     public boolean BoardWrite(BoardDTO boardDTO, MultipartFile file) {
         if(boardDTO != null) {
-            if(!boardDTO.getBimg().equals("") || boardDTO.getBimg() != null ) {
-                String uuidFile = "";
-                if(!file.getOriginalFilename().equals("")) {
-                    UUID uuid = UUID.randomUUID();
-                    uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
+		if(!boardDTO.getBimg().equals("") || boardDTO.getBimg() != null ) {
+		    String uuidFile = "";
+		    if(!file.getOriginalFilename().equals("")) {
+			    UUID uuid = UUID.randomUUID();
+			    uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-                    String filePath = "C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Upload" + boardDTO.getMno();
-                    String fileDir = filePath + "/" + uuidFile;
-                    boardDTO.setBimg(fileDir);
-                } else {
-                    uuidFile = "null";
-                    boardDTO.setBimg(null);
-                }
-            }
+//			    String filePath = "C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Upload" + boardDTO.getMno();
+			    String filePath = "C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Upload" + boardDTO.getMno();
+			    String fileDir = filePath + "/" + uuidFile;
+			    boardDTO.setBimg(fileDir);
+		    } else {
+			    uuidFile = "null";
+		    }
+	    }
 
             BoardEntity boardEntity = BoardEntity.builder()
                     .btitle(boardDTO.getBtitle())

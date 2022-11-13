@@ -24,8 +24,8 @@ public class MemberService {
 	public boolean SignUp(MemberDTO memberDTO) {
 		MemberEntity memberEntityCheck = memberRepository.findByMid(memberDTO.getMid());
 
-		if(memberEntityCheck == null || memberEntityCheck.equals("null")) {
-			if(memberDTO.getMplatform().equals("Kakao")) {
+		if (memberEntityCheck == null || memberEntityCheck.equals("null")) {
+			if (memberDTO.getMplatform().equals("Kakao")) {
 				MemberEntity memberEntity = MemberEntity.builder()
 					.mid(memberDTO.getMid())
 					.mpw(passwordEncoder.encode(memberDTO.getMpw()))
@@ -40,12 +40,12 @@ public class MemberService {
 					.role(Role.USER)
 					.build();
 				memberRepository.save(memberEntity);
-			} else if(memberDTO.getMplatform().equals("SubMate")) {
+			} else if (memberDTO.getMplatform().equals("SubMate")) {
 				// 나이대
 				Date date = new Date();
 				SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
 				String ager = "";
-				if(Integer.parseInt(memberDTO.getMbirth().substring(0, 1)) != 0) {
+				if (Integer.parseInt(memberDTO.getMbirth().substring(0, 1)) != 0) {
 					ager = "19" + memberDTO.getMbirth().substring(0, 2);
 					ager = Integer.toString((Integer.parseInt(sdf.format(date)) - Integer.parseInt(ager) + 1));
 					memberDTO.setMager(ager.substring(0, 1) + "0 ~ " + ager.substring(0, 1) + "9");
@@ -53,7 +53,7 @@ public class MemberService {
 					ager = "20" + memberDTO.getMbirth().substring(0, 2);
 					ager = Integer.toString((Integer.parseInt(sdf.format(date)) - Integer.parseInt(ager) + 1));
 					memberDTO.setMager(ager.substring(0, 1) + "0 ~ " + ager.substring(0, 1) + "9");
-				};
+				}
 
 				MemberEntity memberEntity = MemberEntity.builder()
 					.mid(memberDTO.getMid())
@@ -81,7 +81,7 @@ public class MemberService {
 		MemberEntity memberEntity = memberRepository.findByMid(mid);
 
 		// passwordEncoder의 matches 메소드를 통해 패스워드 일치유무 확인
-		if(memberEntity != null && passwordEncoder.matches(mpw, memberEntity.getMpw())) {
+		if (memberEntity != null && passwordEncoder.matches(mpw, memberEntity.getMpw())) {
 			System.out.println("패스워드가 일치합니다.");
 			return memberEntity;
 		}
@@ -91,7 +91,7 @@ public class MemberService {
 	// 카카오 로그인
 	public boolean KakaoLogin(MemberDTO memberDTO) {
 		MemberEntity memberEntity = memberRepository.findByMid(memberDTO.getMid());
-		if(memberEntity == null) {
+		if (memberEntity == null) {
 			return false;
 		} else {
 			return true;

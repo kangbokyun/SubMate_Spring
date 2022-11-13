@@ -3,10 +3,13 @@ package SubMate.Controller;
 import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 public class BoardController {
@@ -14,18 +17,27 @@ public class BoardController {
 	BoardService boardService;
 
 	@PostMapping("/Board/BoardWrite")
-	public ResponseEntity<?> BoardWrite(@RequestParam("btitle") String btitle, @RequestParam("bcontents") String bcontents, @RequestParam("becho") String becho, @RequestParam("bimg") MultipartFile file) {
-		System.out.println("btitle : " + btitle);
-		System.out.println("bcontents : " + bcontents);
-		System.out.println("becho : " + becho);
-		System.out.println("file.getOriginalFilename() : " + file.getOriginalFilename());
-		BoardDTO boardDTO = BoardDTO.builder().btitle(btitle).bcontents(bcontents).becho(becho).bimg(file.getName()).build();
+	public ResponseEntity<?> BoardWrite(@RequestParam("btitle") String btitle, @RequestParam("bcontents") String bcontents,
+					    @RequestParam("becho") String becho, @RequestParam("bimg") MultipartFile file, @RequestParam("mno") String mno) {
+		BoardDTO boardDTO = BoardDTO.builder().btitle(btitle).bcontents(bcontents).becho(becho).bimg(file.getName())
+			.mno(mno).build();
 		System.out.println("boardDTO : " + boardDTO);
-//		boolean result = boardService.BoardWrite(boardDTO, file);
-//		if(result) {
-//			return ResponseEntity.ok().body(true);
-//		} else {
-			return ResponseEntity.ok().body(false);
-//		}
+		boolean result = boardService.BoardWrite(boardDTO, file);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+		}
+
+	}
+	@PostMapping("/Board/BoardList")
+	public ResponseEntity<?> BoardList() {
+		List<BoardDTO> boardDTOS = boardService.BoardList();
+		if(boardDTOS != null) {
+			return ResponseEntity.ok().body(boardDTOS);
+		} else {
+			boardDTOS = null;
+			return ResponseEntity.ok().body(boardDTOS);
+		}
 	}
 }

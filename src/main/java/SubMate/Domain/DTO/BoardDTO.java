@@ -8,7 +8,7 @@ import javax.persistence.Column;
 @AllArgsConstructor
 @Data @ToString @Builder
 public class BoardDTO {
-	private String bno;
+	private int bno;
 	private String btitle;
 	private String bcontents;
 	private String bimg;

@@ -46,12 +46,11 @@ public class MemberController {
 			// user 정보 받아오고 롤이 NOTUSER가 아니면 토큰 생성
 			if (user != null && user.getRole() != Role.NOTUSER) {
 				String jwtToken = tokenProvider.create(user);
-				MemberDTO memberDTO1 = MemberDTO.builder()
-					.mno(user.getMno()).mid(user.getMid())
+				MemberDTO memberDTO1 = MemberDTO.builder().mno(user.getMno()).mid(user.getMid())
 					.mname(user.getMname()).maddress(user.getMaddress())
 					.mnickname(user.getMnickname()).mphone(user.getMphone())
-					.token(jwtToken).mrole(user.getRole()).createddate(user.getCreateDate())
-					.build();
+					.mager(user.getMager()).mbirth(user.getMbirth()).mhobby(user.getMhobby()).mbti(user.getMbti())
+					.token(jwtToken).mrole(user.getRole()).createddate(user.getCreateDate()).build();
 				return ResponseEntity.ok().body(memberDTO1);
 			} else {
 				ResponseDTO responseDTO = ResponseDTO.builder().error("NOTUSER").build();

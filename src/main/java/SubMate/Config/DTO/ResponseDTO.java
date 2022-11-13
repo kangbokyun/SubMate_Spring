@@ -14,9 +14,9 @@ import java.util.Optional;
 @AllArgsConstructor
 @Data
 public class ResponseDTO<T> { /*T는 Type의 약자*/
-    private String error;
-    private List<T> data;
-    private List<List<T>> datalist;
-    private Optional<T> optiondata;
-    private boolean check;
+	private String error;
+	private List<T> data;
+	private List<List<T>> datalist;
+	private Optional<T> optiondata;
+	private boolean check;
 }

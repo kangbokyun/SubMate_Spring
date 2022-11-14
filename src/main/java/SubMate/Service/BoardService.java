@@ -2,7 +2,9 @@ package SubMate.Service;
 
 import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Domain.Entity.BoardEntity;
+import SubMate.Domain.Entity.MemberEntity;
 import SubMate.Domain.Repository.BoardRepository;
+import SubMate.Domain.Repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,8 @@ import java.util.*;
 public class BoardService {
 	@Autowired
 	BoardRepository boardRepository;
+	@Autowired
+	MemberRepository memberRepository;
 
 	// 글등록(이미지 1개 등록 가능)
 	public boolean BoardWrite(BoardDTO boardDTO, MultipartFile file) {
@@ -44,11 +48,13 @@ public class BoardService {
 					// 에코 체크 값에 따라 시간 설정
 				}
 
+				MemberEntity memberEntity = memberRepository.findById(Integer.parseInt(boardDTO.getMno())).get();
 				BoardEntity boardEntity = BoardEntity.builder()
 					.btitle(boardDTO.getBtitle())
 					.bcontents(boardDTO.getBcontents())
 					.bview("0").becho(boardDTO.getBecho())
-					.bimg(boardDTO.getBimg()).build();
+					.bimg(boardDTO.getBimg()).bwriter(boardDTO.getBwriter())
+					.memberEntity(memberEntity).build();
 				boardRepository.save(boardEntity);
 
 				return true;
@@ -70,6 +76,7 @@ public class BoardService {
 			boardDTO.setBno(entity.getBno());
 			boardDTO.setBtitle(entity.getBtitle());
 			boardDTO.setBcontents(entity.getBcontents());
+			boardDTO.setBwriter(entity.getBwriter());
 			boardDTO.setBview(entity.getBview());
 			boardDTO.setBecho(entity.getBecho());
 			if(entity.getBimg() != null) {

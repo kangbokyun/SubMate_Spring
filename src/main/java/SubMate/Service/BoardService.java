@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class BoardService {
@@ -23,22 +20,28 @@ public class BoardService {
 	public boolean BoardWrite(BoardDTO boardDTO, MultipartFile file) {
 		try {
 			if (boardDTO != null) {
-				if (!boardDTO.getBimg().equals("") || boardDTO.getBimg() != null) {
-					String uuidFile = "";
-					if (!file.getOriginalFilename().equals("")) {
-						UUID uuid = UUID.randomUUID();
-						uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
+				if(file != null) {
+					if (!boardDTO.getBimg().equals("") || boardDTO.getBimg() != null) {
+						String uuidFile = "";
+						if (!file.getOriginalFilename().equals("")) {
+							UUID uuid = UUID.randomUUID();
+							uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-//						String filePath = "C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Upload" + boardDTO.getMno();
-						String filePath = "C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Upload";
-						String fileDir = filePath + "/" + uuidFile;
-						boardDTO.setBimg(fileDir);
+							String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/BoardImg";
+	//						String filePath = "C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Upload";
+	//						String filePath = "C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Upload";
+							String fileDir = filePath + "/" + uuidFile;
+							boardDTO.setBimg(fileDir);
 
-						file.transferTo(new File(fileDir));
-						System.out.println("Save File On DeskTop Folder");
+							file.transferTo(new File(fileDir));
+							System.out.println("Save File On DeskTop Folder");
+						} else {
+							uuidFile = "null";
+						}
 					} else {
-						uuidFile = "null";
+						boardDTO.setBimg("NoImg");
 					}
+					// 에코 체크 값에 따라 시간 설정
 				}
 
 				BoardEntity boardEntity = BoardEntity.builder()
@@ -69,9 +72,26 @@ public class BoardService {
 			boardDTO.setBcontents(entity.getBcontents());
 			boardDTO.setBview(entity.getBview());
 			boardDTO.setBecho(entity.getBecho());
-			boardDTO.setBimg(entity.getBimg());
+			if(entity.getBimg() != null) {
+				boardDTO.setBimg(entity.getBimg().split("/BoardImg/")[1]);
+			} else {
+				boardDTO.setBimg("null");
+			}
 			boardDTOS.add(boardDTO);
 		}
+
+		// 게시글 내림차순
+		Comparator<BoardDTO> listSort = new Comparator<BoardDTO>() {
+			@Override
+			public int compare(BoardDTO o1, BoardDTO o2) {
+				int a = o1.getBno();
+				int b = o2.getBno();
+
+				if(a > b) { return -1; } else {	return 1;	 }
+			}
+		};
+		Collections.sort(boardDTOS, listSort);
+
 		return boardDTOS;
 	}
 }

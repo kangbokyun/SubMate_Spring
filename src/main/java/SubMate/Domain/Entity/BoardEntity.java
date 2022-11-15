@@ -18,6 +18,8 @@ public class BoardEntity extends BaseTimeEntity {
 	@Column
 	private String bwriter;
 	@Column
+	private String bechotimer;
+	@Column
 	private String bimg;
 	@Column
 	private String bview;

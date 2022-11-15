@@ -53,6 +53,7 @@ public class BoardService {
 					.btitle(boardDTO.getBtitle())
 					.bcontents(boardDTO.getBcontents())
 					.bview("0").becho(boardDTO.getBecho())
+					.bechotimer(boardDTO.getBechotimer())
 					.bimg(boardDTO.getBimg()).bwriter(boardDTO.getBwriter())
 					.memberEntity(memberEntity).build();
 				boardRepository.save(boardEntity);
@@ -79,6 +80,7 @@ public class BoardService {
 			boardDTO.setBwriter(entity.getBwriter());
 			boardDTO.setBview(entity.getBview());
 			boardDTO.setBecho(entity.getBecho());
+			boardDTO.setBechotimer(entity.getBechotimer());
 			if(entity.getBimg() != null) {
 				boardDTO.setBimg(entity.getBimg().split("/BoardImg/")[1]);
 			} else {

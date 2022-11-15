@@ -12,6 +12,7 @@ public class BoardDTO {
 	private String btitle;
 	private String bcontents;
 	private String bwriter;
+	private String bechotimer;
 	private String bimg;
 	private String bview;
 	private String becho;

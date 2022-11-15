@@ -18,10 +18,11 @@ public class BoardController {
 
 	@PostMapping("/Board/BoardWrite") // 이미지가 있는 글 등록
 	public ResponseEntity<?> BoardWrite(@RequestParam("btitle") String btitle, @RequestParam("bcontents") String bcontents,
-					    @RequestParam("becho") String becho, @RequestParam("bimg") MultipartFile file, @RequestParam("mno") String mno) {
+					    @RequestParam("becho") String becho, @RequestParam("bimg") MultipartFile file, @RequestParam("mno") String mno,
+					    @RequestParam("bechotimer") String bechotimer) {
 		System.out.println("bimg: " + file);
 		BoardDTO boardDTO = BoardDTO.builder().btitle(btitle).bcontents(bcontents).becho(becho).bimg(file.getName())
-			.mno(mno).build();
+			.mno(mno).bechotimer(bechotimer).build();
 //		System.out.println("boardDTO : " + boardDTO);
 		boolean result = boardService.BoardWrite(boardDTO, file);
 		if(result) {

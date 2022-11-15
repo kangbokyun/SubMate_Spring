@@ -31,9 +31,8 @@ public class BoardService {
 							UUID uuid = UUID.randomUUID();
 							uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-							String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/BoardImg";
-	//						String filePath = "C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Upload";
-	//						String filePath = "C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Upload";
+//							String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/BoardImg";
+							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
 							String fileDir = filePath + "/" + uuidFile;
 							boardDTO.setBimg(fileDir);
 

@@ -48,4 +48,7 @@ public class MemberEntity extends BaseTimeEntity {
 	// 회원 한 명당 여러개의 게시글 작성
 	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
 	private List<BoardEntity> boardEntityList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "memberReplyEntity", cascade = CascadeType.ALL)
+	private List<ReplyEntity> replyEntityList = new ArrayList<>();
 }

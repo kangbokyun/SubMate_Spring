@@ -1,6 +1,7 @@
 package SubMate.Controller;
 
 import SubMate.Domain.DTO.BoardDTO;
+import SubMate.Domain.DTO.ReplyDTO;
 import SubMate.Service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,5 +55,21 @@ public class BoardController {
 			boardDTOS = null;
 			return ResponseEntity.ok().body(boardDTOS);
 		}
+	}
+
+	@PostMapping("/Board/ReplyWrite")
+	public ResponseEntity<?> ReplyWrite(@RequestBody ReplyDTO replyDTO) {
+		boolean result = boardService.ReplyWrite(replyDTO);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/Board/ReplyList")
+	public ResponseEntity<?> ReplyList(@RequestBody String bno) {
+		List<ReplyDTO> replyDTOS = boardService.ReplyList(bno);
+		return ResponseEntity.ok().body(replyDTOS);
 	}
 }

@@ -16,6 +16,6 @@ public class BoardDTO {
 	private String bimg;
 	private String bview;
 	private String becho;
-
+	private String checkreply;
 	private String mno;
 }

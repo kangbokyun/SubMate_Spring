@@ -1,10 +1,13 @@
 package SubMate.Service;
 
 import SubMate.Domain.DTO.BoardDTO;
+import SubMate.Domain.DTO.ReplyDTO;
 import SubMate.Domain.Entity.BoardEntity;
 import SubMate.Domain.Entity.MemberEntity;
+import SubMate.Domain.Entity.ReplyEntity;
 import SubMate.Domain.Repository.BoardRepository;
 import SubMate.Domain.Repository.MemberRepository;
+import SubMate.Domain.Repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +22,8 @@ public class BoardService {
 	BoardRepository boardRepository;
 	@Autowired
 	MemberRepository memberRepository;
+	@Autowired
+	ReplyRepository replyRepository;
 
 	// 글등록(이미지 1개 등록 가능)
 	public boolean BoardWrite(BoardDTO boardDTO, MultipartFile file) {
@@ -101,5 +106,45 @@ public class BoardService {
 		Collections.sort(boardDTOS, listSort);
 
 		return boardDTOS;
+	}
+
+	// 댓글 등록하기
+	public boolean ReplyWrite(ReplyDTO replyDTO) {
+		if(replyDTO != null) {
+			BoardEntity boardEntity = boardRepository.findById(Integer.parseInt(replyDTO.getBno())).get();
+			MemberEntity memberEntity = memberRepository.findById(Integer.parseInt(replyDTO.getMno())).get();
+			ReplyEntity replyEntity = ReplyEntity.builder()
+				.rcontents(replyDTO.getRcontents())
+				.rwriter(replyDTO.getRwriter())
+				.boardReplyEntity(boardEntity)
+				.memberReplyEntity(memberEntity)
+				.build();
+			replyRepository.save(replyEntity);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	// 댓글 리스트
+	public List<ReplyDTO> ReplyList(String bno) {
+		List<ReplyEntity> replyEntityList = replyRepository.findAll();
+		List<ReplyDTO> replyDTOS = new ArrayList<>();
+		if(replyEntityList != null) {
+			BoardEntity boardEntity = boardRepository.findById(Integer.parseInt(bno)).get();
+			for(ReplyEntity replyEntity : replyEntityList) {
+				System.out.println("replyEntity.getBoardReplyEntity().getBno()) : " + replyEntity.getBoardReplyEntity().getBno());
+				if(Integer.parseInt(bno) ==replyEntity.getBoardReplyEntity().getBno()) {
+					ReplyDTO replyDTO = ReplyDTO.builder()
+						.rno(replyEntity.getRno())
+						.rcontents(replyEntity.getRcontents())
+						.rwriter(replyEntity.getRwriter())
+						.createdDate(replyEntity.getCreateDate().toString().split("T")[0])
+						.build();
+					replyDTOS.add(replyDTO);
+				}
+			}
+			return replyDTOS;
+		}
+		return null;
 	}
 }

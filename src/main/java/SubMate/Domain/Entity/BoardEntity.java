@@ -3,6 +3,8 @@ package SubMate.Domain.Entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,4 +30,7 @@ public class BoardEntity extends BaseTimeEntity {
 
 	@ManyToOne @JoinColumn(name = "mno")
 	private MemberEntity memberEntity;
+
+	@OneToMany(mappedBy = "boardReplyEntity", cascade = CascadeType.ALL)
+	private List<ReplyEntity> replyEntityList = new ArrayList<>();
 }

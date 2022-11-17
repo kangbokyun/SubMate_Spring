@@ -97,7 +97,7 @@ public class BoardService {
 						if(formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) { // 아직 안지났으면 1, 같으면 0, 지났으면 -1
 							System.out.println("Echo H Cut");
 							boardRepository.delete(entity);
-							continue;
+							break;
 						}
 					} else {
 						calendar.setTime(formatEcho.parse(echoDate));
@@ -107,7 +107,7 @@ public class BoardService {
 						if( formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) {
 							System.out.println("Echo M Cut");
 							boardRepository.delete(entity);
-							continue;
+							break;
 						}
 					}
 					BoardDTO boardDTO = new BoardDTO();

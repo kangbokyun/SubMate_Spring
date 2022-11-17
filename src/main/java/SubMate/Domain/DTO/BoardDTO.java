@@ -17,5 +17,6 @@ public class BoardDTO {
 	private String bview;
 	private String becho;
 	private String checkreply;
+	private String createdDate;
 	private String mno;
 }

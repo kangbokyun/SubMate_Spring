@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -77,20 +78,93 @@ public class BoardService {
 		List<BoardEntity> boardList = boardRepository.findAll();
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		for(BoardEntity entity : boardList) {
-			BoardDTO boardDTO = new BoardDTO();
-			boardDTO.setBno(entity.getBno());
-			boardDTO.setBtitle(entity.getBtitle());
-			boardDTO.setBcontents(entity.getBcontents());
-			boardDTO.setBwriter(entity.getBwriter());
-			boardDTO.setBview(entity.getBview());
-			boardDTO.setBecho(entity.getBecho());
-			boardDTO.setBechotimer(entity.getBechotimer());
-			if(entity.getBimg() != null) {
-				boardDTO.setBimg(entity.getBimg().split("/BoardImg/")[1]);
+			if(entity.getBechotimer() != null) {
+				try {
+					// entity.getBechotimer() : 30m
+					// entity.getCreateDate().toString() : 2022-11-15T16:11:36.648321
+					String echoDate = entity.getCreateDate().toString().replace("T", " ").replace(".", "_").split("_")[0];
+					System.out.println("echoDate : " + echoDate);
+
+					Date date = new Date();
+					Calendar calendar = Calendar.getInstance();
+					SimpleDateFormat formatEcho = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+					if(entity.getBechotimer().endsWith("h")) {
+						calendar.setTime(formatEcho.parse(echoDate));
+						String temp = entity.getBechotimer();
+						calendar.add(Calendar.HOUR_OF_DAY, Integer.parseInt(temp.replace("h", "")));
+
+						if(formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) { // 아직 안지났으면 1, 같으면 0, 지났으면 -1
+							System.out.println("Echo H Cut");
+							boardRepository.delete(entity);
+							continue;
+						}
+					} else {
+						calendar.setTime(formatEcho.parse(echoDate));
+						String temp = entity.getBechotimer();
+						calendar.add(Calendar.MINUTE, Integer.parseInt(temp.replace("m", "")));
+
+						if( formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) {
+							System.out.println("Echo M Cut");
+							boardRepository.delete(entity);
+							continue;
+						}
+					}
+					BoardDTO boardDTO = new BoardDTO();
+					boardDTO.setBno(entity.getBno());
+					boardDTO.setBtitle(entity.getBtitle());
+					boardDTO.setBcontents(entity.getBcontents());
+					boardDTO.setBwriter(entity.getBwriter());
+					boardDTO.setBview(entity.getBview());
+					boardDTO.setBecho(entity.getBecho());
+					boardDTO.setBechotimer(entity.getBechotimer());
+
+					List<ReplyEntity> replyEntityList =  replyRepository.findAll();
+					for(ReplyEntity replyEntity : replyEntityList) {
+						if(replyEntity.getBoardReplyEntity().getBno() == boardDTO.getBno()) {
+							boardDTO.setCheckreply("1");
+							break;
+						} else {
+							boardDTO.setCheckreply("0");
+						}
+					}
+
+					if(entity.getBimg() != null) {
+						boardDTO.setBimg(entity.getBimg().split("/BoardImg/")[1]);
+					} else {
+						boardDTO.setBimg("null");
+					}
+					boardDTOS.add(boardDTO);
+				} catch(Exception e) {
+					System.out.println(e.getMessage());
+				}
 			} else {
-				boardDTO.setBimg("null");
+				BoardDTO boardDTO = new BoardDTO();
+				boardDTO.setBno(entity.getBno());
+				boardDTO.setBtitle(entity.getBtitle());
+				boardDTO.setBcontents(entity.getBcontents());
+				boardDTO.setBwriter(entity.getBwriter());
+				boardDTO.setBview(entity.getBview());
+				boardDTO.setBecho(entity.getBecho());
+				boardDTO.setBechotimer(entity.getBechotimer());
+
+				List<ReplyEntity> replyEntityList =  replyRepository.findAll();
+				for(ReplyEntity replyEntity : replyEntityList) {
+					if(replyEntity.getBoardReplyEntity().getBno() == boardDTO.getBno()) {
+						boardDTO.setCheckreply("1");
+						break;
+					} else {
+						boardDTO.setCheckreply("0");
+					}
+				}
+
+				if(entity.getBimg() != null) {
+					boardDTO.setBimg(entity.getBimg().split("/BoardImg/")[1]);
+				} else {
+					boardDTO.setBimg("null");
+				}
+				boardDTOS.add(boardDTO);
 			}
-			boardDTOS.add(boardDTO);
 		}
 
 		// 게시글 내림차순

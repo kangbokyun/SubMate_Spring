@@ -50,7 +50,6 @@ public class BoardService {
 					} else {
 						boardDTO.setBimg("NoImg");
 					}
-					// 에코 체크 값에 따라 시간 설정
 				}
 
 				MemberEntity memberEntity = memberRepository.findById(Integer.parseInt(boardDTO.getMno())).get();

@@ -3,15 +3,18 @@ package SubMate.Controller;
 import SubMate.Config.Auth.Role;
 import SubMate.Config.DTO.ResponseDTO;
 import SubMate.Config.Filter.TokenProvider;
+import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Domain.DTO.KakaoDTO;
 import SubMate.Domain.DTO.MemberDTO;
 import SubMate.Domain.Entity.MemberEntity;
 import SubMate.Service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.net.http.HttpResponse;
@@ -27,13 +30,30 @@ public class MemberController {
 
 	// 회원가입
 	@PostMapping("/SignUp")
-	public boolean SignUp(@RequestBody MemberDTO member) {
-		System.out.println("member : " + member);
-		boolean result = memberService.SignUp(member);
+	public ResponseEntity<?> SignUp(
+					@RequestParam("mid") String mid, @RequestParam("mpw") String mpw, @RequestParam("mname") String mname, @RequestParam("mnickname") String mnickname,
+					@RequestParam("mphone") String mphone, @RequestParam("mbirth") String mbirth, @RequestParam("maddress")
+					String maddress, @RequestParam("mgender") String mgender, @RequestParam("mbti") String mbti, @RequestParam("profileimg") MultipartFile profileimg) {
+
+		MemberDTO memberDTO = MemberDTO.builder()
+			.mnickname(mnickname).mname(mname).maddress(maddress).mphone(mphone).mid(mid)
+			.mbirth(mbirth).mbti(mbti).mpw(mpw).mgender(mgender).profileimg(profileimg.getName())
+			.build();
+		boolean result = memberService.SignUp(memberDTO, profileimg);
 		if (result) {
-			return true;
+			return ResponseEntity.ok().body(HttpStatus.OK);
 		} else {
-			return false;
+			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+		}
+	}
+	@PostMapping("/SignUpNoImg")
+	public ResponseEntity<?> SignUpNoImg(@RequestBody MemberDTO memberDTO) {
+		System.out.println("memberDTO : " + memberDTO);
+		boolean result = memberService.SignUp(memberDTO, null);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -85,7 +105,7 @@ public class MemberController {
 			return ResponseEntity.ok().body(memberDTO);
 		} else {
 			System.out.println("새로 가입할 카카오 아이디");
-			memberService.SignUp(memberDTO);
+			memberService.SignUp(memberDTO, null);
 
 			return ResponseEntity.ok().body(memberDTO);
 		}

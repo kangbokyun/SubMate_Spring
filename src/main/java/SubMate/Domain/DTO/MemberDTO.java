@@ -24,5 +24,6 @@ public class MemberDTO  {
 	private String mager;
 	private String mbti;
 	private String mhobby;
+	private String profileimg;
 	private String token;
 }

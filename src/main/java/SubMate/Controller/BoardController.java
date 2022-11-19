@@ -21,9 +21,12 @@ public class BoardController {
 	public ResponseEntity<?> BoardWrite(@RequestParam("btitle") String btitle, @RequestParam("bcontents") String bcontents,
 					    @RequestParam("becho") String becho, @RequestParam("bimg") MultipartFile file, @RequestParam("mno") String mno,
 					    @RequestParam("bechotimer") String bechotimer, @RequestParam("bwriter") String bwriter) {
-		System.out.println("bimg: " + file);
+		System.out.println("BoardWriteImg Init");
 		BoardDTO boardDTO = BoardDTO.builder().btitle(btitle).bcontents(bcontents).becho(becho).bimg(file.getName())
 			.mno(mno).bechotimer(bechotimer).bwriter(bwriter).build();
+		if(boardDTO.getBechotimer() == null || boardDTO.getBechotimer().equals("0")) {
+			boardDTO.setBechotimer(null);
+		}
 //		System.out.println("boardDTO : " + boardDTO);
 		boolean result = boardService.BoardWrite(boardDTO, file);
 		if(result) {

@@ -53,13 +53,9 @@ public class MemberService {
 					}
 				}
 			}else {
-				String uuidFile = "";
-				UUID uuid = UUID.randomUUID();
-				uuidFile = uuid.toString() + "/User_No_Img.png";
-
 //				String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/MemberImg";
 				String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/MemberImg";
-				String fileDir = filePath + "/" + uuidFile;
+				String fileDir = filePath + "/" + "User_No_Img.png";
 				memberDTO.setProfileimg(fileDir);
 
 				try {

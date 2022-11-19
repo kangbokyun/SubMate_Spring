@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -77,7 +78,7 @@ public class BoardService {
 		List<BoardEntity> boardList = boardRepository.findAll();
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		for(BoardEntity entity : boardList) {
-			if(entity.getBechotimer() != null) {
+			if(entity.getBechotimer() != null) { // 에코 타이머가 설정됐을 때
 				try {
 					// entity.getBechotimer() : 30m
 					// entity.getCreateDate().toString() : 2022-11-15T16:11:36.648321
@@ -96,7 +97,7 @@ public class BoardService {
 						if(formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) { // 아직 안지났으면 1, 같으면 0, 지났으면 -1
 							System.out.println("Echo H Cut");
 							boardRepository.delete(entity);
-							break;
+							continue;
 						}
 					} else {
 						calendar.setTime(formatEcho.parse(echoDate));
@@ -106,7 +107,7 @@ public class BoardService {
 						if( formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) {
 							System.out.println("Echo M Cut");
 							boardRepository.delete(entity);
-							break;
+							continue;
 						}
 					}
 					BoardDTO boardDTO = new BoardDTO();
@@ -117,6 +118,12 @@ public class BoardService {
 					boardDTO.setBview(entity.getBview());
 					boardDTO.setBecho(entity.getBecho());
 					boardDTO.setBechotimer(entity.getBechotimer());
+
+					// 시간계산 date : Sat Nov 19 15:18:28 KST 2022
+					SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
+					calendar.setTime(date);
+
 					boardDTO.setCreatedDate(entity.getCreateDate().toString());
 
 					List<ReplyEntity> replyEntityList =  replyRepository.findAll();
@@ -138,7 +145,7 @@ public class BoardService {
 				} catch(Exception e) {
 					System.out.println(e.getMessage());
 				}
-			} else {
+			} else { // 에코타이머가 설정 안됐을 때
 				BoardDTO boardDTO = new BoardDTO();
 				boardDTO.setBno(entity.getBno());
 				boardDTO.setBtitle(entity.getBtitle());
@@ -147,7 +154,38 @@ public class BoardService {
 				boardDTO.setBview(entity.getBview());
 				boardDTO.setBecho(entity.getBecho());
 				boardDTO.setBechotimer(entity.getBechotimer());
-				boardDTO.setCreatedDate(entity.getCreateDate().toString());
+
+				try {
+					// 시간계산
+					Calendar calendar = Calendar.getInstance();
+					Calendar calDate = Calendar.getInstance();
+					calendar.setTime(new Date());
+
+					String splitDate = entity.getCreateDate().toString().replace("T", " ").replace(".", "_").split("_")[0]; // 글 작성일
+//					String splitTime = entity.getCreateDate().toString().split("T")[1].replace(".", "_").split("_")[0]; // 작성 시간
+					Date getDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(splitDate);
+					calDate.setTime(getDate);
+
+					long sec = (calendar.getTimeInMillis() - calDate.getTimeInMillis()) / 1000;
+					int minute = Integer.parseInt(String.valueOf(sec)) / 60;
+					int hour = Integer.parseInt(String.valueOf(sec)) / ( 60 * 60 );
+					int day = Integer.parseInt(String.valueOf(sec)) / ( 24 * 60 * 60 );
+
+					System.out.println(day + "일 " +hour + "시 " + minute + "분 " + sec + "초");
+
+					if(sec <= 59) {
+						boardDTO.setCreatedDate(sec + "초 전");
+					} else if(sec >= 60 && minute <= 59) {
+						boardDTO.setCreatedDate(minute + "분 전");
+					} else if(minute >= 60 && hour <= 23) {
+						boardDTO.setCreatedDate(hour + "시간 전");
+					} else {
+						boardDTO.setCreatedDate(day + "일 전");
+					}
+
+				} catch (ParseException e) {
+					System.out.println(e.getMessage());
+				}
 
 				List<ReplyEntity> replyEntityList =  replyRepository.findAll();
 				for(ReplyEntity replyEntity : replyEntityList) {

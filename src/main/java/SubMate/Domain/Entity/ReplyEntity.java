@@ -15,6 +15,12 @@ public class ReplyEntity extends BaseTimeEntity {
         private String rcontents;
         @Column
         private String rwriter;
+	@Column
+        private String rdepth;
+	@Column
+        private String writedrno;
+	@Column
+        private String rwriterimg;
 
         @ManyToOne @JoinColumn(name = "mno")
         private MemberEntity memberReplyEntity;

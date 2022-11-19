@@ -117,6 +117,7 @@ public class BoardService {
 					boardDTO.setBview(entity.getBview());
 					boardDTO.setBecho(entity.getBecho());
 					boardDTO.setBechotimer(entity.getBechotimer());
+					boardDTO.setCreatedDate(entity.getCreateDate().toString());
 
 					List<ReplyEntity> replyEntityList =  replyRepository.findAll();
 					for(ReplyEntity replyEntity : replyEntityList) {
@@ -146,6 +147,7 @@ public class BoardService {
 				boardDTO.setBview(entity.getBview());
 				boardDTO.setBecho(entity.getBecho());
 				boardDTO.setBechotimer(entity.getBechotimer());
+				boardDTO.setCreatedDate(entity.getCreateDate().toString());
 
 				List<ReplyEntity> replyEntityList =  replyRepository.findAll();
 				for(ReplyEntity replyEntity : replyEntityList) {
@@ -166,7 +168,7 @@ public class BoardService {
 			}
 		}
 
-		// 게시글 내림차순
+		// 게시글 내림차순(가장 최신 글이 제일 위로)
 		Comparator<BoardDTO> listSort = new Comparator<BoardDTO>() {
 			@Override
 			public int compare(BoardDTO o1, BoardDTO o2) {
@@ -186,13 +188,28 @@ public class BoardService {
 		if(replyDTO != null) {
 			BoardEntity boardEntity = boardRepository.findById(Integer.parseInt(replyDTO.getBno())).get();
 			MemberEntity memberEntity = memberRepository.findById(Integer.parseInt(replyDTO.getMno())).get();
-			ReplyEntity replyEntity = ReplyEntity.builder()
-				.rcontents(replyDTO.getRcontents())
-				.rwriter(replyDTO.getRwriter())
-				.boardReplyEntity(boardEntity)
-				.memberReplyEntity(memberEntity)
-				.build();
-			replyRepository.save(replyEntity);
+			if(replyDTO.getRdepth().equals("1")) {
+				ReplyEntity replyEntity = ReplyEntity.builder()
+					.rcontents(replyDTO.getRcontents())
+					.rwriter(replyDTO.getRwriter())
+					.rdepth(replyDTO.getRdepth())
+					.rwriterimg(replyDTO.getRwriterimg())
+					.boardReplyEntity(boardEntity)
+					.memberReplyEntity(memberEntity)
+					.build();
+				replyRepository.save(replyEntity);
+			} else {
+				ReplyEntity replyEntity = ReplyEntity.builder()
+					.rcontents(replyDTO.getRcontents())
+					.rwriter(replyDTO.getRwriter())
+					.rdepth(replyDTO.getRdepth())
+					.rwriterimg(replyDTO.getRwriterimg())
+					.writedrno(replyDTO.getWritedrno())
+					.boardReplyEntity(boardEntity)
+					.memberReplyEntity(memberEntity)
+					.build();
+				replyRepository.save(replyEntity);
+			}
 			return true;
 		} else {
 			return false;
@@ -205,12 +222,14 @@ public class BoardService {
 		if(replyEntityList != null) {
 			BoardEntity boardEntity = boardRepository.findById(Integer.parseInt(bno)).get();
 			for(ReplyEntity replyEntity : replyEntityList) {
-				System.out.println("replyEntity.getBoardReplyEntity().getBno()) : " + replyEntity.getBoardReplyEntity().getBno());
-				if(Integer.parseInt(bno) ==replyEntity.getBoardReplyEntity().getBno()) {
+				if(Integer.parseInt(bno) == replyEntity.getBoardReplyEntity().getBno()) {
 					ReplyDTO replyDTO = ReplyDTO.builder()
 						.rno(replyEntity.getRno())
 						.rcontents(replyEntity.getRcontents())
 						.rwriter(replyEntity.getRwriter())
+						.rdepth(replyEntity.getRdepth())
+						.writedrno(replyEntity.getWritedrno())
+						.rwriterimg(replyEntity.getRwriterimg().split("MemberImg/")[1])
 						.createdDate(replyEntity.getCreateDate().toString().split("T")[0])
 						.build();
 					replyDTOS.add(replyDTO);

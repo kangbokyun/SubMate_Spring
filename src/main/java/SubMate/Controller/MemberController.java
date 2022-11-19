@@ -67,10 +67,11 @@ public class MemberController {
 			if (user != null && user.getRole() != Role.NOTUSER) {
 				String jwtToken = tokenProvider.create(user);
 				MemberDTO memberDTO1 = MemberDTO.builder().mno(user.getMno()).mid(user.getMid())
-					.mname(user.getMname()).maddress(user.getMaddress())
-					.mnickname(user.getMnickname()).mphone(user.getMphone())
+					.mname(user.getMname()).maddress(user.getMaddress()).profileimg(user.getProfileimg())
+					.mnickname(user.getMnickname()).mphone(user.getMphone()).mplatform(user.getMplatform())
 					.mager(user.getMager()).mbirth(user.getMbirth()).mhobby(user.getMhobby()).mbti(user.getMbti())
-					.token(jwtToken).mrole(user.getRole()).createddate(user.getCreateDate()).build();
+					.token(jwtToken).mrole(user.getRole()).createddate(user.getCreateDate()).mbti(user.getMbti()).mgender(user.getMgender())
+					.build();
 				return ResponseEntity.ok().body(memberDTO1);
 			} else {
 				ResponseDTO responseDTO = ResponseDTO.builder().error("NOTUSER").build();

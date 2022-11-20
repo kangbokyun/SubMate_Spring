@@ -277,4 +277,16 @@ public class BoardService {
 		}
 		return null;
 	}
+
+	// 조회수 증가
+	public BoardEntity ViewUpdate(String bno, String bview) {
+		BoardEntity boardEntity = boardRepository.findById(Integer.parseInt(bno)).get();
+		if(bno != null && bview != null) {
+			boardEntity.setBview(Integer.toString(Integer.parseInt(boardEntity.getBview()) + 1));
+			boardRepository.save(boardEntity);
+			return boardEntity;
+		} else {
+			return boardEntity;
+		}
+	}
 }

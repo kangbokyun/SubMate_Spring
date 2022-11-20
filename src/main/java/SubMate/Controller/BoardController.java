@@ -2,6 +2,7 @@ package SubMate.Controller;
 
 import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Domain.DTO.ReplyDTO;
+import SubMate.Domain.Entity.BoardEntity;
 import SubMate.Service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,5 +75,12 @@ public class BoardController {
 	public ResponseEntity<?> ReplyList(@RequestBody String bno) {
 		List<ReplyDTO> replyDTOS = boardService.ReplyList(bno);
 		return ResponseEntity.ok().body(replyDTOS);
+	}
+
+	@PostMapping("/Board/ViewUpdate")
+	public ResponseEntity<?> ViewUpdate(@RequestParam("bno") String bno, @RequestParam("bview") String bview) {
+		System.out.println("ViewUpdateBoardDTO : " + bno + " / " + bview);
+		BoardEntity boardEntity = boardService.ViewUpdate(bno, bview);
+		return ResponseEntity.ok().body(boardEntity);
 	}
 }

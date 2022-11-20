@@ -1,11 +1,14 @@
 package SubMate.Service;
 
 import SubMate.Domain.DTO.BoardDTO;
+import SubMate.Domain.DTO.HeartDTO;
 import SubMate.Domain.DTO.ReplyDTO;
 import SubMate.Domain.Entity.BoardEntity;
+import SubMate.Domain.Entity.HeartEntity;
 import SubMate.Domain.Entity.MemberEntity;
 import SubMate.Domain.Entity.ReplyEntity;
 import SubMate.Domain.Repository.BoardRepository;
+import SubMate.Domain.Repository.HeartRepository;
 import SubMate.Domain.Repository.MemberRepository;
 import SubMate.Domain.Repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ public class BoardService {
 	MemberRepository memberRepository;
 	@Autowired
 	ReplyRepository replyRepository;
+	@Autowired
+	HeartRepository heartRepository;
 
 	// 글등록(이미지 1개 등록 가능)
 	public boolean BoardWrite(BoardDTO boardDTO, MultipartFile file) {
@@ -87,12 +92,47 @@ public class BoardService {
 
 					Date date = new Date();
 					Calendar calendar = Calendar.getInstance();
+					Calendar nowTime = Calendar.getInstance();
+					nowTime.setTime(new Date());
 					SimpleDateFormat formatEcho = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+					BoardDTO boardDTO = new BoardDTO();
+					boardDTO.setBno(entity.getBno());
+					boardDTO.setBtitle(entity.getBtitle());
+					boardDTO.setBcontents(entity.getBcontents());
+					boardDTO.setBwriter(entity.getBwriter());
+					boardDTO.setBview(entity.getBview());
+					boardDTO.setBecho(entity.getBecho());
+					boardDTO.setBechotimer(entity.getBechotimer());
+
+					List<HeartEntity> heartEntities = heartRepository.findAll();
+					for(HeartEntity heartEntity : heartEntities) {
+						if(heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
+							heartEntity.getBno().equals(entity.getBno() + "")) {
+							boardDTO.setHeart("1");
+						}
+					}
 
 					if(entity.getBechotimer().endsWith("h")) {
 						calendar.setTime(formatEcho.parse(echoDate));
 						String temp = entity.getBechotimer();
 						calendar.add(Calendar.HOUR_OF_DAY, Integer.parseInt(temp.replace("h", "")));
+
+						long sec = (calendar.getTimeInMillis() - nowTime.getTimeInMillis()) / 1000;
+						int minute = Integer.parseInt(String.valueOf(sec)) / 60;
+						int hour = minute / 60 ;
+						int day = hour / 24;
+						System.out.println("sec : " + sec + "\nminute : " + minute + "\nhour : " + hour + "\nday : " + day);
+						if(sec <= 59) {
+							boardDTO.setCreatedDate(sec + "초 남음");
+						} else if(day == 0 && hour == 0) {
+							boardDTO.setCreatedDate(minute + "분 남음");
+						} else if(day == 0 && hour > 0) {
+							boardDTO.setCreatedDate(hour + "시간 남음");
+						} else {
+							boardDTO.setCreatedDate(day + "일 남음");
+						}
+
 
 						if(formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) { // 아직 안지났으면 1, 같으면 0, 지났으면 -1
 							System.out.println("Echo H Cut");
@@ -104,27 +144,26 @@ public class BoardService {
 						String temp = entity.getBechotimer();
 						calendar.add(Calendar.MINUTE, Integer.parseInt(temp.replace("m", "")));
 
+						long sec = (calendar.getTimeInMillis() - nowTime.getTimeInMillis()) / 1000;
+						int minute = Integer.parseInt(String.valueOf(sec)) / 60;
+						int hour = minute / 60 ;
+						int day = hour / 24;
+						if(sec <= 59) {
+							boardDTO.setCreatedDate(sec + "초 남음");
+						} else if(day == 0 && hour == 0) {
+							boardDTO.setCreatedDate(minute + "분 남음");
+						} else if(day == 0 && hour > 0) {
+							boardDTO.setCreatedDate(hour + "시간 남음");
+						} else {
+							boardDTO.setCreatedDate(day + "일 남음");
+						}
+
 						if( formatEcho.format(calendar.getTime()).compareTo(formatEcho.format(date)) <= 0) {
 							System.out.println("Echo M Cut");
 							boardRepository.delete(entity);
 							continue;
 						}
 					}
-					BoardDTO boardDTO = new BoardDTO();
-					boardDTO.setBno(entity.getBno());
-					boardDTO.setBtitle(entity.getBtitle());
-					boardDTO.setBcontents(entity.getBcontents());
-					boardDTO.setBwriter(entity.getBwriter());
-					boardDTO.setBview(entity.getBview());
-					boardDTO.setBecho(entity.getBecho());
-					boardDTO.setBechotimer(entity.getBechotimer());
-
-					// 시간계산 date : Sat Nov 19 15:18:28 KST 2022
-					SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
-					SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-					calendar.setTime(date);
-
-					boardDTO.setCreatedDate(entity.getCreateDate().toString());
 
 					List<ReplyEntity> replyEntityList =  replyRepository.findAll();
 					for(ReplyEntity replyEntity : replyEntityList) {
@@ -143,7 +182,7 @@ public class BoardService {
 					}
 					boardDTOS.add(boardDTO);
 				} catch(Exception e) {
-					System.out.println(e.getMessage());
+					System.out.println("e.Msg : " + e.getMessage());
 				}
 			} else { // 에코타이머가 설정 안됐을 때
 				BoardDTO boardDTO = new BoardDTO();
@@ -155,6 +194,14 @@ public class BoardService {
 				boardDTO.setBecho(entity.getBecho());
 				boardDTO.setBechotimer(entity.getBechotimer());
 
+				List<HeartEntity> heartEntities = heartRepository.findAll();
+				for(HeartEntity heartEntity : heartEntities) {
+					if(heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
+						heartEntity.getBno().equals(entity.getBno() + "")) {
+						boardDTO.setHeart("1");
+					}
+				}
+
 				try {
 					// 시간계산
 					Calendar calendar = Calendar.getInstance();
@@ -162,8 +209,8 @@ public class BoardService {
 					calendar.setTime(new Date());
 
 					String splitDate = entity.getCreateDate().toString().replace("T", " ").replace(".", "_").split("_")[0]; // 글 작성일
-//					String splitTime = entity.getCreateDate().toString().split("T")[1].replace(".", "_").split("_")[0]; // 작성 시간
 					Date getDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(splitDate);
+					SimpleDateFormat sevenDaysAgo = new SimpleDateFormat("yy-MM-dd");
 					calDate.setTime(getDate);
 
 					long sec = (calendar.getTimeInMillis() - calDate.getTimeInMillis()) / 1000;
@@ -171,16 +218,18 @@ public class BoardService {
 					int hour = Integer.parseInt(String.valueOf(sec)) / ( 60 * 60 );
 					int day = Integer.parseInt(String.valueOf(sec)) / ( 24 * 60 * 60 );
 
-					System.out.println(day + "일 " +hour + "시 " + minute + "분 " + sec + "초");
-
-					if(sec <= 59) {
-						boardDTO.setCreatedDate(sec + "초 전");
-					} else if(sec >= 60 && minute <= 59) {
-						boardDTO.setCreatedDate(minute + "분 전");
-					} else if(minute >= 60 && hour <= 23) {
-						boardDTO.setCreatedDate(hour + "시간 전");
+					if(day < 7) {
+						if(sec <= 59) {
+							boardDTO.setCreatedDate(sec + "초 전");
+						} else if(sec >= 60 && minute <= 59) {
+							boardDTO.setCreatedDate(minute + "분 전");
+						} else if(minute >= 60 && hour <= 23) {
+							boardDTO.setCreatedDate(hour + "시간 전");
+						} else  {
+							boardDTO.setCreatedDate(day + "일 전");
+						}
 					} else {
-						boardDTO.setCreatedDate(day + "일 전");
+						boardDTO.setCreatedDate(sevenDaysAgo.format(getDate));
 					}
 
 				} catch (ParseException e) {
@@ -288,5 +337,27 @@ public class BoardService {
 		} else {
 			return boardEntity;
 		}
+	}
+
+	// 하트
+	public HeartDTO BoardHeart(HeartDTO heartDTO) {
+		if(heartDTO.getHkind().equals("1")) { // 하트 안누름
+			System.out.println("하트 안누름");
+			List<HeartEntity> heartEntity = heartRepository.findAll();
+			for(HeartEntity heartEntity1 : heartEntity) {
+				if(heartEntity1.getBno().equals(heartDTO.getBno()) && heartEntity1.getHkind().equals("0")
+				&& heartEntity1.getHtype().equals(heartDTO.getHtype()) && heartEntity1.getMno().equals(heartDTO.getMno())) {
+					heartRepository.delete(heartEntity1);
+				}
+			}
+		} else { // 하트 누름
+			System.out.println("하트 누름");
+			System.out.println("heartDTO.getHkind() : " + heartDTO.getHkind());
+			HeartEntity heartEntity = HeartEntity.builder()
+				.hkind(heartDTO.getHkind()).mno(heartDTO.getMno())
+				.bno(heartDTO.getBno()).htype(heartDTO.getHtype()).build();
+			heartRepository.save(heartEntity);
+		}
+		return heartDTO;
 	}
 }

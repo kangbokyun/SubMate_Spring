@@ -1,8 +1,10 @@
 package SubMate.Controller;
 
 import SubMate.Domain.DTO.BoardDTO;
+import SubMate.Domain.DTO.HeartDTO;
 import SubMate.Domain.DTO.ReplyDTO;
 import SubMate.Domain.Entity.BoardEntity;
+import SubMate.Domain.Entity.HeartEntity;
 import SubMate.Service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,7 +52,7 @@ public class BoardController {
 		}
 	}
 
-	@PostMapping("/Board/BoardList")
+	@PostMapping("/Board/BoardList") // 글 목록
 	public ResponseEntity<?> BoardList() {
 		List<BoardDTO> boardDTOS = boardService.BoardList();
 		if(boardDTOS != null) {
@@ -61,7 +63,7 @@ public class BoardController {
 		}
 	}
 
-	@PostMapping("/Board/ReplyWrite")
+	@PostMapping("/Board/ReplyWrite") // 댓글 쓰기
 	public ResponseEntity<?> ReplyWrite(@RequestBody ReplyDTO replyDTO) {
 		boolean result = boardService.ReplyWrite(replyDTO);
 		if(result) {
@@ -71,16 +73,23 @@ public class BoardController {
 		}
 	}
 
-	@PostMapping("/Board/ReplyList")
+	@PostMapping("/Board/ReplyList") // 댓글/대댓글 목록
 	public ResponseEntity<?> ReplyList(@RequestBody String bno) {
 		List<ReplyDTO> replyDTOS = boardService.ReplyList(bno);
 		return ResponseEntity.ok().body(replyDTOS);
 	}
 
-	@PostMapping("/Board/ViewUpdate")
+	@PostMapping("/Board/ViewUpdate") // 조회수 증가
 	public ResponseEntity<?> ViewUpdate(@RequestParam("bno") String bno, @RequestParam("bview") String bview) {
 		System.out.println("ViewUpdateBoardDTO : " + bno + " / " + bview);
 		BoardEntity boardEntity = boardService.ViewUpdate(bno, bview);
-		return ResponseEntity.ok().body(boardEntity);
+		return ResponseEntity.ok().body(HttpStatus.OK);
+	}
+
+	@PostMapping("/Board/Heart")
+	public ResponseEntity<?> HeartUpdate(@RequestParam("hkind") String hkind, @RequestParam("htype") String htype, @RequestParam("bno") String bno, @RequestParam("mno") String mno) {
+		HeartDTO heartDTO = HeartDTO.builder().hkind(hkind).bno(bno).mno(mno).htype(htype).build();
+		heartDTO = boardService.BoardHeart(heartDTO);
+		return ResponseEntity.ok().body(heartDTO);
 	}
 }

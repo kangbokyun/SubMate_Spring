@@ -18,6 +18,7 @@ public class BoardDTO {
 	private String becho;
 	private String checkreply;
 	private String maddress;
+	private String heart;
 	private String createdDate;
 	private String mno;
 }

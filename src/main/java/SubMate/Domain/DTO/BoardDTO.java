@@ -19,6 +19,8 @@ public class BoardDTO {
 	private String checkreply;
 	private String maddress;
 	private String heart;
+	private String htype                                                                      ;
+	private String hrno;                                                                      ;
 	private String createdDate;
 	private String mno;
 }

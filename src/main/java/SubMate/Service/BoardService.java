@@ -110,6 +110,7 @@ public class BoardService {
 						if(heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
 							heartEntity.getBno().equals(entity.getBno() + "")) {
 							boardDTO.setHeart("1");
+							boardDTO.setHrno(heartEntity.getRno());
 						}
 					}
 
@@ -193,6 +194,7 @@ public class BoardService {
 				boardDTO.setBview(entity.getBview());
 				boardDTO.setBecho(entity.getBecho());
 				boardDTO.setBechotimer(entity.getBechotimer());
+				boardDTO.setHtype("1");
 
 				List<HeartEntity> heartEntities = heartRepository.findAll();
 				for(HeartEntity heartEntity : heartEntities) {
@@ -325,7 +327,6 @@ public class BoardService {
 							countReply++;
 						}
 					}
-					System.out.println("해당 댓글의 대댓글 수 : " + countReply);
 					replyDTO.setRcount(Integer.toString(countReply));
 
 					try {
@@ -385,7 +386,7 @@ public class BoardService {
 	// 하트
 	public HeartDTO BoardHeart(HeartDTO heartDTO) {
 		if(heartDTO.getHkind().equals("1")) { // 하트 안누름
-			System.out.println("하트 안누름");
+			System.out.println("하트 OFF");
 			List<HeartEntity> heartEntity = heartRepository.findAll();
 			for(HeartEntity heartEntity1 : heartEntity) {
 				if(heartEntity1.getBno().equals(heartDTO.getBno()) && heartEntity1.getHkind().equals("0")
@@ -394,11 +395,14 @@ public class BoardService {
 				}
 			}
 		} else { // 하트 누름
-			System.out.println("하트 누름");
+			System.out.println("하트 ON");
 			System.out.println("heartDTO.getHkind() : " + heartDTO.getHkind());
 			HeartEntity heartEntity = HeartEntity.builder()
 				.hkind(heartDTO.getHkind()).mno(heartDTO.getMno())
 				.bno(heartDTO.getBno()).htype(heartDTO.getHtype()).build();
+			if(heartDTO.getRno() != null) {
+				heartEntity.setRno(heartDTO.getRno());
+			}
 			heartRepository.save(heartEntity);
 		}
 		return heartDTO;

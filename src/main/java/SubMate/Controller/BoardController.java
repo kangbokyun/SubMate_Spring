@@ -87,8 +87,13 @@ public class BoardController {
 	}
 
 	@PostMapping("/Board/Heart")
-	public ResponseEntity<?> HeartUpdate(@RequestParam("hkind") String hkind, @RequestParam("htype") String htype, @RequestParam("bno") String bno, @RequestParam("mno") String mno) {
+	public ResponseEntity<?> HeartUpdate(@RequestParam("hkind") String hkind, @RequestParam("htype")
+		String htype, @RequestParam("bno") String bno, @RequestParam("mno") String mno, @RequestParam("rno") String rno) {
 		HeartDTO heartDTO = HeartDTO.builder().hkind(hkind).bno(bno).mno(mno).htype(htype).build();
+		if(rno != null) {
+			heartDTO.setRno(rno);
+		}
+		System.out.println("heartDTO : " + heartDTO);
 		heartDTO = boardService.BoardHeart(heartDTO);
 		return ResponseEntity.ok().body(heartDTO);
 	}

@@ -12,6 +12,7 @@ public class ReplyDTO {
 	private String rdepth;
 	private String writedrno;
 	private String rwriterimg;
+        private String rcount;
         private String mno;
         private String bno;
         private String createdDate;

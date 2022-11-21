@@ -308,6 +308,7 @@ public class BoardService {
 		List<ReplyDTO> replyDTOS = new ArrayList<>();
 		if(replyEntityList != null) {
 			BoardEntity boardEntity = boardRepository.findById(Integer.parseInt(bno)).get();
+			int countReply = 0;
 			for(ReplyEntity replyEntity : replyEntityList) {
 				if(Integer.parseInt(bno) == replyEntity.getBoardReplyEntity().getBno()) {
 					ReplyDTO replyDTO = ReplyDTO.builder()
@@ -317,8 +318,50 @@ public class BoardService {
 						.rdepth(replyEntity.getRdepth())
 						.writedrno(replyEntity.getWritedrno())
 						.rwriterimg(replyEntity.getRwriterimg().split("MemberImg/")[1])
-						.createdDate(replyEntity.getCreateDate().toString().split("T")[0])
 						.build();
+
+					for(int i = 0; i < replyEntityList.size(); i++) {
+						if(replyEntityList.get(i).getWritedrno() != null && Integer.toString(replyDTO.getRno()).equals(replyEntityList.get(i).getWritedrno())) {
+							countReply++;
+						}
+					}
+					System.out.println("해당 댓글의 대댓글 수 : " + countReply);
+					replyDTO.setRcount(Integer.toString(countReply));
+
+					try {
+						// 시간계산
+						Calendar calendar = Calendar.getInstance();
+						Calendar calDate = Calendar.getInstance();
+						calendar.setTime(new Date());
+
+						String splitDate = replyEntity.getCreateDate().toString().replace("T", " ").replace(".", "_").split("_")[0]; // 글 작성일
+						Date getDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(splitDate);
+						SimpleDateFormat sevenDaysAgo = new SimpleDateFormat("yy-MM-dd");
+						calDate.setTime(getDate);
+
+						long sec = (calendar.getTimeInMillis() - calDate.getTimeInMillis()) / 1000;
+						int minute = Integer.parseInt(String.valueOf(sec)) / 60;
+						int hour = Integer.parseInt(String.valueOf(sec)) / ( 60 * 60 );
+						int day = Integer.parseInt(String.valueOf(sec)) / ( 24 * 60 * 60 );
+
+						if(day < 7) {
+							if(sec <= 59) {
+								replyDTO.setCreatedDate(sec + "초 전");
+							} else if(sec >= 60 && minute <= 59) {
+								replyDTO.setCreatedDate(minute + "분 전");
+							} else if(minute >= 60 && hour <= 23) {
+								replyDTO.setCreatedDate(hour + "시간 전");
+							} else  {
+								replyDTO.setCreatedDate(day + "일 전");
+							}
+						} else {
+							replyDTO.setCreatedDate(sevenDaysAgo.format(getDate));
+						}
+
+					} catch (ParseException e) {
+						System.out.println(e.getMessage());
+					}
+
 					replyDTOS.add(replyDTO);
 				}
 			}

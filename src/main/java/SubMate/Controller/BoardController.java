@@ -97,4 +97,11 @@ public class BoardController {
 		heartDTO = boardService.BoardHeart(heartDTO);
 		return ResponseEntity.ok().body(heartDTO);
 	}
+
+	@PostMapping("/Board/HeartList")
+	public ResponseEntity<?> HeartList() {
+		System.out.println("HeartList Init");
+		List<HeartDTO> heartDTOS = boardService.HeartList();
+		return ResponseEntity.ok().body(heartDTOS);
+	}
 }

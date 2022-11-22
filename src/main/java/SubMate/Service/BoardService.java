@@ -43,8 +43,8 @@ public class BoardService {
 							UUID uuid = UUID.randomUUID();
 							uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-//							String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/BoardImg";
-							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
+							String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/BoardImg";
+//							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
 							String fileDir = filePath + "/" + uuidFile;
 							boardDTO.setBimg(fileDir);
 
@@ -319,8 +319,25 @@ public class BoardService {
 						.rwriter(replyEntity.getRwriter())
 						.rdepth(replyEntity.getRdepth())
 						.writedrno(replyEntity.getWritedrno())
+						.mno(Integer.toString(replyEntity.getMemberReplyEntity().getMno()))
+						.bno(Integer.toString(replyEntity.getBoardReplyEntity().getBno()))
 						.rwriterimg(replyEntity.getRwriterimg().split("MemberImg/")[1])
 						.build();
+
+					if(replyDTO.getRdepth().equals("1")) {
+						replyDTO.setHtype("2");
+					} else if(replyDTO.getRdepth().equals("2")) {
+						replyDTO.setHtype("3");
+					}
+
+					List<HeartEntity> heartEntities = heartRepository.findAll();
+					for(HeartEntity heartEntity : heartEntities) {
+						if(heartEntity.getRno() != null && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
+							System.out.println(" heartEntity.getRno() : " + heartEntity.getRno());
+							System.out.println(" replyDTO.getRno() : " + replyDTO.getRno());
+							replyDTO.setHrno( heartEntity.getRno());
+						}
+					}
 
 					for(int i = 0; i < replyEntityList.size(); i++) {
 						if(replyEntityList.get(i).getWritedrno() != null && Integer.toString(replyDTO.getRno()).equals(replyEntityList.get(i).getWritedrno())) {
@@ -406,5 +423,22 @@ public class BoardService {
 			heartRepository.save(heartEntity);
 		}
 		return heartDTO;
+	}
+
+	// 하트 리스트
+	public List<HeartDTO> HeartList() {
+		List<HeartEntity> heartEntityList = heartRepository.findAll();
+		List<HeartDTO> heartDTOS = new ArrayList<>();
+		for(HeartEntity heartEntity : heartEntityList) {
+			HeartDTO heartDTO = new HeartDTO();
+			heartDTO.setHno(heartEntity.getHno());
+			heartDTO.setHkind(heartEntity.getHkind());
+			heartDTO.setHtype(heartEntity.getHtype());
+			heartDTO.setBno(heartEntity.getBno());
+			heartDTO.setRno(heartEntity.getRno());
+			heartDTO.setMno(heartEntity.getMno());
+			heartDTOS.add(heartDTO);
+		}
+		return heartDTOS;
 	}
 }

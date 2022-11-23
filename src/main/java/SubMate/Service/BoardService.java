@@ -43,8 +43,8 @@ public class BoardService {
 							UUID uuid = UUID.randomUUID();
 							uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-							String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/BoardImg";
-//							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
+//							String filePath = "C:/Users/bk940/OneDrive/바탕 화면/SubMate_React/src/BoardImg";
+							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
 							String fileDir = filePath + "/" + uuidFile;
 							boardDTO.setBimg(fileDir);
 
@@ -198,11 +198,10 @@ public class BoardService {
 
 				List<HeartEntity> heartEntities = heartRepository.findAll();
 				for(HeartEntity heartEntity : heartEntities) {
-					System.out.println( " heartEntity.getRno() : " + heartEntity.getRno());
 					if(heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
-						heartEntity.getBno().equals(entity.getBno() + "") && heartEntity.getRno().equals("null")) {
-						System.out.println( " heartEntity.getRno is Null ");
+						heartEntity.getBno().equals(entity.getBno() + "") && (heartEntity.getRno() == null || heartEntity.getRno().equals("null"))) {
 						boardDTO.setHeart("1");
+						boardDTO.setHrno(heartEntity.getRno());
 					} else {
 						boardDTO.setHeart("0");
 					}
@@ -336,7 +335,7 @@ public class BoardService {
 
 					List<HeartEntity> heartEntities = heartRepository.findAll();
 					for(HeartEntity heartEntity : heartEntities) {
-						if(heartEntity.getRno() != null && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
+						if((heartEntity.getRno() != null || !heartEntity.getRno().equals("null")) && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
 							replyDTO.setHrno( heartEntity.getRno());
 							replyDTO.setRheart("1");
 							System.out.println("여기 걸린 reply : " + replyDTO);
@@ -418,6 +417,9 @@ public class BoardService {
 		} else { // 하트 누름
 			System.out.println("하트 ON");
 			System.out.println("heartDTO.getHkind() : " + heartDTO.getHkind());
+			if(heartDTO.getHkind().equals("undefined") || heartDTO.getHkind() == null) {
+				heartDTO.setHkind("0");
+			}
 			HeartEntity heartEntity = HeartEntity.builder()
 				.hkind(heartDTO.getHkind()).mno(heartDTO.getMno())
 				.bno(heartDTO.getBno()).htype(heartDTO.getHtype()).build();

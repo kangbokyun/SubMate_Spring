@@ -14,6 +14,7 @@ public class ReplyDTO {
 	private String rwriterimg;
         private String htype;
         private String hrno;
+        private String rheart;
         private String rcount;
         private String mno;
         private String bno;

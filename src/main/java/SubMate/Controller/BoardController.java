@@ -90,6 +90,7 @@ public class BoardController {
 	public ResponseEntity<?> HeartUpdate(@RequestParam("hkind") String hkind, @RequestParam("htype")
 		String htype, @RequestParam("bno") String bno, @RequestParam("mno") String mno, @RequestParam("rno") String rno) {
 		HeartDTO heartDTO = HeartDTO.builder().hkind(hkind).bno(bno).mno(mno).htype(htype).build();
+		System.out.println("heartDTO.getHkind() : " + heartDTO.getHkind());
 		if(rno != null) {
 			heartDTO.setRno(rno);
 		}

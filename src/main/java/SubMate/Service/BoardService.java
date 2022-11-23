@@ -198,9 +198,13 @@ public class BoardService {
 
 				List<HeartEntity> heartEntities = heartRepository.findAll();
 				for(HeartEntity heartEntity : heartEntities) {
+					System.out.println( " heartEntity.getRno() : " + heartEntity.getRno());
 					if(heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
-						heartEntity.getBno().equals(entity.getBno() + "")) {
+						heartEntity.getBno().equals(entity.getBno() + "") && heartEntity.getRno().equals("null")) {
+						System.out.println( " heartEntity.getRno is Null ");
 						boardDTO.setHeart("1");
+					} else {
+						boardDTO.setHeart("0");
 					}
 				}
 
@@ -333,9 +337,9 @@ public class BoardService {
 					List<HeartEntity> heartEntities = heartRepository.findAll();
 					for(HeartEntity heartEntity : heartEntities) {
 						if(heartEntity.getRno() != null && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
-							System.out.println(" heartEntity.getRno() : " + heartEntity.getRno());
-							System.out.println(" replyDTO.getRno() : " + replyDTO.getRno());
 							replyDTO.setHrno( heartEntity.getRno());
+							replyDTO.setRheart("1");
+							System.out.println("여기 걸린 reply : " + replyDTO);
 						}
 					}
 

@@ -199,11 +199,9 @@ public class BoardService {
 				List<HeartEntity> heartEntities = heartRepository.findAll();
 				for(HeartEntity heartEntity : heartEntities) {
 					if(heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
-						heartEntity.getBno().equals(entity.getBno() + "") && (heartEntity.getRno() == null || heartEntity.getRno().equals("null"))) {
+						heartEntity.getBno().equals(entity.getBno() + "") && heartEntity.getRno().equals("null") && heartEntity.getHtype().equals("1")) {
 						boardDTO.setHeart("1");
 						boardDTO.setHrno(heartEntity.getRno());
-					} else {
-						boardDTO.setHeart("0");
 					}
 				}
 
@@ -335,7 +333,7 @@ public class BoardService {
 
 					List<HeartEntity> heartEntities = heartRepository.findAll();
 					for(HeartEntity heartEntity : heartEntities) {
-						if((heartEntity.getRno() != null || !heartEntity.getRno().equals("null")) && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
+						if((!heartEntity.getRno().equals("null")) && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
 							replyDTO.setHrno( heartEntity.getRno());
 							replyDTO.setRheart("1");
 							System.out.println("여기 걸린 reply : " + replyDTO);
@@ -410,7 +408,7 @@ public class BoardService {
 			List<HeartEntity> heartEntity = heartRepository.findAll();
 			for(HeartEntity heartEntity1 : heartEntity) {
 				if(heartEntity1.getBno().equals(heartDTO.getBno()) && heartEntity1.getHkind().equals("0")
-				&& heartEntity1.getHtype().equals(heartDTO.getHtype()) && heartEntity1.getMno().equals(heartDTO.getMno())) {
+				&& heartEntity1.getHtype().equals(heartDTO.getHtype()) && heartEntity1.getMno().equals(heartDTO.getMno()) && heartEntity1.getRno().equals(heartDTO.getRno())) {
 					heartRepository.delete(heartEntity1);
 				}
 			}

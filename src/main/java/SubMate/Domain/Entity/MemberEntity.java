@@ -51,4 +51,8 @@ public class MemberEntity extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "memberReplyEntity", cascade = CascadeType.ALL)
 	private List<ReplyEntity> replyEntityList = new ArrayList<>();
+
+	// 한 명당 한개의 Mate 설정
+	@OneToOne(mappedBy =  "memberEntity", cascade = CascadeType.ALL)
+	private MateEntity mateEntity = new MateEntity();
 }

@@ -12,4 +12,6 @@ public class MateDTO {
         private String matelwst;
         private String matelwet;
         private String matetline;
+        private String matestartstaion;
+        private String mateendstation;
 }

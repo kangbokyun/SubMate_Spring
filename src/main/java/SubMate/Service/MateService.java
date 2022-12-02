@@ -82,7 +82,7 @@ public class MateService {
 //		}
 //	}
 
-	public void SearchStation(MateDTO mateDTO) {1
+	public void SearchStation(MateDTO mateDTO) {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
 		if(subWayEntities.size() != 0) {
                         // mateDTO : MateDTO(mateno=0, mategwst=11, mategwet=11, matelwst=12, matelwet=12, matetline=null,

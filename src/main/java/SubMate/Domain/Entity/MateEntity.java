@@ -25,6 +25,10 @@ public class MateEntity extends BaseTimeEntity{
 	private String matestartstaion;
 	@Column
 	private String mateendstation;
+	@Column
+        private String matestartstaionname;
+	@Column
+        private String mateendstaionname;
 
 	@OneToOne @JoinColumn(name = "mno")
 	private MemberEntity memberEntity;

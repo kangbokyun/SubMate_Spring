@@ -85,6 +85,8 @@ public class MateService {
 	public void SearchStation(MateDTO mateDTO) {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
 		if(subWayEntities.size() != 0) {
+                        // mateDTO : MateDTO(mateno=0, mategwst=11, mategwet=11, matelwst=12, matelwet=12, matetline=null,
+                        // matestartstaion=초지, mateendstation=가산디지털단지, matestartstaionname=04호선, mateendstaionname=01호선)
 			for(SubWayEntity subWayEntity : subWayEntities) {
 				if(subWayEntity.getSname().equals(mateDTO.getMateendstation())) {
 					System.out.println("subWayEntity : " + subWayEntity);

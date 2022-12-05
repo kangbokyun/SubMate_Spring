@@ -22,7 +22,7 @@ public class MateEntity extends BaseTimeEntity{
 	@Column
 	private String matetline;
 	@Column
-	private String matestartstaion;
+	private String matestartstation;
 	@Column
 	private String mateendstation;
 	@Column

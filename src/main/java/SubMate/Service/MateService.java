@@ -1,5 +1,6 @@
 package SubMate.Service;
 
+import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Domain.DTO.MateDTO;
 import SubMate.Domain.DTO.SubWayDTO;
 import SubMate.Domain.Entity.SubWayEntity;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -84,13 +87,56 @@ public class MateService {
 
 	public void SearchStation(MateDTO mateDTO) {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
+		List<SubWayDTO> subWayStartLine = new ArrayList<>();
+		List<SubWayDTO> subWayEndLine = new ArrayList<>();
+		if(mateDTO.getMatestartstation() == null) { mateDTO.setMatestartstation("01호선");
+		} else if(mateDTO.getMateendstation() == null) { mateDTO.setMateendstation("01호선");
+		} else if(mateDTO.getMatestartstation() == null && mateDTO.getMateendstation() == null) {
+			mateDTO.setMatestartstation("01호선"); mateDTO.setMateendstation("01호선");
+		}
 		if(subWayEntities.size() != 0) {
-                        // mateDTO : MateDTO(mateno=0, mategwst=11, mategwet=11, matelwst=12, matelwet=12, matetline=null,
-                        // matestartstaion=초지, mateendstation=가산디지털단지, matestartstaionname=04호선, mateendstaionname=01호선)
 			for(SubWayEntity subWayEntity : subWayEntities) {
-				if(subWayEntity.getSname().equals(mateDTO.getMateendstation())) {
-					System.out.println("subWayEntity : " + subWayEntity);
+				if(mateDTO.getMatestartstation().equals(subWayEntity.getSline())) {
+					SubWayDTO subWayDTO = new SubWayDTO();
+					subWayDTO.setSno(Integer.toString(subWayEntity.getSno()));
+					subWayDTO.setSline(subWayEntity.getSline());
+					subWayDTO.setSlng(subWayEntity.getSlng());
+					subWayDTO.setSlat(subWayEntity.getSlat());
+					subWayDTO.setSname(subWayEntity.getSname());
+					subWayDTO.setScode(subWayEntity.getScode());
 
+					subWayStartLine.add(subWayDTO);
+				}
+				if(mateDTO.getMateendstation().equals(subWayEntity.getSline())) {
+					SubWayDTO subWayDTO = new SubWayDTO();
+					subWayDTO.setSno(Integer.toString(subWayEntity.getSno()));
+					subWayDTO.setSline(subWayEntity.getSline());
+					subWayDTO.setSlng(subWayEntity.getSlng());
+					subWayDTO.setSlat(subWayEntity.getSlat());
+					subWayDTO.setSname(subWayEntity.getSname());
+					subWayDTO.setScode(subWayEntity.getScode());
+
+					subWayEndLine.add(subWayDTO);
+				}
+			}
+
+			Comparator<SubWayDTO> listSort = new Comparator<SubWayDTO>() {
+				@Override
+				public int compare(SubWayDTO o1, SubWayDTO o2) {
+					double a = Double.parseDouble(o1.getSlng());
+					double b = Double.parseDouble(o2.getSlng());
+
+					if(a > b) { return -1; } else {	return 1;	 }
+				}
+			};
+			Collections.sort(subWayStartLine, listSort);
+			Collections.sort(subWayEndLine, listSort);
+
+			for(int i = 0; i < subWayStartLine.size(); i++) {
+				for(int j = 0 ; j < subWayEndLine.size(); j++) {
+					if(subWayStartLine.get(i).getSname().equals(subWayEndLine.get(j).getSname())) {
+						System.out.println("같다 : " + subWayStartLine.get(i).getSname());
+					}
 				}
 			}
 		}

@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity @Table(name = "member")
-@Getter @Setter @ToString @Builder
+@Getter @Setter @ToString(exclude = {"mateEntity"}) @Builder
 public class MemberEntity extends BaseTimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int mno; // 고유번호

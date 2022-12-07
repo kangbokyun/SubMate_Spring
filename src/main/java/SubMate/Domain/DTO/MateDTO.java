@@ -16,4 +16,5 @@ public class MateDTO {
         private String mateendstation;
         private String matestartstationname;
         private String mateendstationname;
+        private int mno;
 }

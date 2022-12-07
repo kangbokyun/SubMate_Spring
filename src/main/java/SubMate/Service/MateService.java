@@ -1,9 +1,11 @@
 package SubMate.Service;
 
-import SubMate.Domain.DTO.BoardDTO;
-import SubMate.Domain.DTO.MateDTO;
-import SubMate.Domain.DTO.SubWayDTO;
+import SubMate.Domain.DTO.*;
+import SubMate.Domain.Entity.MateEntity;
+import SubMate.Domain.Entity.MemberEntity;
 import SubMate.Domain.Entity.SubWayEntity;
+import SubMate.Domain.Repository.MateRepository;
+import SubMate.Domain.Repository.MemberRepository;
 import SubMate.Domain.Repository.SubWayRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -12,15 +14,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class MateService {
 	@Autowired
 	SubWayRepository subWayRepository;
+	@Autowired
+	MemberRepository memberRepository;
+	@Autowired
+	MateRepository mateRepository;
 
 	public void SubStation() {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
@@ -31,8 +34,8 @@ public class MateService {
 
 			try {
 				// 파일 읽기
-				Reader reader = new FileReader("C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Data/TrainData.json");
-//				Reader reader = new FileReader("C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Data/TrainData.json");
+//				Reader reader = new FileReader("C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Data/TrainData.json");
+				Reader reader = new FileReader("C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Data/TrainData.json");
 				JSONArray jsonArray = (JSONArray) jsonParser.parse(reader);
 
 				for(int i = 0; i < jsonArray.size(); i++) {
@@ -73,24 +76,12 @@ public class MateService {
 		}
 	}
 
-//	public List<SubWayDTO> SubWayKind() {
-//		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
-//		List<SubWayDTO> subWayDTOS = new ArrayList<>();
-//		if(subWayEntities.size() != 0) {
-//			for(SubWayEntity subWayEntity : subWayEntities) {
-//				SubWayDTO subWayDTO = new SubWayDTO();
-//				subWayDTO.setSline(subWayEntity.getSline());
-//				if(subWayEntity.getSline().equals())
-//			}
-//		}
-//	}
-
-	public void SearchStation(MateDTO mateDTO) {
+	public boolean SearchStation(MateDTO mateDTO) { // 지하철 역 경로 찾는 로직 수정해야 됨
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
 		List<SubWayDTO> subWayStartLine = new ArrayList<>();
 		List<SubWayDTO> subWayEndLine = new ArrayList<>();
 		List<String> overLapStartStation = new ArrayList<>();
-		List<String> overLapEndStation = new ArrayList<>();
+		String line = "";
 
 		if(mateDTO.getMatestartstation() == null) { mateDTO.setMatestartstation("01호선");
 		} else if(mateDTO.getMateendstation() == null) { mateDTO.setMateendstation("01호선");
@@ -138,7 +129,6 @@ public class MateService {
 			for(int i = 0; i < subWayStartLine.size(); i++) {
 				for(int j = 0 ; j < subWayEndLine.size(); j++) {
 					if(subWayStartLine.get(i).getSname().equals(subWayEndLine.get(j).getSname())) { // 환승역 찾기
-//                                        System.out.println("같다 : " + subWayStartLine.get(i).getSname());
 						overLapStartStation.add(subWayStartLine.get(i).getSname());
 					}
 				}
@@ -195,7 +185,6 @@ public class MateService {
 			int endStation = 0;
 			int endTransferStation = 0;
 			if(wayCnt.get(0) < wayCnt.get(1)) { // 출발역부터 환승역까지
-//                          System.out.println(subWayStartLine + "\n");
 				for(int i = 0; i < subWayStartLine.size(); i++) {
 					if(subWayStartLine.get(i).getSname().equals(mateDTO.getMatestartstationname())) { startStation = i; } // 출발역
 					if(subWayStartLine.get(i).getSname().equals(startArr[0].split("_")[1])) { startTransferStation = i; } // 출발환승역
@@ -205,12 +194,103 @@ public class MateService {
 					if(subWayEndLine.get(i).getSname().equals(endArr[0].split("_")[1])) { endTransferStation = i; } // 도착환승역
 				}
 				for(int i = startStation; i >= startStation - (startStation - startTransferStation); i--) { // 출발역부터 환승역까지
-					System.out.println("subWayStartLine.get(i).getSname() : " + subWayStartLine.get(i).getSname());
+//					System.out.println("subWayStartLine.get(i).getSname() : " + subWayStartLine.get(i).getSname());
+					line += subWayStartLine.get(i).getSname() + ", ";
 				}
 				for(int i = endTransferStation - 1; i >= endTransferStation - (endTransferStation - endStation); i--) { // 환승역 다음 역부터 도착역까지
-					System.out.println("subWayEndLine.get(i).getSname() : " + subWayEndLine.get(i).getSname());
+//					System.out.println("subWayEndLine.get(i).getSname() : " + subWayEndLine.get(i).getSname());
+					line += subWayEndLine.get(i).getSname() + ", ";
+				}
+				System.out.println("line : " + line);
+			}
+
+			List<MateEntity> mateEntityCheck = mateRepository.findAll();
+			System.out.println(mateEntityCheck.size());
+			boolean flag = true;
+			if(mateEntityCheck.size() != 0) {
+				for(MateEntity mateEntity : mateEntityCheck) {
+					if(mateDTO.getMno() == mateEntity.getMemberEntity().getMno()) {
+						flag = true;
+						break;
+					} else {
+						flag = false;
+					}
+				}
+			} else {
+				flag = false;
+			}
+			if(flag) { // 설정한 값이 이미 있음
+				MateEntity mateEntity = mateRepository.findByMemberEntity_Mno(mateDTO.getMno());
+				mateEntity.setMategwst(mateDTO.getMategwst());
+				mateEntity.setMategwet(mateDTO.getMategwet());
+				mateEntity.setMatelwst(mateDTO.getMatelwst());
+				mateEntity.setMatelwet(mateDTO.getMatelwet());
+				mateEntity.setMatestartstation(mateDTO.getMatestartstation());
+				mateEntity.setMatestartstationname(mateDTO.getMatestartstationname());
+				mateEntity.setMateendstation(mateDTO.getMateendstation());
+				mateEntity.setMateendstationname(mateDTO.getMateendstationname());
+				mateEntity.setMatetline(line);
+				return true;
+			} else {
+				MemberEntity memberEntity = memberRepository.findById(mateDTO.getMno()).get();
+				MateEntity mateEntity = MateEntity.builder()
+					.mategwst(mateDTO.getMategwst())
+					.mategwet(mateDTO.getMategwet())
+					.matelwst(mateDTO.getMatelwst())
+					.matelwet(mateDTO.getMatelwet())
+					.matestartstation(mateDTO.getMatestartstation())
+					.mateendstation(mateDTO.getMateendstation())
+					.matestartstationname(mateDTO.getMatestartstationname())
+					.mateendstationname(mateDTO.getMateendstationname())
+					.memberEntity(memberEntity).matetline(line)
+					.build();
+				mateRepository.save(mateEntity);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public List<MemberDTO> MateData(int mno) {
+		List<MateEntity> mateEntities = mateRepository.findAll();
+		List<MemberDTO> memberDTOS = new ArrayList<>();
+
+		MateEntity mateEntity = mateRepository.findByMemberEntity_Mno(mno);
+		String[] oneLine = mateEntity.getMatetline().split(", ");
+
+		for(MateEntity mate : mateEntities) {
+			int overLabCnt = 0;
+			if(mate.getMateno() == mateEntity.getMateno()) {
+				continue;
+			} else {
+				MemberDTO memberDTO = new MemberDTO();
+				for(int i = 0; i < oneLine.length; i++) {
+					if(mate.getMatetline().contains(oneLine[i])) {
+						// oneLine( 초지 )이 포함된 MateLine :
+						// 초지, 고잔, 중앙, 한대앞, 상록수, 반월, 대야미, 수리산, 산본, 금정, 명학,
+						// 안양, 관악, 석수, 오류동, 금천구청, 개봉, 독산, 가산디지털단지,
+						// System.out.println("oneLine( " + oneLine[i] + " )이 포함된 MateLine : " + mate.getMatetline());
+						overLabCnt++;
+						if(overLabCnt > 2) {
+							MemberEntity entity = memberRepository.findById(mate.getMemberEntity().getMno()).get();
+							memberDTO.setMno(entity.getMno());
+							memberDTO.setMgender(entity.getMgender());
+							memberDTO.setMager(entity.getMager());
+							memberDTO.setMbirth(entity.getMbirth());
+							memberDTO.setProfileimg(entity.getProfileimg().split("/MemberImg")[1]);
+							memberDTO.setMnickname(entity.getMnickname());
+							memberDTO.setMbti(entity.getMbti());
+							memberDTO.setMname(entity.getMname());
+							memberDTO.setMhobby(entity.getMhobby());
+							memberDTO.setMphone(entity.getMphone());
+							memberDTOS.add(memberDTO);
+							break;
+						}
+					}
 				}
 			}
 		}
+
+		return memberDTOS;
 	}
 }

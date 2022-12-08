@@ -316,23 +316,33 @@ public class SettingService {
 		}
 	}
 
-	public ProfileDTO UserProfile(int mno) {
-		ProfileDTO profileDTO = new ProfileDTO();
-		ProfileEntity profileEntity = profileRepository.findByMemberEntity_mno(mno);
-		if(profileEntity != null) {
-			profileDTO.setMno(profileEntity.getMemberEntity().getMno());
-			profileDTO.setPintro(profileEntity.getPintro());
-			profileDTO.setPhobby1(profileEntity.getPhobby1());
-			profileDTO.setPhobby2(profileEntity.getPhobby2());
-			profileDTO.setPhobby3(profileEntity.getPhobby3());
-			profileDTO.setPlike1(profileEntity.getPlike1());
-			profileDTO.setPlike2(profileEntity.getPlike2());
-			profileDTO.setPlike3(profileEntity.getPlike3());
-			profileDTO.setPunlike1(profileEntity.getPunlike1());
-			profileDTO.setPunlike2(profileEntity.getPunlike2());
-			profileDTO.setPunlike3(profileEntity.getPunlike3());
-			profileDTO.setPno(profileEntity.getPno());
+	public List<ProfileDTO> UserProfile(int mno) {
+		List<ProfileDTO> profileDTOS = new ArrayList<>();
+//		ProfileEntity profileEntity = profileRepository.findByMemberEntity_mno(mno);
+		List<ProfileEntity> profileEntities = profileRepository.findAll();
+		for(ProfileEntity profileEntity : profileEntities) {
+			if(profileEntity != null) {
+				ProfileDTO profileDTO = new ProfileDTO();
+				profileDTO.setMno(profileEntity.getMemberEntity().getMno());
+				profileDTO.setPintro(profileEntity.getPintro());
+				profileDTO.setPhobby1(profileEntity.getPhobby1());
+				profileDTO.setPhobby2(profileEntity.getPhobby2());
+				profileDTO.setPhobby3(profileEntity.getPhobby3());
+				profileDTO.setPlike1(profileEntity.getPlike1());
+				profileDTO.setPlike2(profileEntity.getPlike2());
+				profileDTO.setPlike3(profileEntity.getPlike3());
+				profileDTO.setPunlike1(profileEntity.getPunlike1());
+				profileDTO.setPunlike2(profileEntity.getPunlike2());
+				profileDTO.setPunlike3(profileEntity.getPunlike3());
+				profileDTO.setPno(profileEntity.getPno());
+				profileDTO.setChecknull("NOTNULL");
+				profileDTOS.add(profileDTO);
+			} else {
+				ProfileDTO profileDTO = new ProfileDTO();
+				profileDTO.setChecknull("NULL");
+				profileDTOS.add(profileDTO);
+			}
 		}
-		return profileDTO;
+		return profileDTOS;
 	}
 }

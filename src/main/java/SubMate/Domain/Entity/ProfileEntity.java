@@ -10,27 +10,27 @@ import javax.persistence.*;
 @Getter @Setter @Builder @Entity
 public class ProfileEntity extends BaseTimeEntity {
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        int pno;
+        private int pno;
         @Column
-        String pintro; // 소개말
+	private String pintro; // 소개말
         @Column
-        String plike1; // 좋아요1
+	private String plike1; // 좋아요1
         @Column
-        String plike2; // 좋아요2
+	private String plike2; // 좋아요2
         @Column
-        String plike3; // 좋아요3
+	private String plike3; // 좋아요3
         @Column
-        String punlike1; // 싫어요1
+	private String punlike1; // 싫어요1
         @Column
-        String punlike2; // 싫어요2
+	private String punlike2; // 싫어요2
         @Column
-        String punlike3; // 싫어요3
+	private String punlike3; // 싫어요3
         @Column
-        String phobby1; // 취미1
+	private String phobby1; // 취미1
         @Column
-        String phobby2; // 취미2
+	private String phobby2; // 취미2
         @Column
-        String phobby3; // 취미3
+	private String phobby3; // 취미3
 
         @OneToOne @JoinColumn(name = "mno")
         MemberEntity memberEntity;

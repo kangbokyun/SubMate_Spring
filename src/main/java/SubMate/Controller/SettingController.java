@@ -54,7 +54,7 @@ public class SettingController {
         @PostMapping("/Mate/Profile")
         public ResponseEntity<?> UserProfile(@RequestParam("mno") int mno) {
                 System.out.println("/Mate/Profile/mno : " + mno);
-                ProfileDTO profileDTO = settingService.UserProfile(mno);
-                return ResponseEntity.ok().body(profileDTO);
+                List<ProfileDTO> profileDTOS = settingService.UserProfile(mno);
+                return ResponseEntity.ok().body(profileDTOS);
         }
 }

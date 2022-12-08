@@ -3,7 +3,9 @@ package SubMate.Service;
 import SubMate.Domain.DTO.*;
 import SubMate.Domain.Entity.MateEntity;
 import SubMate.Domain.Entity.MemberEntity;
+import SubMate.Domain.Entity.ProfileEntity;
 import SubMate.Domain.Entity.SubWayEntity;
+import SubMate.Domain.Repository.ProfileRepository;
 import SubMate.Domain.Repository.MateRepository;
 import SubMate.Domain.Repository.MemberRepository;
 import SubMate.Domain.Repository.SubWayRepository;
@@ -17,13 +19,15 @@ import java.io.Reader;
 import java.util.*;
 
 @Service
-public class MateService {
+public class SettingService {
 	@Autowired
 	SubWayRepository subWayRepository;
 	@Autowired
 	MemberRepository memberRepository;
 	@Autowired
 	MateRepository mateRepository;
+	@Autowired
+	ProfileRepository profileRepository;
 
 	public void SubStation() {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
@@ -230,6 +234,7 @@ public class MateService {
 				mateEntity.setMateendstation(mateDTO.getMateendstation());
 				mateEntity.setMateendstationname(mateDTO.getMateendstationname());
 				mateEntity.setMatetline(line);
+				mateRepository.save(mateEntity);
 				return true;
 			} else {
 				MemberEntity memberEntity = memberRepository.findById(mateDTO.getMno()).get();
@@ -256,13 +261,14 @@ public class MateService {
 		List<MemberDTO> memberDTOS = new ArrayList<>();
 
 		MateEntity mateEntity = mateRepository.findByMemberEntity_Mno(mno);
+		if(mateEntity == null) {
+			return memberDTOS;
+		}
 		String[] oneLine = mateEntity.getMatetline().split(", ");
 
 		for(MateEntity mate : mateEntities) {
 			int overLabCnt = 0;
-			if(mate.getMateno() == mateEntity.getMateno()) {
-				continue;
-			} else {
+			if(mate.getMateno() != mateEntity.getMateno()) {
 				MemberDTO memberDTO = new MemberDTO();
 				for(int i = 0; i < oneLine.length; i++) {
 					if(mate.getMatetline().contains(oneLine[i])) {
@@ -292,5 +298,41 @@ public class MateService {
 		}
 
 		return memberDTOS;
+	}
+
+	public boolean ProfileSetting(ProfileDTO profileDTO) {
+		if(profileDTO != null) {
+			MemberEntity memberEntity = memberRepository.findById(profileDTO.getMno()).get();
+			ProfileEntity profileEntity = ProfileEntity.builder()
+				.pintro(profileDTO.getPintro()).memberEntity(memberEntity)
+				.plike1(profileDTO.getPlike1()).plike2(profileDTO.getPlike2()).plike3(profileDTO.getPlike3())
+				.punlike1(profileDTO.getPunlike1()).punlike2(profileDTO.getPunlike2()).punlike3(profileDTO.getPunlike3())
+				.phobby1(profileDTO.getPhobby1()).phobby2(profileDTO.getPhobby2()).phobby3(profileDTO.getPhobby3())
+				.build();
+			profileRepository.save(profileEntity);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public ProfileDTO UserProfile(int mno) {
+		ProfileDTO profileDTO = new ProfileDTO();
+		ProfileEntity profileEntity = profileRepository.findByMemberEntity_mno(mno);
+		if(profileEntity != null) {
+			profileDTO.setMno(profileEntity.getMemberEntity().getMno());
+			profileDTO.setPintro(profileEntity.getPintro());
+			profileDTO.setPhobby1(profileEntity.getPhobby1());
+			profileDTO.setPhobby2(profileEntity.getPhobby2());
+			profileDTO.setPhobby3(profileEntity.getPhobby3());
+			profileDTO.setPlike1(profileEntity.getPlike1());
+			profileDTO.setPlike2(profileEntity.getPlike2());
+			profileDTO.setPlike3(profileEntity.getPlike3());
+			profileDTO.setPunlike1(profileEntity.getPunlike1());
+			profileDTO.setPunlike2(profileEntity.getPunlike2());
+			profileDTO.setPunlike3(profileEntity.getPunlike3());
+			profileDTO.setPno(profileEntity.getPno());
+		}
+		return profileDTO;
 	}
 }

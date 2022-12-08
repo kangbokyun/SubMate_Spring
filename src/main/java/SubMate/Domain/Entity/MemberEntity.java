@@ -10,8 +10,9 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter @Setter @Builder
 @Entity @Table(name = "member")
-@Getter @Setter @ToString(exclude = {"mateEntity"}) @Builder
+@ToString(exclude = {"mateEntity", "profileEntity"})
 public class MemberEntity extends BaseTimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int mno; // 고유번호
@@ -49,10 +50,15 @@ public class MemberEntity extends BaseTimeEntity {
 	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
 	private List<BoardEntity> boardEntityList = new ArrayList<>();
 
+	// 회원 한 명당 여러개의 댓글, 대댓글 작성
 	@OneToMany(mappedBy = "memberReplyEntity", cascade = CascadeType.ALL)
 	private List<ReplyEntity> replyEntityList = new ArrayList<>();
 
-	// 한 명당 한개의 Mate 설정
+	// 한 명당 한개의 Mate Setting
 	@OneToOne(mappedBy =  "memberEntity", cascade = CascadeType.ALL)
 	private MateEntity mateEntity = new MateEntity();
+
+	// 한 명당 한 개의 Profile Setting
+	@OneToOne(mappedBy = "memberEntity", cascade = CascadeType.ALL)
+	private ProfileEntity profileEntity = new ProfileEntity();
 }

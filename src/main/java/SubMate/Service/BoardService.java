@@ -493,10 +493,9 @@ public class BoardService {
 
 					List<HeartEntity> heartEntities = heartRepository.findAll();
 					for(HeartEntity heartEntity : heartEntities) {
-						if((!heartEntity.getRno().equals("null")) && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
+						if(heartEntity.getUserno() == null && (!heartEntity.getRno().equals("null")) && heartEntity.getUserno() == null && heartEntity.getBno().equals(replyDTO.getBno()) && heartEntity.getMno().equals(replyDTO.getMno()) && heartEntity.getRno().equals(Integer.toString(replyDTO.getRno()))) {
 							replyDTO.setHrno( heartEntity.getRno());
 							replyDTO.setRheart("1");
-							System.out.println("여기 걸린 reply : " + replyDTO);
 						}
 					}
 
@@ -567,7 +566,7 @@ public class BoardService {
 			System.out.println("하트 OFF");
 			List<HeartEntity> heartEntity = heartRepository.findAll();
 			for(HeartEntity heartEntity1 : heartEntity) {
-				if(heartEntity1.getBno().equals(heartDTO.getBno()) && heartEntity1.getHkind().equals("0")
+				if(heartEntity1.getUserno() == null && heartEntity1.getBno().equals(heartDTO.getBno()) && heartEntity1.getHkind().equals("0")
 				&& heartEntity1.getHtype().equals(heartDTO.getHtype()) && heartEntity1.getMno().equals(heartDTO.getMno()) && heartEntity1.getRno().equals(heartDTO.getRno())) {
 					heartRepository.delete(heartEntity1);
 				}

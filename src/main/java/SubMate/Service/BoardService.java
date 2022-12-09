@@ -291,7 +291,7 @@ public class BoardService {
 
 			List<HeartEntity> heartEntities = heartRepository.findAll();
 			for(HeartEntity heartEntity : heartEntities) {
-				if(heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
+				if(heartEntity.getUserno() == null && heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
 					heartEntity.getBno().equals(entity.getBno() + "") && heartEntity.getRno().equals("null") && heartEntity.getHtype().equals("1")) {
 					boardDTO.setHeart("1");
 					boardDTO.setHrno(heartEntity.getRno());

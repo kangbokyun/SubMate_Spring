@@ -1,14 +1,8 @@
 package SubMate.Service;
 
 import SubMate.Domain.DTO.*;
-import SubMate.Domain.Entity.MateEntity;
-import SubMate.Domain.Entity.MemberEntity;
-import SubMate.Domain.Entity.ProfileEntity;
-import SubMate.Domain.Entity.SubWayEntity;
-import SubMate.Domain.Repository.ProfileRepository;
-import SubMate.Domain.Repository.MateRepository;
-import SubMate.Domain.Repository.MemberRepository;
-import SubMate.Domain.Repository.SubWayRepository;
+import SubMate.Domain.Entity.*;
+import SubMate.Domain.Repository.*;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +22,8 @@ public class SettingService {
 	MateRepository mateRepository;
 	@Autowired
 	ProfileRepository profileRepository;
+	@Autowired
+	HeartRepository heartRepository;
 
 	public void SubStation() {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
@@ -266,6 +262,17 @@ public class SettingService {
 		}
 		String[] oneLine = mateEntity.getMatetline().split(", ");
 
+		List<HeartEntity> heartEntities = heartRepository.findAll();
+		List<HeartDTO> heartDTOS = new ArrayList<>();
+		for(HeartEntity heartEntity : heartEntities) {
+			if(heartEntity.getUserno() != null) {
+				HeartDTO heartDTO = HeartDTO.builder()
+					.hno(heartEntity.getHno()).hkind(heartEntity.getHkind()).htype(heartEntity.getHtype())
+					.userno(heartEntity.getUserno()).mno(heartEntity.getMno()).build();
+				heartDTOS.add(heartDTO);
+			}
+		}
+
 		for(MateEntity mate : mateEntities) {
 			int overLabCnt = 0;
 			if(mate.getMateno() != mateEntity.getMateno()) {
@@ -279,6 +286,18 @@ public class SettingService {
 						overLabCnt++;
 						if(overLabCnt > 2) {
 							MemberEntity entity = memberRepository.findById(mate.getMemberEntity().getMno()).get();
+							if(heartDTOS.size() != 0) {
+								for (int j = 0; j < heartDTOS.size(); j++) {
+									if (Integer.parseInt(heartDTOS.get(j).getUserno()) == entity.getMno()) {
+										memberDTO.setUserheart(heartDTOS.get(j).getHkind());
+										break;
+									} else {
+										memberDTO.setUserheart(Integer.toString(Integer.parseInt(heartDTOS.get(j).getHkind()) + 1));
+									}
+								}
+							} else {
+								memberDTO.setUserheart("0");
+							}
 							memberDTO.setMno(entity.getMno());
 							memberDTO.setMgender(entity.getMgender());
 							memberDTO.setMager(entity.getMager());

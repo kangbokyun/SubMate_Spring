@@ -12,4 +12,5 @@ public class HeartDTO {
 	private String mno;
 	private String bno;
 	private String rno;
+	private String userno;
 }

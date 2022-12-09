@@ -11,16 +11,18 @@ import javax.persistence.*;
 public class HeartEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int hno;
-	@Column // 좋아요가 됐는지 아닌지
+	@Column // 하트 눌렀는지 아닌지
 	private String hkind;
 	// htype
-	// 1 => 게시글 좋아요, 2=> 댓글 좋아요, 3 => 대댓글 좋아요
+	// 1 => 게시글 하트, 2=> 댓글 하트, 3 => 대댓글 하트, 4 => 유저 하트
 	@Column
 	private String htype;
 	@Column
-	private String mno;
+	private String mno; // 하트를 누른 사람
 	@Column
 	private String bno;
 	@Column
 	private String rno;
+	@Column
+	private String userno; // 하트를 받은 사람
 }

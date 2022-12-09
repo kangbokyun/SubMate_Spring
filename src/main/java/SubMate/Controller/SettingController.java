@@ -35,7 +35,7 @@ public class SettingController {
 
         @PostMapping("/Mate/Users")
         public ResponseEntity<?> MateData(@RequestParam("mno") int mno) {
-                System.out.println(mno);
+                System.out.println("/Mate/Users/mno" + mno);
                 List<MemberDTO> memberDTOS = settingService.MateData(mno);
                 return ResponseEntity.ok().body(memberDTOS);
         }

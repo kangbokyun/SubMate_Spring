@@ -274,6 +274,7 @@ public class SettingService {
 		}
 
 		for(MateEntity mate : mateEntities) {
+			int heartCnt = 0;
 			int overLabCnt = 0;
 			if(mate.getMateno() != mateEntity.getMateno()) {
 				MemberDTO memberDTO = new MemberDTO();
@@ -287,6 +288,22 @@ public class SettingService {
 						if(overLabCnt > 2) {
 							MemberEntity entity = memberRepository.findById(mate.getMemberEntity().getMno()).get();
 							if(heartDTOS.size() != 0) {
+								for(int j = 0; j < heartDTOS.size(); j++) {
+									if(heartDTOS.get(j).getUserno() != null && Integer.parseInt(heartDTOS.get(j).getUserno()) == entity.getMno()) {
+										heartCnt ++;
+									}
+								}
+								for(int j = 0; j < heartDTOS.size(); j++) {
+									System.out.println("heartDTOS.get(j).getUserno() : " + heartDTOS.get(j).getMno());
+									System.out.println("entity.getMno() : " + entity.getMno());
+									if(Integer.parseInt(heartDTOS.get(j).getMno()) == mno && Integer.parseInt(heartDTOS.get(j).getUserno()) == entity.getMno()) {
+										memberDTO.setHeartclicker("true");
+										break;
+									} else {
+										memberDTO.setHeartclicker("false");
+									}
+								}
+								memberDTO.setUserheartcnt(heartCnt + "");
 								for (int j = 0; j < heartDTOS.size(); j++) {
 									if (Integer.parseInt(heartDTOS.get(j).getUserno()) == entity.getMno()) {
 										memberDTO.setUserheart(heartDTOS.get(j).getHkind());

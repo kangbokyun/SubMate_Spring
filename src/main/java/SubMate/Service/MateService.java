@@ -42,17 +42,14 @@ public class MateService {
                 return false;
         }
         // 하트 리스트
-        public List<HeartDTO> UserHeartList() {
+        public boolean ClickHeart(int mno) {
                 List<HeartEntity> heartEntities = heartRepository.findAll();
                 List<HeartDTO> heartDTOS = new ArrayList<>();
                 for(HeartEntity heartEntity : heartEntities) {
-                        if(heartEntity.getUserno() != null) {
-                                HeartDTO heartDTO = HeartDTO.builder()
-                                        .hno(heartEntity.getHno()).userno(heartEntity.getUserno()).htype(heartEntity.getHtype()).hkind(heartEntity.getHkind())
-                                        .build();
-                                heartDTOS.add(heartDTO);
+                        if(heartEntity.getUserno() != null && Integer.parseInt(heartEntity.getMno()) == mno) {
+                                return true;
                         }
                 }
-                return heartDTOS;
+                return false;
         }
 }

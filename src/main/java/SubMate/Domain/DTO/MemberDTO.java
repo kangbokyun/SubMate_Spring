@@ -26,5 +26,7 @@ public class MemberDTO  {
 	private String mhobby;
 	private String profileimg;
 	private String userheart;
+	private String userheartcnt;
+	private String heartclicker;
 	private String token;
 }

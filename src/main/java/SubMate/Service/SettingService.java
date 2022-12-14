@@ -294,22 +294,28 @@ public class SettingService {
 									}
 								}
 								for(int j = 0; j < heartDTOS.size(); j++) {
-									System.out.println("heartDTOS.get(j).getUserno() : " + heartDTOS.get(j).getMno());
-									System.out.println("entity.getMno() : " + entity.getMno());
+//									System.out.println("heartDTOS.get(j).getUserno() : " + heartDTOS.get(j).getMno());
+//									System.out.println("entity.getMno() : " + entity.getMno());
+									System.out.println("HeartClicker > j : " + j);
 									if(Integer.parseInt(heartDTOS.get(j).getMno()) == mno && Integer.parseInt(heartDTOS.get(j).getUserno()) == entity.getMno()) {
 										memberDTO.setHeartclicker("true");
+										System.out.println("memberDTO.getHeartclicker( 1 ) : " + memberDTO.getHeartclicker());
 										break;
 									} else {
 										memberDTO.setHeartclicker("false");
+										System.out.println("memberDTO.getHeartclicker( 2 ) : " + memberDTO.getHeartclicker());
 									}
 								}
 								memberDTO.setUserheartcnt(heartCnt + "");
 								for (int j = 0; j < heartDTOS.size(); j++) {
-									if (Integer.parseInt(heartDTOS.get(j).getUserno()) == entity.getMno()) {
+								System.out.println("UserHeart > j : " + j);
+									if (!memberDTO.getHeartclicker().equals("false") && Integer.parseInt(heartDTOS.get(j).getUserno()) == entity.getMno()) {
 										memberDTO.setUserheart(heartDTOS.get(j).getHkind());
+										System.out.println("memberDTO.getUserheart( 1 ) : " + memberDTO.getUserheart());
 										break;
 									} else {
 										memberDTO.setUserheart(Integer.toString(Integer.parseInt(heartDTOS.get(j).getHkind()) + 1));
+										System.out.println("memberDTO.getUserheart( 2 ) : " + memberDTO.getUserheart());
 									}
 								}
 							} else {

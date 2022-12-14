@@ -61,4 +61,7 @@ public class MemberEntity extends BaseTimeEntity {
 	// 한 명당 한 개의 Profile Setting
 	@OneToOne(mappedBy = "memberEntity", cascade = CascadeType.ALL)
 	private ProfileEntity profileEntity = new ProfileEntity();
+
+	@OneToOne(mappedBy = "memberEntity", cascade = CascadeType.ALL)
+	private RankEntity rankEntity = new RankEntity();
 }

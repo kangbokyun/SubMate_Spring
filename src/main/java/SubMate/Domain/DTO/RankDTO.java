@@ -10,4 +10,6 @@ public class RankDTO {
         private String rankline;
         private String rankrankerno;
         private String rankrankernickname;
+        private int mno;
+        private String profileImg;
 }

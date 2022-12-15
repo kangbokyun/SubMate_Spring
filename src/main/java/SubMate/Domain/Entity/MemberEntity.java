@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter @Setter @Builder
 @Entity @Table(name = "member")
-@ToString(exclude = {"mateEntity", "profileEntity"})
+@ToString(exclude = {"mateEntity", "profileEntity", "rankEntity", "boardEntityList", "replyEntityList"})
 public class MemberEntity extends BaseTimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int mno; // 고유번호

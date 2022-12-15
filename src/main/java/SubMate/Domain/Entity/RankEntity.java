@@ -2,21 +2,22 @@ package SubMate.Domain.Entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity @Table(name = "rank")
-@Getter @Setter @ToString @Builder
+@Entity @Table(name = "ranking")
+@Data @ToString @Builder
 public class RankEntity extends BaseTimeEntity {
-        private int rankno;
-        private String rankline;
-        private String rankerno;
-        private String rankernickname;
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int rankerno; // PK
+        @Column
+        private String rankerline; // 랭커 호선
+        @Column
+        private String rankingno; // 랭커 순위
+        @Column
+        private String rankernickname; // 랭커 닉네임
 
         @OneToOne @JoinColumn(name = "mno")
-        MemberEntity memberEntity;
+        private MemberEntity memberEntity;
 }

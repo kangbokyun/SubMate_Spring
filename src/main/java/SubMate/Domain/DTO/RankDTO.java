@@ -12,4 +12,5 @@ public class RankDTO {
         private String rankrankernickname;
         private int mno;
         private String profileImg;
+        private int heartcount;
 }

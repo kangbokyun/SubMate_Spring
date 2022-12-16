@@ -31,38 +31,48 @@ public class HomeService {
                 List<MateDTO> mateDTOS = new ArrayList<>();
                 List<HeartEntity> heartEntities = heartRepository.findAll();
                 List<HeartDTO> heartDTOS = new ArrayList<>();
+                List<HeartDTO> tempDTOS = new ArrayList<>();
                 List<RankDTO> rankDTOS = new ArrayList<>();
 
-                ArrayList<String> integers = new ArrayList<>();
+                // 하트 개수를 구한다.
+//                for(int i = 0; i < heartEntities.size(); i++) {
+//                        if(heartEntities.get(i).getUserno() != null) {
+//                                for(int j = 0; j < heartEntities.size(); j++) {
+//                                        if(heartDTOS.size() == 0) {
+//                                                HeartDTO heartDTO = HeartDTO.builder().mno(heartEntities.get(i).getMno()).userno(heartEntities.get(i).getUserno()).build();
+//                                                heartDTOS.add(heartDTO);
+//                                        } else if(heartDTOS.size() != 0) {
+//                                                if(heartDTOS.size() < j) {
+//                                                        break;
+//                                                }
+//                                                System.out.println("heartDTOS.get(j).getUserNo() : " + heartDTOS.get(j).getUserno());
+//                                        }
+//                                }
+//                        }
+//                }
 
                 for(int i = 0; i < heartEntities.size(); i++) {
-                        for(int j = 0; j < heartEntities.size(); j++) {
-                                if(heartEntities.get(i).getUserno() != null &&
-                                        heartEntities.get(j).getUserno() != null &&
-                                        heartEntities.get(i).getUserno().equals(heartEntities.get(j).getUserno())) {
-                                        integers.add(heartEntities.get(j).getUserno());
-                                        break;
-                                }
+                        if(heartEntities.get(i).getUserno() != null) {
+                                HeartDTO heartDTO = HeartDTO.builder().mno(heartEntities.get(i).getMno()).userno(heartEntities.get(i).getUserno()).build();
+                                tempDTOS.add(heartDTO);
                         }
                 }
 
-                System.out.println("integers : " + integers);
-                ArrayList<Integer> temp = new ArrayList<>();
-                for(int i = 0 ; i < integers.size(); i++) {
-                        int cnt = 1;
-                        for(int j = i + 1; j < integers.size(); j++) {
-                                if(integers.get(i) == integers.get(j)) {
-                                        System.out.println(i + " : " + j);
-                                        cnt++;
-                                        integers.remove(j);
-                                        System.out.println("integers.get(i) : " + integers.get(i));
-                                        System.out.println("integers.get(j) : " + integers.get(j));
+                for(int i = 0; i < tempDTOS.size(); i++) {
+                        if(heartDTOS.size() == 0) {
+                                heartDTOS.add(tempDTOS.get(i));
+                        } else {
+                                for(int j = 0; j <= heartDTOS.size(); j++) {
+                                        if(!heartDTOS.get(j).getUserno().equals(tempDTOS.get(i))) {
+                                                System.out.println("j : " + j);
+                                                System.out.println("heartDTOS.size() : " + heartDTOS.size());
+                                                heartDTOS.add(tempDTOS.get(i));
+                                                break;
+                                        }
                                 }
                         }
-                        temp.add(cnt);
                 }
-                System.out.println("temp : " + temp);
-
+                System.out.println("heartDTOS: " + heartDTOS);
                 return null;
         }
 }

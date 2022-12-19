@@ -9,9 +9,14 @@ import SubMate.Domain.Repository.HeartRepository;
 import SubMate.Domain.Repository.MateRepository;
 import SubMate.Domain.Repository.MemberRepository;
 import SubMate.Domain.Repository.RankRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -102,5 +107,32 @@ public class HomeService {
                         }
                 }
                 return rankDTOS;
+        }
+
+        public List<IssueDTO> HomeIssue() {
+                try {
+                        Document document = Jsoup.connect("https://search.naver.com/search.naver?where=news&ie=utf8&sm=nws_hty&query=지하철").get();
+                        Elements newsTitle = document.getElementsByClass("list_news");
+                        Elements title = newsTitle.select("li>div>div>a");
+                        List<IssueDTO> issueInfo = new ArrayList<>();
+                        String[] IssueTitle = new String[title.size()];
+                        String[] IssueLink = new String[title.size()];
+                        for(int i = 0; i < title.size(); i++) {
+                                IssueDTO issueDTO = new IssueDTO();
+                                IssueTitle[i] = title.get(i).attr("title");
+                                IssueLink[i] = (title.get(i).attr("href"));
+//                                issueInfo.add(issueDTO);
+                                issueDTO.setIssueTitle(IssueTitle[i]);
+                                issueDTO.setIssueLink(IssueLink[i]);
+                                issueInfo.add(issueDTO);
+                        }
+//                        for(int i = 0; i < IssueTitle.length; i++) {
+//                                System.out.println("IssueTitle[i] : " + IssueTitle[i]);
+//                        }
+                        return issueInfo;
+                } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        return null;
+                }
         }
 }

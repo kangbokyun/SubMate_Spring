@@ -1,5 +1,6 @@
 package SubMate.Controller;
 
+import SubMate.Domain.DTO.IssueDTO;
 import SubMate.Domain.DTO.RankDTO;
 import SubMate.Service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,12 @@ public class HomeController {
                 System.out.println("/Home/Rank/mno : " + mno);
                 List<RankDTO> rankDTOS = homeService.SearchRanker(mno);
                 return ResponseEntity.ok().body(rankDTOS);
+        }
+
+        @PostMapping("/Home/Issue")
+        public ResponseEntity<?> HomeIssue() {
+                List<IssueDTO> issueDTOS = homeService.HomeIssue();
+//                System.out.println("Home/Issue/IssueDTO : " + issueDTOS);
+                return ResponseEntity.ok().body(issueDTOS);
         }
 }

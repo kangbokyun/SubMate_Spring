@@ -18,7 +18,15 @@ public class RankEntity extends BaseTimeEntity {
         @Column
         private String rankernickname; // 랭커 닉네임
         @Column
-        private int heartcount;;
+        private String rankerprofileimg; // 랭커 프로필사진
+        @Column
+        private String rankerager; // 랭커 나이대
+        @Column
+        private String rankerhobby; // 랭커 취미
+        @Column
+        private String rankermbti; // 랭커 성향
+        @Column
+        private int heartcount;; // 랭커 하트 수
 
         @OneToOne @JoinColumn(name = "mno")
         private MemberEntity memberEntity;

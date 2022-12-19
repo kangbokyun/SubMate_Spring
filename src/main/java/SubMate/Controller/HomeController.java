@@ -19,7 +19,7 @@ public class HomeController {
         @PostMapping("/Home/Rank")
         public ResponseEntity<?> SearchRank(@RequestParam("mno") int mno) {
                 System.out.println("/Home/Rank/mno : " + mno);
-                homeService.SearchRanker(mno);
-                return ResponseEntity.ok().body(HttpStatus.OK);
+                List<RankDTO> rankDTOS = homeService.SearchRanker(mno);
+                return ResponseEntity.ok().body(rankDTOS);
         }
 }

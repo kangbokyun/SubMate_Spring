@@ -35,44 +35,22 @@ public class HomeService {
                 List<RankDTO> rankDTOS = new ArrayList<>();
 
                 // 하트 개수를 구한다.
-//                for(int i = 0; i < heartEntities.size(); i++) {
-//                        if(heartEntities.get(i).getUserno() != null) {
-//                                for(int j = 0; j < heartEntities.size(); j++) {
-//                                        if(heartDTOS.size() == 0) {
-//                                                HeartDTO heartDTO = HeartDTO.builder().mno(heartEntities.get(i).getMno()).userno(heartEntities.get(i).getUserno()).build();
-//                                                heartDTOS.add(heartDTO);
-//                                        } else if(heartDTOS.size() != 0) {
-//                                                if(heartDTOS.size() < j) {
-//                                                        break;
-//                                                }
-//                                                System.out.println("heartDTOS.get(j).getUserNo() : " + heartDTOS.get(j).getUserno());
-//                                        }
-//                                }
-//                        }
-//                }
-
+                Map<Integer, Integer> sureMap = new HashMap<>();
                 for(int i = 0; i < heartEntities.size(); i++) {
                         if(heartEntities.get(i).getUserno() != null) {
-                                HeartDTO heartDTO = HeartDTO.builder().mno(heartEntities.get(i).getMno()).userno(heartEntities.get(i).getUserno()).build();
-                                tempDTOS.add(heartDTO);
+                                HeartDTO heartDTO = HeartDTO.builder().userno(heartEntities.get(i).getUserno()).mno(heartEntities.get(i).getMno()).build();
+                                if(sureMap.size() != 0 && sureMap.containsKey(Integer.parseInt(heartDTO.getUserno()))) {
+                                        sureMap.put(Integer.parseInt(heartDTO.getUserno()), sureMap.get(Integer.parseInt(heartDTO.getUserno())) + 1);
+                                } else {
+                                        sureMap.put(Integer.parseInt(heartDTO.getUserno()), 1);
+                                }
+                        }
+                        if(sureMap.size() <= 5) {
+                                break;
                         }
                 }
 
-                for(int i = 0; i < tempDTOS.size(); i++) {
-                        if(heartDTOS.size() == 0) {
-                                heartDTOS.add(tempDTOS.get(i));
-                        } else {
-                                for(int j = 0; j <= heartDTOS.size(); j++) {
-                                        if(!heartDTOS.get(j).getUserno().equals(tempDTOS.get(i))) {
-                                                System.out.println("j : " + j);
-                                                System.out.println("heartDTOS.size() : " + heartDTOS.size());
-                                                heartDTOS.add(tempDTOS.get(i));
-                                                break;
-                                        }
-                                }
-                        }
-                }
-                System.out.println("heartDTOS: " + heartDTOS);
+                System.out.println("sureMap.get(i) : " + sureMap);
                 return null;
         }
 }

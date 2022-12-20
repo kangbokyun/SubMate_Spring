@@ -1,14 +1,8 @@
 package SubMate.Service;
 
 import SubMate.Domain.DTO.*;
-import SubMate.Domain.Entity.HeartEntity;
-import SubMate.Domain.Entity.MateEntity;
-import SubMate.Domain.Entity.MemberEntity;
-import SubMate.Domain.Entity.RankEntity;
-import SubMate.Domain.Repository.HeartRepository;
-import SubMate.Domain.Repository.MateRepository;
-import SubMate.Domain.Repository.MemberRepository;
-import SubMate.Domain.Repository.RankRepository;
+import SubMate.Domain.Entity.*;
+import SubMate.Domain.Repository.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -106,30 +100,27 @@ public class HomeService {
                                 rankRepository.save(rankEntity);
                         }
                 }
+                System.out.println("rankDTOS : " + rankDTOS);
                 return rankDTOS;
         }
 
         public List<IssueDTO> HomeIssue() {
+                List<IssueDTO> issueDTOS = new ArrayList<>();
                 try {
                         Document document = Jsoup.connect("https://search.naver.com/search.naver?where=news&ie=utf8&sm=nws_hty&query=지하철").get();
-                        Elements newsTitle = document.getElementsByClass("list_news");
-                        Elements title = newsTitle.select("li>div>div>a");
-                        List<IssueDTO> issueInfo = new ArrayList<>();
-                        String[] IssueTitle = new String[title.size()];
-                        String[] IssueLink = new String[title.size()];
-                        for(int i = 0; i < title.size(); i++) {
-                                IssueDTO issueDTO = new IssueDTO();
-                                IssueTitle[i] = title.get(i).attr("title");
-                                IssueLink[i] = (title.get(i).attr("href"));
-//                                issueInfo.add(issueDTO);
-                                issueDTO.setIssueTitle(IssueTitle[i]);
-                                issueDTO.setIssueLink(IssueLink[i]);
-                                issueInfo.add(issueDTO);
+                        Elements news = document.getElementsByClass("list_news");
+                        Elements title = news.select("li>div>div>a");
+                        for (int i = 0; i < title.size(); i++) {
+                                IssueDTO issueDTO = IssueDTO.builder().issueLink(title.get(i).attr("href")).issueTitle(title.get(i).attr("title")).issueNo(i + 1).build();
+                                if(title.get(i).attr("title").contains("\"")) {
+                                        issueDTO.setIssueTitle(title.get(i).attr("title").replace("\"", ""));
+                                }
+                                issueDTOS.add(issueDTO);
+                                if(i > 5) {
+                                        break;
+                                }
                         }
-//                        for(int i = 0; i < IssueTitle.length; i++) {
-//                                System.out.println("IssueTitle[i] : " + IssueTitle[i]);
-//                        }
-                        return issueInfo;
+                        return issueDTOS;
                 } catch (Exception e) {
                         System.out.println(e.getMessage());
                         return null;

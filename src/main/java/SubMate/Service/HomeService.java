@@ -3,6 +3,8 @@ package SubMate.Service;
 import SubMate.Domain.DTO.*;
 import SubMate.Domain.Entity.*;
 import SubMate.Domain.Repository.*;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,8 +12,12 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -120,10 +126,52 @@ public class HomeService {
                                         break;
                                 }
                         }
+
+                        try {
+                                String apiurl = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=20221220&base_time=0500&nx=55&ny=127";
+//                                String apiurl = "https://openapi.gg.go.kr/AnimalSale?Key=d33e0915e37c453abb4d9a94d8f265ed&Type=json&pIndex=1&pSize=1000";
+
+                                URL url = new URL(apiurl);
+                                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+
+                                String result = bufferedReader.readLine();
+
+                                System.out.println("result : " + result);
+                                JSONParser jsonParser = new JSONParser();
+                                JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+
+                        } catch (Exception e) {
+                                System.out.println("e.getMessage() : " + e.getMessage());
+                        }
+
                         return issueDTOS;
                 } catch (Exception e) {
                         System.out.println(e.getMessage());
                         return null;
+                }
+        }
+
+        public void Weather() {
+                try {
+                        String apiurl = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?" +
+                                "serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D&" +
+                                "pageNo=1&" +
+                                "numOfRows=1000&" +
+                                "dataType=JSON&" +
+                                "base_date=20221220&" +
+                                "base_time=0500&" +
+                                "nx=55&" +
+                                "ny=127";
+                        String apiKey = "HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+
+                        URL url = new URL(apiurl);
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+
+                        String result = bufferedReader.readLine();
+
+                        System.out.println("result : " + result);
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
                 }
         }
 }

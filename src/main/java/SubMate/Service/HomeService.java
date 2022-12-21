@@ -3,6 +3,7 @@ package SubMate.Service;
 import SubMate.Domain.DTO.*;
 import SubMate.Domain.Entity.*;
 import SubMate.Domain.Repository.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.jsoup.Jsoup;
@@ -106,7 +107,6 @@ public class HomeService {
                                 rankRepository.save(rankEntity);
                         }
                 }
-                System.out.println("rankDTOS : " + rankDTOS);
                 return rankDTOS;
         }
 
@@ -126,24 +126,6 @@ public class HomeService {
                                         break;
                                 }
                         }
-
-                        try {
-                                String apiurl = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=20221220&base_time=0500&nx=55&ny=127";
-//                                String apiurl = "https://openapi.gg.go.kr/AnimalSale?Key=d33e0915e37c453abb4d9a94d8f265ed&Type=json&pIndex=1&pSize=1000";
-
-                                URL url = new URL(apiurl);
-                                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
-
-                                String result = bufferedReader.readLine();
-
-                                System.out.println("result : " + result);
-                                JSONParser jsonParser = new JSONParser();
-                                JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
-
-                        } catch (Exception e) {
-                                System.out.println("e.getMessage() : " + e.getMessage());
-                        }
-
                         return issueDTOS;
                 } catch (Exception e) {
                         System.out.println(e.getMessage());
@@ -151,27 +133,65 @@ public class HomeService {
                 }
         }
 
-        public void Weather() {
+        public WeatherDTO Weather() {
                 try {
-                        String apiurl = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?" +
-                                "serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D&" +
-                                "pageNo=1&" +
-                                "numOfRows=1000&" +
-                                "dataType=JSON&" +
-                                "base_date=20221220&" +
-                                "base_time=0500&" +
-                                "nx=55&" +
-                                "ny=127";
-                        String apiKey = "HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+//                                String apiurl = "https://openapi.gg.go.kr/AnimalSale?Key=d33e0915e37c453abb4d9a94d8f265ed&Type=json&pIndex=1&pSize=1000";
+                        String apiurl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
+                                + "?serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D"
+                                + "&dataType=JSON"            // JSON, XML
+                                + "&numOfRows=10"             // 페이지 ROWS
+                                + "&pageNo=1"                 // 페이지 번호
+                                + "&base_date=20221221"       // 발표일자
+                                + "&base_time=0500"           // 발표시각 // 총 몇개인지 조사해야됨
+                                + "&nx=58"                    // 예보지점 X 좌표
+                                + "&ny=121";
 
                         URL url = new URL(apiurl);
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
 
                         String result = bufferedReader.readLine();
 
-                        System.out.println("result : " + result);
+                        JSONParser jsonParser = new JSONParser();
+                        JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+                        JSONObject jsonObject1 = (JSONObject) jsonObject.get("response");
+                        JSONObject jsonObject2 = (JSONObject) jsonObject1.get("body");
+                        JSONObject jsonObject3 = (JSONObject) jsonObject2.get("items");
+                        JSONArray jsonArray = (JSONArray) jsonObject3.get("item");
+
+                        WeatherDTO weatherDTO = new WeatherDTO();
+                        for(int i = 0; i < jsonArray.size(); i++) {
+                                if(jsonArray.get(i).toString().contains("TMP")) {
+                                        weatherDTO.setTMP(jsonArray.get(i).toString().split("Value\":\"")[1].split("\",\"")[0] + "°C");
+                                }
+                                if(jsonArray.get(i).toString().contains("PTY")) {
+                                        switch (jsonArray.get(i).toString().split("Value\":\"")[1].split("\",\"")[0]) {
+                                                case "1": weatherDTO.setPTY("비"); break;
+                                                case "2": weatherDTO.setPTY("진눈개비"); break;
+                                                case "3": weatherDTO.setPTY("눈"); break;
+                                                case "4": weatherDTO.setPTY("소나기"); break;
+                                                case "5": weatherDTO.setPTY("빗방울"); break;
+                                                case "6": weatherDTO.setPTY("빗방울/눈날림"); break;
+                                                case "7": weatherDTO.setPTY("눈날림"); break;
+                                                default: weatherDTO.setPTY("null"); break;
+                                        }
+                                }
+                                if(jsonArray.get(i).toString().contains("SKY")) {
+                                        switch (jsonArray.get(i).toString().split("Value\":\"")[1].split("\",\"")[0]) {
+                                                case "1": weatherDTO.setSKY("맑음"); break;
+                                                case "3": weatherDTO.setSKY("구름많음"); break;
+                                                case "4": weatherDTO.setSKY("흐림"); break;
+                                                default: weatherDTO.setSKY("null"); break;
+                                        }
+                                }
+                                if(jsonArray.get(i).toString().contains("POP")) {
+                                        weatherDTO.setPOP(jsonArray.get(i).toString().split("Value\":\"")[1].split("\",\"")[0] + "%");
+                                }
+                        }
+//                        System.out.println("weatherDTO : " + weatherDTO);
+                        return weatherDTO;
                 } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        System.out.println("e.getMessage() : " + e.getMessage());
+                        return null;
                 }
         }
 }

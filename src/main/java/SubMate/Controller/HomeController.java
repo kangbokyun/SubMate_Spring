@@ -2,6 +2,7 @@ package SubMate.Controller;
 
 import SubMate.Domain.DTO.IssueDTO;
 import SubMate.Domain.DTO.RankDTO;
+import SubMate.Domain.DTO.WeatherDTO;
 import SubMate.Service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,5 +30,11 @@ public class HomeController {
                 List<IssueDTO> issueDTOS = homeService.HomeIssue();
 //                System.out.println("Home/Issue/IssueDTO : " + issueDTOS);
                 return ResponseEntity.ok().body(issueDTOS);
+        }
+
+        @PostMapping("/Home/Weather")
+        public ResponseEntity<?> HomeWeather() {
+                WeatherDTO weatherDTO = homeService.Weather();
+                return ResponseEntity.ok().body(weatherDTO);
         }
 }

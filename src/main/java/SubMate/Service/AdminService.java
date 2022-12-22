@@ -2,8 +2,14 @@ package SubMate.Service;
 
 import SubMate.Config.Auth.Role;
 import SubMate.Domain.DTO.MemberDTO;
+import SubMate.Domain.DTO.QnADTO;
+import SubMate.Domain.DTO.TendinousDTO;
 import SubMate.Domain.Entity.MemberEntity;
+import SubMate.Domain.Entity.QnAEntity;
+import SubMate.Domain.Entity.TendinousEntity;
 import SubMate.Domain.Repository.MemberRepository;
+import SubMate.Domain.Repository.QnARepository;
+import SubMate.Domain.Repository.TendinousRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +21,10 @@ import java.util.List;
 public class AdminService {
 	@Autowired
 	MemberRepository memberRepository;
+	@Autowired
+	QnARepository qnARepository;
+	@Autowired
+	TendinousRepository tendinousRepository;
 
 	public List<MemberDTO> UserManage() {
 		List<MemberEntity> memberEntities = memberRepository.findAll();
@@ -54,5 +64,33 @@ public class AdminService {
 		} else {
 			return false;
 		}
+	}
+
+	public List<QnADTO> QnAList() {
+		List<QnAEntity> qnAEntities = qnARepository.findAll();
+		List<QnADTO> qnADTOS = new ArrayList<>();
+		for(QnAEntity qnAEntity : qnAEntities) {
+			QnADTO qnADTO = QnADTO.builder()
+				.qnano(qnAEntity.getQnano()).qnacontents(qnAEntity.getQnacontents())
+				.qnamno(qnAEntity.getQnano()).qnastatus(qnAEntity.getQnastatus())
+				.qnatitle(qnAEntity.getQnatitle()).build();
+			qnADTOS.add(qnADTO);
+		}
+		return qnADTOS;
+	}
+	public List<TendinousDTO> TendinousList() {
+		List<TendinousEntity> tendinousEntities = tendinousRepository.findAll();
+		List<TendinousDTO> tendinousDTOS = new ArrayList<>();
+		for(TendinousEntity tendinousEntity : tendinousEntities) {
+			TendinousDTO tendinousDTO = TendinousDTO.builder()
+				.mno(tendinousEntity.getMemberEntity().getMno())
+				.tno(tendinousEntity.getTno())
+				.tcontents(tendinousEntity.getTcontents())
+				.tselectcontentkind(tendinousEntity.getTselectcontentkind())
+				.tselecttendinouskind(tendinousEntity.getTselecttendinouskind())
+				.tstatus(Integer.toString(tendinousEntity.getTstatus())).build();
+			tendinousDTOS.add(tendinousDTO);
+		}
+		return tendinousDTOS;
 	}
 }

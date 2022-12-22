@@ -1,8 +1,6 @@
 package SubMate.Controller;
 
-import SubMate.Domain.DTO.MateDTO;
-import SubMate.Domain.DTO.MemberDTO;
-import SubMate.Domain.DTO.ProfileDTO;
+import SubMate.Domain.DTO.*;
 import SubMate.Service.SettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,5 +54,26 @@ public class SettingController {
                 System.out.println("/Mate/Profile/mno : " + mno);
                 List<ProfileDTO> profileDTOS = settingService.UserProfile(mno);
                 return ResponseEntity.ok().body(profileDTOS);
+        }
+
+        @PostMapping("/Set/Customer/QnA")
+        public ResponseEntity<?> QnA(@RequestBody QnADTO qnADTO) {
+                boolean result = settingService.QnA(qnADTO);
+                if(result) {
+                        return ResponseEntity.ok().body(HttpStatus.OK);
+                } else {
+                        return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+                }
+        }
+
+        @PostMapping("/Set/Customer/Tendinous")
+        public ResponseEntity<?> Tendinous(@RequestBody TendinousDTO tendinousDTO) {
+                System.out.println("/Set/Customer/Tendinous/TendinousDTO" + tendinousDTO);
+                boolean result = settingService.Tendinous(tendinousDTO);
+                if(result) {
+                        return ResponseEntity.ok().body(HttpStatus.OK);
+                } else {
+                        return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+                }
         }
 }

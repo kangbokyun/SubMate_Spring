@@ -24,6 +24,10 @@ public class SettingService {
 	ProfileRepository profileRepository;
 	@Autowired
 	HeartRepository heartRepository;
+	@Autowired
+	QnARepository qnARepository;
+	@Autowired
+	TendinousRepository tendinousRepository;
 
 	public void SubStation() {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
@@ -379,4 +383,33 @@ public class SettingService {
 		}
 		return profileDTOS;
 	}
+
+	public boolean QnA(QnADTO qnADTO) {
+		if(qnADTO != null) {
+			MemberEntity memberEntity = memberRepository.findById(qnADTO.getQnamno()).get();
+			QnAEntity qnAEntity = QnAEntity.builder()
+				.qnatitle(qnADTO.getQnatitle()).qnacontents(qnADTO.getQnacontents()).memberEntity(memberEntity)
+				.build();
+			qnARepository.save(qnAEntity);
+		}
+		return true;
+	}
+
+	public boolean Tendinous(TendinousDTO tendinousDTO) {
+		if(tendinousDTO != null) {
+			System.out.println("tendinousDTO.getMno() : " + tendinousDTO.getMno());
+			Optional<MemberEntity> memberEntity = memberRepository.findById(tendinousDTO.getMno());
+			System.out.println("memberEntity : " + memberEntity);
+			TendinousEntity tendinousEntity = TendinousEntity.builder()
+				.tcontents(tendinousDTO.getTcontents())
+				.tselectcontentkind(tendinousDTO.getTselectcontentkind())
+				.tselecttendinouskind(tendinousDTO.getTselecttendinouskind())
+				.memberEntity(memberEntity.get()).build();
+			tendinousRepository.save(tendinousEntity);
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
+

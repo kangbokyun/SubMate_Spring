@@ -135,14 +135,40 @@ public class HomeService {
 
         public WeatherDTO Weather() {
                 try {
+                        Date date = new Date();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYYMMdd");
+                        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("HHmm");
+                        System.out.println("simpleDateFormat1.format(date) : " + simpleDateFormat1.format(date));
+                        String baseTime = null;
+                        if(Integer.parseInt(simpleDateFormat1.format(date)) < 200) {
+                                baseTime = "0200";
+                        } else if(Integer.parseInt(simpleDateFormat1.format(date)) < 500 && Integer.parseInt(simpleDateFormat1.format(date)) > 200) {
+                                baseTime = "0200";
+                        } else if(Integer.parseInt(simpleDateFormat1.format(date)) < 800 && Integer.parseInt(simpleDateFormat1.format(date)) > 500) {
+                                baseTime = "0500";
+                        } else if(Integer.parseInt(simpleDateFormat1.format(date)) < 1100 && Integer.parseInt(simpleDateFormat1.format(date)) > 800) {
+                                baseTime = "0800";
+                        } else if(Integer.parseInt(simpleDateFormat1.format(date)) < 1400 && Integer.parseInt(simpleDateFormat1.format(date)) > 1100) {
+                                baseTime = "1100";
+                        } else if(Integer.parseInt(simpleDateFormat1.format(date)) < 1700 && Integer.parseInt(simpleDateFormat1.format(date)) > 1400) {
+                                baseTime = "1400";
+                        } else if(Integer.parseInt(simpleDateFormat1.format(date)) < 2100 && Integer.parseInt(simpleDateFormat1.format(date)) > 1700) {
+                                baseTime = "1700";
+                        } else {
+                                baseTime = "2300";
+                        }
 //                                String apiurl = "https://openapi.gg.go.kr/AnimalSale?Key=d33e0915e37c453abb4d9a94d8f265ed&Type=json&pIndex=1&pSize=1000";
                         String apiurl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
                                 + "?serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D"
                                 + "&dataType=JSON"            // JSON, XML
                                 + "&numOfRows=10"             // 페이지 ROWS
                                 + "&pageNo=1"                 // 페이지 번호
-                                + "&base_date=20221221"       // 발표일자
-                                + "&base_time=0500"           // 발표시각 // 총 몇개인지 조사해야됨
+                                + "&base_date=" + simpleDateFormat.format(date)       // 발표일자
+//                                 동네예보 --
+//                                  baseTime = 0200, 0500, 0800, 1100, 1400, 1700, 2100
+//                                  API 제공시간 = baseTime+10
+//                                  API 제공시간인 0210분 이전시간이면 전날 23시로 세팅
+                                + "&base_time=" + baseTime           // 발표시각 // 총 몇개인지 조사해야됨
                                 + "&nx=58"                    // 예보지점 X 좌표
                                 + "&ny=121";
 
@@ -161,7 +187,7 @@ public class HomeService {
                         WeatherDTO weatherDTO = new WeatherDTO();
                         for(int i = 0; i < jsonArray.size(); i++) {
                                 if(jsonArray.get(i).toString().contains("TMP")) {
-                                        weatherDTO.setTMP(jsonArray.get(i).toString().split("Value\":\"")[1].split("\",\"")[0] + "°C");
+                                        weatherDTO.setTMP(jsonArray.get(i).toString().split("Value\":\"")[1].split("\",\"")[0]);
                                 }
                                 if(jsonArray.get(i).toString().contains("PTY")) {
                                         switch (jsonArray.get(i).toString().split("Value\":\"")[1].split("\",\"")[0]) {

@@ -3,6 +3,7 @@ package SubMate.Controller;
 import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Domain.DTO.HeartDTO;
 import SubMate.Domain.DTO.ReplyDTO;
+import SubMate.Domain.DTO.ReportDTO;
 import SubMate.Domain.Entity.BoardEntity;
 import SubMate.Domain.Entity.HeartEntity;
 import SubMate.Service.BoardService;
@@ -53,8 +54,8 @@ public class BoardController {
 	}
 
 	@PostMapping("/Board/BoardList") // 글 목록
-	public ResponseEntity<?> BoardList() {
-		List<BoardDTO> boardDTOS = boardService.BoardList();
+	public ResponseEntity<?> BoardList(@RequestParam("mno") int mno) {
+		List<BoardDTO> boardDTOS = boardService.BoardList(mno);
 		if(boardDTOS != null) {
 			return ResponseEntity.ok().body(boardDTOS);
 		} else {
@@ -104,5 +105,15 @@ public class BoardController {
 		System.out.println("HeartList Init");
 		List<HeartDTO> heartDTOS = boardService.HeartList();
 		return ResponseEntity.ok().body(heartDTOS);
+	}
+
+	@PostMapping("/Board/Report")
+	public ResponseEntity<?> BoardReport(@RequestParam("reportbno") int reportbno, @RequestParam("reportkind") int reportkind, @RequestParam("mno") int mno, @RequestParam("reportclickvalue") int clickvalue) {
+		System.out.println("/Board/Report/Init");
+		ReportDTO reportDTO = ReportDTO.builder()
+			.reportbno(reportbno).reportkind(reportkind).reportmno(mno).reportclickvalue(clickvalue)
+			.build();
+		boolean result = boardService.BoardReport(reportDTO);
+		return ResponseEntity.ok().body(HttpStatus.OK);
 	}
 }

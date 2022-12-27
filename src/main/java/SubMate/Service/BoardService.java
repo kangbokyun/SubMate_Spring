@@ -3,14 +3,9 @@ package SubMate.Service;
 import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Domain.DTO.HeartDTO;
 import SubMate.Domain.DTO.ReplyDTO;
-import SubMate.Domain.Entity.BoardEntity;
-import SubMate.Domain.Entity.HeartEntity;
-import SubMate.Domain.Entity.MemberEntity;
-import SubMate.Domain.Entity.ReplyEntity;
-import SubMate.Domain.Repository.BoardRepository;
-import SubMate.Domain.Repository.HeartRepository;
-import SubMate.Domain.Repository.MemberRepository;
-import SubMate.Domain.Repository.ReplyRepository;
+import SubMate.Domain.DTO.ReportDTO;
+import SubMate.Domain.Entity.*;
+import SubMate.Domain.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +26,8 @@ public class BoardService {
 	ReplyRepository replyRepository;
 	@Autowired
 	HeartRepository heartRepository;
+	@Autowired
+	ReportRepository reportRepository;
 
 	// 글등록(이미지 1개 등록 가능)
 	public boolean BoardWrite(BoardDTO boardDTO, MultipartFile file) {
@@ -274,7 +271,7 @@ public class BoardService {
 //	}
 
 	// 모든 게시글 가져오기
-	public List<BoardDTO> BoardList() {
+	public List<BoardDTO> BoardList(int mno) {
 		List<BoardEntity> boardList = boardRepository.findAll();
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		List<BoardDTO> infinityScroll = new ArrayList<>();
@@ -298,6 +295,14 @@ public class BoardService {
 				}
 			}
 
+			List<ReportEntity> reportEntities = reportRepository.findAll();
+			for(ReportEntity reportEntity : reportEntities) {
+				if(reportEntity != null && reportEntity.getMemberEntity().getMno() == entity.getMemberEntity().getMno()
+				&& reportEntity.getReportbno() == entity.getBno() && mno == reportEntity.getMemberEntity().getMno()) {
+					System.out.println("reportEntity : " + reportEntity);
+				}
+			}
+
 			List<ReplyEntity> replyEntityList =  replyRepository.findAll();
 			for(ReplyEntity replyEntity : replyEntityList) {
 				if(replyEntity.getBoardReplyEntity().getBno() == boardDTO.getBno()) {
@@ -316,8 +321,6 @@ public class BoardService {
 
 			if(entity.getBechotimer() != null) { // 에코 타이머가 설정됐을 때
 				try {
-					// entity.getBechotimer() : 30m
-					// entity.getCreateDate().toString() : 2022-11-15T16:11:36.648321
 					String echoDate = entity.getCreateDate().toString().replace("T", " ").replace(".", "_").split("_")[0];
 					System.out.println("echoDate : " + echoDate);
 
@@ -603,5 +606,33 @@ public class BoardService {
 			heartDTOS.add(heartDTO);
 		}
 		return heartDTOS;
+	}
+
+	public boolean BoardReport(ReportDTO reportDTO) {
+		BoardEntity boardEntity = boardRepository.findById(reportDTO.getReportbno()).get();
+		MemberEntity memberEntity = memberRepository.findById(reportDTO.getReportmno()).get();
+		List<ReportEntity> reportEntities = reportRepository.findByMemberEntity_Mno(boardEntity.getMemberEntity().getMno());
+
+		if(reportDTO.getReportclickvalue() == 0) {
+			ReportEntity reportEntity = ReportEntity.builder()
+				.reportclickvalue(reportDTO.getReportclickvalue())
+				.reportbno(reportDTO.getReportbno())
+				.reportkind(reportDTO.getReportkind())
+				.memberEntity(memberEntity)
+				.reportuserno(boardEntity.getMemberEntity().getMno())
+				.build();
+			reportRepository.save(reportEntity);
+			return false;
+		} else {
+			for(ReportEntity reportEntity : reportEntities) {
+				if(reportEntity.getMemberEntity().getMno() == reportDTO.getReportmno()
+					&& reportEntity.getReportuserno() == boardEntity.getMemberEntity().getMno()
+					&& reportEntity.getReportkind() == 2 && reportEntity.getReportbno() == reportDTO.getReportbno()) {
+					reportRepository.delete(reportEntity);
+					break;
+				}
+			}
+			return false;
+		}
 	}
 }

@@ -19,7 +19,9 @@ import java.util.List;
 	"boardEntityList",
 	"replyEntityList",
 	"qnaEntityList",
-	"tendinousEntityList"
+	"tendinousEntityList",
+	"noticeEntities",
+	"reportEntities"
 })
 public class MemberEntity extends BaseTimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,6 +69,12 @@ public class MemberEntity extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
 	private List<TendinousEntity> tendinousEntityList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
+	private List<NoticeEntity> noticeEntities = new ArrayList<>();
+
+	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
+	private List<ReportEntity> reportEntities = new ArrayList<>();
 
 	// 한 명당 한개의 Mate Setting
 	@OneToOne(mappedBy =  "memberEntity", cascade = CascadeType.ALL)

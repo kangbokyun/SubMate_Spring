@@ -1,15 +1,9 @@
 package SubMate.Service;
 
 import SubMate.Config.Auth.Role;
-import SubMate.Domain.DTO.MemberDTO;
-import SubMate.Domain.DTO.QnADTO;
-import SubMate.Domain.DTO.TendinousDTO;
-import SubMate.Domain.Entity.MemberEntity;
-import SubMate.Domain.Entity.QnAEntity;
-import SubMate.Domain.Entity.TendinousEntity;
-import SubMate.Domain.Repository.MemberRepository;
-import SubMate.Domain.Repository.QnARepository;
-import SubMate.Domain.Repository.TendinousRepository;
+import SubMate.Domain.DTO.*;
+import SubMate.Domain.Entity.*;
+import SubMate.Domain.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +19,8 @@ public class AdminService {
 	QnARepository qnARepository;
 	@Autowired
 	TendinousRepository tendinousRepository;
+	@Autowired
+	NoticeRepository noticeRepository;
 
 	public List<MemberDTO> UserManage() {
 		List<MemberEntity> memberEntities = memberRepository.findAll();
@@ -92,5 +88,38 @@ public class AdminService {
 			tendinousDTOS.add(tendinousDTO);
 		}
 		return tendinousDTOS;
+	}
+
+	public List<NoticeDTO> NoticeList() {
+		List<NoticeEntity> noticeEntities = noticeRepository.findAll();
+		System.out.println("noticeEntities : " + noticeEntities);
+		List<NoticeDTO> noticeDTOS = new ArrayList<>();
+		for(NoticeEntity noticeEntity : noticeEntities) {
+			NoticeDTO noticeDTO = NoticeDTO.builder()
+				.nno(noticeEntity.getNno()).ntitle(noticeEntity.getNtitle())
+				.ncontents(noticeEntity.getNcontents()).mno(noticeEntity.getMemberEntity().getMno())
+				.nkind(noticeEntity.getNkind())
+				.build();
+			System.out.println("noticeDTO : " + noticeDTO);
+			noticeDTOS.add(noticeDTO);
+		}
+		return noticeDTOS;
+	}
+
+	public boolean NoticeWrite(NoticeDTO noticeDTO) {
+		if(noticeDTO != null) {
+			MemberEntity memberEntity = memberRepository.findById(noticeDTO.getMno()).get();
+			NoticeEntity noticeEntity = NoticeEntity.builder()
+				.ntitle(noticeDTO.getNtitle())
+				.ncontents(noticeDTO.getNcontents())
+				.nkind(noticeDTO.getNkind())
+				.memberEntity(memberEntity)
+				.build();
+			noticeRepository.save(noticeEntity);
+
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

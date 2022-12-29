@@ -25,6 +25,10 @@ public class ReportEntity extends BaseTimeEntity {
         private int reportcheck;
         @Column
         private int reportclickvalue;
+        @Column // 1 => 음란매체 2 => 사진도용 3 => 명예훼손 4 => 기타
+	private String reportvalue;
+        @Column
+	private String reportcontents;
 
         @ManyToOne @JoinColumn(name = "mno")
         MemberEntity memberEntity;

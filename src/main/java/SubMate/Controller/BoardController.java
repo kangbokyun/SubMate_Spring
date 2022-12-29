@@ -108,10 +108,22 @@ public class BoardController {
 	}
 
 	@PostMapping("/Board/Report")
-	public ResponseEntity<?> BoardReport(@RequestParam("reportbno") int reportbno, @RequestParam("reportkind") int reportkind, @RequestParam("mno") int mno, @RequestParam("reportclickvalue") int clickvalue, @RequestParam("reportvalue") int reportvalue, @RequestParam("reportcontents") String reportcontents) {
+	public ResponseEntity<?> BoardReport(
+					     @RequestParam("reportbno") int reportbno,
+					     @RequestParam("reportkind") int reportkind,
+					     @RequestParam("mno") int mno,
+					     @RequestParam("reportclickvalue") int clickvalue,
+					     @RequestParam("reportvalue") String reportvalue,
+					     @RequestParam("reportcontents") String reportcontents) {
 		System.out.println("/Board/Report/Init");
+		System.out.println("reportvalue : " + reportvalue);
+		System.out.println("reportcontents : " + reportcontents);
+//		if(reportvalue == null) {
+//			System.out.println("123123123");
+//		}
 		ReportDTO reportDTO = ReportDTO.builder()
 			.reportbno(reportbno).reportkind(reportkind).reportmno(mno).reportclickvalue(clickvalue)
+			.reportvalue(reportvalue).reportcontents(reportcontents)
 			.build();
 		boolean result = boardService.BoardReport(reportDTO);
 		return ResponseEntity.ok().body(HttpStatus.OK);

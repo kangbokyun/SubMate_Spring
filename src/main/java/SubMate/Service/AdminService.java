@@ -21,6 +21,9 @@ public class AdminService {
 	TendinousRepository tendinousRepository;
 	@Autowired
 	NoticeRepository noticeRepository;
+	@Autowired
+	ReportRepository reportRepository;
+
 
 	public List<MemberDTO> UserManage() {
 		List<MemberEntity> memberEntities = memberRepository.findAll();
@@ -121,5 +124,21 @@ public class AdminService {
 		} else {
 			return false;
 		}
+	}
+
+	public List<ReportDTO> ReportList() {
+		List<ReportEntity> reportEntities = reportRepository.findAll();
+		List<ReportDTO> reportDTOS = new ArrayList<>();
+		for(ReportEntity reportEntity : reportEntities) {
+			ReportDTO reportDTO = ReportDTO.builder()
+				.reportno(reportEntity.getReportno()).reportkind(reportEntity.getReportkind())
+				.reportcontents(reportEntity.getReportcontents()).reportvalue(reportEntity.getReportvalue())
+				.reportbno(reportEntity.getReportbno()).reportcheck(reportEntity.getReportcheck())
+				.reportclickvalue(reportEntity.getReportclickvalue()).reportmno(reportEntity.getReportmno())
+				.reportrno(reportEntity.getReportrno()).reportuserno(reportEntity.getReportuserno())
+				.build();
+			reportDTOS.add(reportDTO);
+		}
+		return reportDTOS;
 	}
 }

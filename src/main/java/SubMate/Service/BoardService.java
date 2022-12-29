@@ -618,6 +618,8 @@ public class BoardService {
 				.reportclickvalue(reportDTO.getReportclickvalue())
 				.reportbno(reportDTO.getReportbno())
 				.reportkind(reportDTO.getReportkind())
+				.reportvalue(reportDTO.getReportvalue())
+				.reportcontents(reportDTO.getReportcontents())
 				.memberEntity(memberEntity)
 				.reportuserno(boardEntity.getMemberEntity().getMno())
 				.build();

@@ -20,4 +20,6 @@ public class ReportDTO {
         private int reportclickvalue;
         // 결과 1 => 조치 2 => 보류 3 => 반려
         private int reportresult;
+	private String reportvalue;
+	private String reportcontents;
 }

@@ -1,9 +1,6 @@
 package SubMate.Controller;
 
-import SubMate.Domain.DTO.MemberDTO;
-import SubMate.Domain.DTO.NoticeDTO;
-import SubMate.Domain.DTO.QnADTO;
-import SubMate.Domain.DTO.TendinousDTO;
+import SubMate.Domain.DTO.*;
 import SubMate.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,5 +62,11 @@ public class AdminController {
 		} else {
 			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	@PostMapping("/Admin/ReportList")
+	public ResponseEntity<?> ReportList() {
+		List<ReportDTO> reportDTOS = adminService.ReportList();
+		return ResponseEntity.ok().body(reportDTOS);
 	}
 }

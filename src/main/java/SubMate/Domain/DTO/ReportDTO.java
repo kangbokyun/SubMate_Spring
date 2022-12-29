@@ -18,4 +18,6 @@ public class ReportDTO {
         private int reportuserno; // 신고 받은 사람
         private int reportcheck;
         private int reportclickvalue;
+        // 결과 1 => 조치 2 => 보류 3 => 반려
+        private int reportresult;
 }

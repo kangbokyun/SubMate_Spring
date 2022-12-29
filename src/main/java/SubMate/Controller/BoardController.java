@@ -108,7 +108,7 @@ public class BoardController {
 	}
 
 	@PostMapping("/Board/Report")
-	public ResponseEntity<?> BoardReport(@RequestParam("reportbno") int reportbno, @RequestParam("reportkind") int reportkind, @RequestParam("mno") int mno, @RequestParam("reportclickvalue") int clickvalue) {
+	public ResponseEntity<?> BoardReport(@RequestParam("reportbno") int reportbno, @RequestParam("reportkind") int reportkind, @RequestParam("mno") int mno, @RequestParam("reportclickvalue") int clickvalue, @RequestParam("reportvalue") int reportvalue, @RequestParam("reportcontents") String reportcontents) {
 		System.out.println("/Board/Report/Init");
 		ReportDTO reportDTO = ReportDTO.builder()
 			.reportbno(reportbno).reportkind(reportkind).reportmno(mno).reportclickvalue(clickvalue)

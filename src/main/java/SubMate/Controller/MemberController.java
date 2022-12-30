@@ -61,7 +61,6 @@ public class MemberController {
 	@PostMapping("/Login")
 	public ResponseEntity<?> Login(@RequestBody MemberDTO memberDTO) {
 		MemberEntity user = memberService.Login(memberDTO.getMid(), memberDTO.getMpw());
-
 		try {
 			// user 정보 받아오고 롤이 NOTUSER가 아니면 토큰 생성
 			if (user != null && user.getRole() != Role.NOTUSER) {
@@ -73,6 +72,10 @@ public class MemberController {
 					.token(jwtToken).mrole(user.getRole()).createddate(user.getCreateDate()).mbti(user.getMbti()).mgender(user.getMgender())
 					.build();
 				return ResponseEntity.ok().body(memberDTO1);
+			} else if(user == null) {
+//				System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@user : " + user);
+				ResponseDTO responseDTO = ResponseDTO.builder().error("Login Failed").build();
+				return ResponseEntity.badRequest().body(responseDTO);
 			} else {
 				ResponseDTO responseDTO = ResponseDTO.builder().error("NOTUSER").build();
 				return ResponseEntity.badRequest().body(responseDTO);

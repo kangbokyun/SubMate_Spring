@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AdminService {
@@ -140,5 +140,50 @@ public class AdminService {
 			reportDTOS.add(reportDTO);
 		}
 		return reportDTOS;
+	}
+
+	public List<MainChartDTO> MainChart() {
+		List<QnAEntity> qnAEntities = qnARepository.findAll();
+
+		Calendar nowDate = Calendar.getInstance();
+		Calendar vsDate = Calendar.getInstance();
+		nowDate.setTime(new Date());
+		vsDate.setTime(new Date());
+		SimpleDateFormat nowDateSDF = new SimpleDateFormat("YY-MM-dd");
+
+		vsDate.add(Calendar.MONTH, - 1);
+		Calendar calendar = Calendar.getInstance();
+		int day = Integer.parseInt((nowDate.getTimeInMillis() - vsDate.getTimeInMillis()) / (1000 * 60 * 60 * 24) + "");
+		// qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10)
+
+		int qnaCnt = 0;
+		Map<String, Integer> qnaCntList = new HashMap<>();
+
+		for(int i = 0; i < day; i++) {
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DATE, - i);
+
+			System.out.println("qnAEntities : " + qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10));
+			System.out.println("calendar : " + nowDateSDF.format(calendar.getTimeInMillis()));
+//			for(int j = 0; j < qnAEntities.size(); i++) {
+//				if(qnAEntities.get(j).getCreateDate().toString().split("T")[0].substring(2, 10).equals(nowDateSDF.format(calendar.getTimeInMillis()))) {
+//					qnaCnt++;
+//					qnaCntList.put(qnAEntities.get(j).getCreateDate().toString().split("T")[0].substring(2, 10), qnaCntList.get(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10)) + 1);
+//				} else {
+//					// 맵 키가 qnAEntities.get(j).getCreateDate() 일 때, 값이 null이거나 0이면 0 값이 있으면 그 값 그대로
+//					if(qnaCntList.containsKey(nowDateSDF.format(calendar.getTimeInMillis())))
+//					qnaCntList.put(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10), 0);
+//				}
+//			}
+//			qnaCnt.put(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10), )
+//			System.out.println(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10));
+			System.out.println(qnaCntList);
+			if(qnAEntities.size() == (i + 1)) {
+				break;
+			}
+		}
+
+		List<MainChartDTO> mainChartDTOS = new ArrayList<>();
+		return mainChartDTOS;
 	}
 }

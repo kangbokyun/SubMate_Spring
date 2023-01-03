@@ -69,4 +69,10 @@ public class AdminController {
 		List<ReportDTO> reportDTOS = adminService.ReportList();
 		return ResponseEntity.ok().body(reportDTOS);
 	}
+
+	@PostMapping("/Admin/MainChart")
+	public ResponseEntity<?> MainChart() {
+		adminService.MainChart();
+		return ResponseEntity.ok().body(HttpStatus.OK);
+	}
 }

@@ -37,8 +37,8 @@ public class MemberService {
 						UUID uuid = UUID.randomUUID();
 						uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-//						String filePath = "C:/Users/bk940/SubMate_React/src/MemberImg";
-						String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/MemberImg";
+						String filePath = "C:/Users/bk940/SubMate_React/src/MemberImg";
+//						String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/MemberImg";
 						String fileDir = filePath + "/" + uuidFile;
 						memberDTO.setProfileimg(fileDir);
 
@@ -53,8 +53,8 @@ public class MemberService {
 					}
 				}
 			}else {
-//				String filePath = "C:/Users/bk940/SubMate_React/src/MemberImg";
-				String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/MemberImg";
+				String filePath = "C:/Users/bk940/SubMate_React/src/MemberImg";
+//				String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/MemberImg";
 				String fileDir = filePath + "/" + "User_No_Img.png";
 				memberDTO.setProfileimg(fileDir);
 

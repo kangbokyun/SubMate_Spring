@@ -144,6 +144,9 @@ public class AdminService {
 
 	public List<MainChartDTO> MainChart() {
 		List<QnAEntity> qnAEntities = qnARepository.findAll();
+		List<TendinousEntity> tendinousEntities = tendinousRepository.findAll();
+		List<ReportEntity> reportEntities = reportRepository.findAll();
+		List<MainChartDTO> mainChartDTOS = new ArrayList<>();
 
 		Calendar nowDate = Calendar.getInstance();
 		Calendar vsDate = Calendar.getInstance();
@@ -156,34 +159,43 @@ public class AdminService {
 		int day = Integer.parseInt((nowDate.getTimeInMillis() - vsDate.getTimeInMillis()) / (1000 * 60 * 60 * 24) + "");
 		// qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10)
 
-		int qnaCnt = 0;
-		Map<String, Integer> qnaCntList = new HashMap<>();
-
 		for(int i = 0; i < day; i++) {
 			calendar.setTime(new Date());
 			calendar.add(Calendar.DATE, - i);
 
-			System.out.println("qnAEntities : " + qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10));
-			System.out.println("calendar : " + nowDateSDF.format(calendar.getTimeInMillis()));
-//			for(int j = 0; j < qnAEntities.size(); i++) {
-//				if(qnAEntities.get(j).getCreateDate().toString().split("T")[0].substring(2, 10).equals(nowDateSDF.format(calendar.getTimeInMillis()))) {
-//					qnaCnt++;
-//					qnaCntList.put(qnAEntities.get(j).getCreateDate().toString().split("T")[0].substring(2, 10), qnaCntList.get(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10)) + 1);
-//				} else {
-//					// 맵 키가 qnAEntities.get(j).getCreateDate() 일 때, 값이 null이거나 0이면 0 값이 있으면 그 값 그대로
-//					if(qnaCntList.containsKey(nowDateSDF.format(calendar.getTimeInMillis())))
-//					qnaCntList.put(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10), 0);
-//				}
-//			}
-//			qnaCnt.put(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10), )
-//			System.out.println(qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10));
-			System.out.println(qnaCntList);
-			if(qnAEntities.size() == (i + 1)) {
-				break;
-			}
-		}
+			MainChartDTO mainChartDTO = new MainChartDTO();
+			mainChartDTO.setChartdate(nowDateSDF.format(calendar.getTimeInMillis()));
 
-		List<MainChartDTO> mainChartDTOS = new ArrayList<>();
+			for(int j = 0; j < qnAEntities.size(); j++) {
+				if(qnAEntities.get(j).getCreateDate().toString().split("T")[0].substring(2, 10).equals(nowDateSDF.format(calendar.getTimeInMillis()))) {
+					mainChartDTO.setChartqna(mainChartDTO.getChartqna() + 1);
+				} else {
+					if(mainChartDTO.getChartqna() == 0) {
+						mainChartDTO.setChartqna(0);
+					}
+				}
+			}
+			for(int j = 0; j < tendinousEntities.size(); j++) {
+				if(tendinousEntities.get(j).getCreateDate().toString().split("T")[0].substring(2, 10).equals(nowDateSDF.format(calendar.getTimeInMillis()))) {
+					mainChartDTO.setCharttendinous(mainChartDTO.getCharttendinous() + 1);
+				} else {
+					if(mainChartDTO.getCharttendinous() == 0) {
+						mainChartDTO.setCharttendinous(0);
+					}
+				}
+			}
+			for(int j = 0; j < reportEntities.size(); j++) {
+				if(reportEntities.get(j).getCreateDate().toString().split("T")[0].substring(2, 10).equals(nowDateSDF.format(calendar.getTimeInMillis()))) {
+					mainChartDTO.setChartreport(mainChartDTO.getChartreport() + 1);
+				} else {
+					if(mainChartDTO.getChartreport() == 0) {
+						mainChartDTO.setChartreport(0);
+					}
+				}
+			}
+
+			mainChartDTOS.add(mainChartDTO);
+		}
 		return mainChartDTOS;
 	}
 }

@@ -6,6 +6,7 @@ import SubMate.Config.Filter.TokenProvider;
 import SubMate.Domain.DTO.BoardDTO;
 import SubMate.Domain.DTO.KakaoDTO;
 import SubMate.Domain.DTO.MemberDTO;
+import SubMate.Domain.DTO.ProfileTalkDTO;
 import SubMate.Domain.Entity.MemberEntity;
 import SubMate.Service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;

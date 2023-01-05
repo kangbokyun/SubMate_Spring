@@ -2,8 +2,11 @@ package SubMate.Service;
 
 import SubMate.Config.Auth.Role;
 import SubMate.Domain.DTO.MemberDTO;
+import SubMate.Domain.DTO.ProfileTalkDTO;
 import SubMate.Domain.Entity.MemberEntity;
+import SubMate.Domain.Entity.ProfileTalkEntity;
 import SubMate.Domain.Repository.MemberRepository;
+import SubMate.Domain.Repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

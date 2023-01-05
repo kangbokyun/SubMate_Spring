@@ -76,4 +76,21 @@ public class SettingController {
                         return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
                 }
         }
+
+	@PostMapping("/Profile/LineTalk")
+	public ResponseEntity<?> LineTalk(@RequestBody  ProfileTalkDTO profileTalkDTO) {
+		System.out.println("profileTalkDTO : " + profileTalkDTO);
+		boolean result = settingService.LineTalk(profileTalkDTO);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/Profile/TalkList")
+	public ResponseEntity<?> TalkList(@RequestParam("mno") String mno) {
+		List<ProfileTalkDTO> profileTalkDTOS = settingService.TalkList(Integer.parseInt(mno));
+		return ResponseEntity.ok().body(profileTalkDTOS);
+	}
 }

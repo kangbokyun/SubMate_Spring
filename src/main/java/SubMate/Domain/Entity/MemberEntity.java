@@ -21,7 +21,8 @@ import java.util.List;
 	"qnaEntityList",
 	"tendinousEntityList",
 	"noticeEntities",
-	"reportEntities"
+	"reportEntities",
+	"profileTalkEntities"
 })
 public class MemberEntity extends BaseTimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +76,9 @@ public class MemberEntity extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
 	private List<ReportEntity> reportEntities = new ArrayList<>();
+
+	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)
+	private List<ProfileTalkEntity> profileTalkEntities = new ArrayList<>();
 
 	// 한 명당 한개의 Mate Setting
 	@OneToOne(mappedBy =  "memberEntity", cascade = CascadeType.ALL)

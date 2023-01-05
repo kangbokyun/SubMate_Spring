@@ -28,6 +28,8 @@ public class SettingService {
 	QnARepository qnARepository;
 	@Autowired
 	TendinousRepository tendinousRepository;
+	@Autowired
+	ProfileTalkRepository profileTalkRepository;
 
 	public void SubStation() {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
@@ -415,6 +417,50 @@ public class SettingService {
 		} else {
 			return false;
 		}
+	}
+
+	public boolean LineTalk(ProfileTalkDTO profileTalkDTO) {
+		if(profileTalkDTO != null) {
+			MemberEntity memberEntity = memberRepository.findById(profileTalkDTO.getMno()).get();
+			ProfileTalkEntity profileTalkEntity = ProfileTalkEntity.builder()
+				.ptcontents(profileTalkDTO.getPtcontents())
+				.ptwriter(profileTalkDTO.getPtwriter())
+				.writedmno(profileTalkDTO.getWritedmno())
+				.memberEntity(memberEntity)
+				.build();
+			profileTalkRepository.save(profileTalkEntity);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public List<ProfileTalkDTO> TalkList(int mno) {
+		List<ProfileTalkEntity> profileTalkEntities = profileTalkRepository.findAll();
+		List<ProfileTalkDTO> profileTalkDTOS = new ArrayList<>();
+		for(ProfileTalkEntity profileTalkEntity : profileTalkEntities) {
+			if(mno == profileTalkEntity.getMemberEntity().getMno()) {
+				ProfileTalkDTO profileTalkDTO = ProfileTalkDTO.builder()
+					.mno(profileTalkEntity.getMemberEntity().getMno())
+					.ptcontents(profileTalkEntity.getPtcontents())
+					.ptno(profileTalkEntity.getPtno())
+					.ptwriter(profileTalkEntity.getPtwriter())
+					.writedmno(profileTalkEntity.getWritedmno())
+					.build();
+				profileTalkDTOS.add(profileTalkDTO);
+			}
+		}
+		Comparator<ProfileTalkDTO> listSort = new Comparator<ProfileTalkDTO>() {
+			@Override
+			public int compare(ProfileTalkDTO o1, ProfileTalkDTO o2) {
+				int a = o1.getPtno();
+				int b = o2.getPtno();
+
+				if(a > b) { return -1; } else { return 1; }
+			}
+		};
+		Collections.sort(profileTalkDTOS, listSort);
+		return profileTalkDTOS;
 	}
 }
 

@@ -138,6 +138,9 @@ public class AdminService {
 				.reportrno(reportEntity.getReportrno()).reportuserno(reportEntity.getReportuserno())
 				.build();
 			reportDTOS.add(reportDTO);
+			if(reportDTOS.size() > 3) {
+				break;
+			}
 		}
 		return reportDTOS;
 	}
@@ -154,7 +157,7 @@ public class AdminService {
 		vsDate.setTime(new Date());
 		SimpleDateFormat nowDateSDF = new SimpleDateFormat("YY-MM-dd");
 
-		vsDate.add(Calendar.MONTH, - 1);
+		vsDate.add(Calendar.DATE, - 10);
 		Calendar calendar = Calendar.getInstance();
 		int day = Integer.parseInt((nowDate.getTimeInMillis() - vsDate.getTimeInMillis()) / (1000 * 60 * 60 * 24) + "");
 		// qnAEntities.get(i).getCreateDate().toString().split("T")[0].substring(2, 10)
@@ -196,6 +199,16 @@ public class AdminService {
 
 			mainChartDTOS.add(mainChartDTO);
 		}
+		Comparator<MainChartDTO> listSort = new Comparator<MainChartDTO>() {
+			@Override
+			public int compare(MainChartDTO o1, MainChartDTO o2) {
+				int a = Integer.parseInt(o1.getChartdate().replace("-", ""));
+				int b = Integer.parseInt(o2.getChartdate().replace("-", ""));
+
+				if(a < b) { return -1; } else {	return 1; }
+			}
+		};
+		Collections.sort(mainChartDTOS, listSort);
 		return mainChartDTOS;
 	}
 }

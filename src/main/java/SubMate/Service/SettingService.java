@@ -348,6 +348,11 @@ public class SettingService {
 				.phobby1(profileDTO.getPhobby1()).phobby2(profileDTO.getPhobby2()).phobby3(profileDTO.getPhobby3())
 				.build();
 			profileRepository.save(profileEntity);
+
+			if(memberEntity.getMhobby() == null) {
+				memberEntity.setMhobby(profileDTO.getPhobby1());
+			}
+
 			return true;
 		} else {
 			return false;

@@ -11,5 +11,6 @@ public class TendinousDTO {
         private String tselectcontentkind;
         private String tselecttendinouskind;
         private String tstatus;
+	private String twriter;
         private int mno;
 }

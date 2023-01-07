@@ -81,16 +81,35 @@ public class AdminService {
 		List<TendinousEntity> tendinousEntities = tendinousRepository.findAll();
 		List<TendinousDTO> tendinousDTOS = new ArrayList<>();
 		for(TendinousEntity tendinousEntity : tendinousEntities) {
+			MemberEntity memberEntity = memberRepository.findById(tendinousEntity.getMemberEntity().getMno()).get();
 			TendinousDTO tendinousDTO = TendinousDTO.builder()
 				.mno(tendinousEntity.getMemberEntity().getMno())
 				.tno(tendinousEntity.getTno())
 				.tcontents(tendinousEntity.getTcontents())
 				.tselectcontentkind(tendinousEntity.getTselectcontentkind())
 				.tselecttendinouskind(tendinousEntity.getTselecttendinouskind())
+				.twriter(memberEntity.getMname())
 				.tstatus(Integer.toString(tendinousEntity.getTstatus())).build();
 			tendinousDTOS.add(tendinousDTO);
 		}
 		return tendinousDTOS;
+	}
+
+	public TendinousDTO TendinousView(int tno) {
+		TendinousEntity tendinousEntity = tendinousRepository.findById(tno).get();
+		if(tendinousEntity != null) {
+			TendinousDTO tendinousDTO = TendinousDTO.builder()
+				.tno(tendinousEntity.getTno())
+				.mno(tendinousEntity.getMemberEntity().getMno())
+				.twriter(tendinousEntity.getMemberEntity().getMname())
+				.tcontents(tendinousEntity.getTcontents())
+				.tselectcontentkind(tendinousEntity.getTselectcontentkind())
+				.tselecttendinouskind(tendinousEntity.getTselecttendinouskind())
+				.tstatus(Integer.toString(tendinousEntity.getTstatus()))
+				.build();
+			return tendinousDTO;
+		}
+		return null;
 	}
 
 	public List<NoticeDTO> NoticeList() {

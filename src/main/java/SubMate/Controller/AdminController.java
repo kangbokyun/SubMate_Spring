@@ -46,6 +46,12 @@ public class AdminController {
 		return ResponseEntity.ok().body(tendinousDTOS);
 	}
 
+	@PostMapping("/Admin/TendinousView")
+	public ResponseEntity<?> TendinousView(@RequestParam("tno") String tno) {
+		TendinousDTO tendinousDTO = adminService.TendinousView(Integer.parseInt(tno));
+		return ResponseEntity.ok().body(tendinousDTO);
+	}
+
 	@PostMapping("Admin/NoticeList")
 	public ResponseEntity<?> NoticeList() {
 		List<NoticeDTO> noticeDTOS = adminService.NoticeList();

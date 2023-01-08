@@ -106,10 +106,24 @@ public class AdminService {
 				.tselectcontentkind(tendinousEntity.getTselectcontentkind())
 				.tselecttendinouskind(tendinousEntity.getTselecttendinouskind())
 				.tstatus(Integer.toString(tendinousEntity.getTstatus()))
+				.tanswer(tendinousEntity.getTanswer())
 				.build();
 			return tendinousDTO;
 		}
 		return null;
+	}
+
+	@Transactional
+	public boolean TendinousAnswer(TendinousDTO tendinousDTO) {
+		if(tendinousDTO != null) {
+			TendinousEntity tendinousEntity = tendinousRepository.findById(tendinousDTO.getTno()).get();
+			tendinousEntity.setTanswer(tendinousDTO.getTanswer());
+			tendinousEntity.setTstatus(Integer.parseInt(tendinousDTO.getTstatus()));
+			tendinousRepository.save(tendinousEntity);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public List<NoticeDTO> NoticeList() {

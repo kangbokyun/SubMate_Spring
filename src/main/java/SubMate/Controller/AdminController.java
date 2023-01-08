@@ -34,6 +34,17 @@ public class AdminController {
 		}
 	}
 
+	@PostMapping("/Admin/TendinousAnswer")
+	public ResponseEntity<?> TendiAnswer(@RequestBody TendinousDTO tendinousDTO) {
+		System.out.println("tendinousDTO : " + tendinousDTO);
+		boolean result = adminService.TendinousAnswer(tendinousDTO);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+		}
+	}
+
 	@PostMapping("/Admin/QnA")
 	public ResponseEntity<?> QnAList() {
 		List<QnADTO> qnADTOS = adminService.QnAList();

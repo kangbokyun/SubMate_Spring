@@ -472,7 +472,7 @@ public class SettingService {
 						.mno(tendinousEntity.getMemberEntity().getMno())
 						.tno(tendinousEntity.getTno())
 						.tcontents(tendinousEntity.getTcontents())
-						.tstatus(tendinousEntity.getTcontents())
+						.tstatus(Integer.toString(tendinousEntity.getTstatus()))
 						.tselectcontentkind(tendinousEntity.getTselectcontentkind())
 						.tselecttendinouskind(tendinousEntity.getTselecttendinouskind())
 						.build();

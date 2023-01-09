@@ -94,8 +94,10 @@ public class SettingController {
 		return ResponseEntity.ok().body(profileTalkDTOS);
 	}
 
-    @PostMapping("/SendedTendinous")
-    public ResponseEntity<?> SendedTendinous() {
-        return ResponseEntity.ok().body(HttpStatus.OK);
-    }
+	@PostMapping("/SendedTendinous")
+	public ResponseEntity<?> SendedTendinous(@RequestParam("mno") int mno) {
+		System.out.println("mno : " + mno);
+		List<TendinousDTO> tendinousDTOS = settingService.SendedTendinous(mno);
+		return ResponseEntity.ok().body(tendinousDTOS);
+	}
 }

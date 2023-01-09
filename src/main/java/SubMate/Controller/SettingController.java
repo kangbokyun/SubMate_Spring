@@ -93,4 +93,9 @@ public class SettingController {
 		List<ProfileTalkDTO> profileTalkDTOS = settingService.TalkList(Integer.parseInt(mno));
 		return ResponseEntity.ok().body(profileTalkDTOS);
 	}
+
+    @PostMapping("/SendedTendinous")
+    public ResponseEntity<?> SendedTendinous() {
+        return ResponseEntity.ok().body(HttpStatus.OK);
+    }
 }

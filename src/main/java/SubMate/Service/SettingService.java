@@ -462,5 +462,24 @@ public class SettingService {
 		Collections.sort(profileTalkDTOS, listSort);
 		return profileTalkDTOS;
 	}
+
+	public List<TendinousDTO> SendedTendinous(int mno) {
+		List<TendinousEntity> tendinousEntities = tendinousRepository.findAll();
+		List<TendinousDTO> tendinousDTOS = new ArrayList<>();
+		for(TendinousEntity tendinousEntity : tendinousEntities) {
+			if(tendinousEntity.getMemberEntity().getMno() == mno) {
+				TendinousDTO tendinousDTO = TendinousDTO.builder()
+						.mno(tendinousEntity.getMemberEntity().getMno())
+						.tno(tendinousEntity.getTno())
+						.tcontents(tendinousEntity.getTcontents())
+						.tstatus(tendinousEntity.getTcontents())
+						.tselectcontentkind(tendinousEntity.getTselectcontentkind())
+						.tselecttendinouskind(tendinousEntity.getTselecttendinouskind())
+						.build();
+				tendinousDTOS.add(tendinousDTO);
+			}
+		}
+		return tendinousDTOS;
+	}
 }
 

@@ -30,7 +30,7 @@ dependencies {
         implementation 'com.google.code.gson:gson:2.8.5'
         implementation 'com.googlecode.json-simple:json-simple:1.1.1' // JSON 파일을 읽기 위함
         implementation 'org.jsoup:jsoup:1.13.1' // 크롤링
-
+        implementation 'org.springframework.boot:spring-boot-starter-websocket' // 채팅
 }
 
 //def frontendDir = "$projectDir/frontend"

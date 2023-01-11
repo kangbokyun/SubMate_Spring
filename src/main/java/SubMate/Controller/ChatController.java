@@ -15,7 +15,7 @@ public class ChatController {
 
 	// /app/message 어노테이션에 발행하는 경로를 @SendTo( 1 : n )와 @SendToUser( 1 : 1 ) 어노테이션에 구독 경로를 작성
 	// 예를 들어, 특정 사용자가 message라는 경로로 메세지를 보내면 /room/public 이라는 토픽을 구독하는 사용자에게 모두 메세지를 뿌린다.
-	@MessageMapping("/message") @SendTo("/Room/public")
+	@MessageMapping("/message") @SendTo("/room/public")
 	public MessageDTO receivePublicMessage(@Payload MessageDTO messageDTO) {
 		return messageDTO;
 	}

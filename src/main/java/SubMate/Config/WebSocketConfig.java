@@ -17,14 +17,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		// 도착 경로에 대한 prefix를 설정 => /topic/hello라는 토픽에 대해 구독을 신청했을 때 실제 경로는 /app/topic/hello가 된다.
 		registry.setApplicationDestinationPrefixes("/app");
 
-		// 도착 경로에 대한 prefix를 설정 => /topic/hello라는 토픽에 대해 구독을 신청했을 때 실제 경로는 /app/topic/hello가 된다.
-		registry.enableSimpleBroker("/room", "/user");
-		registry.setUserDestinationPrefix("/user");
 		// registry.setUserDestinationPrefix("/user") : 사용자 대상을 식별하는데 사용되는 접두사를 구성. 사용자 대상은 사용자가 자신의 세션에 고유한 대기열 이름을 구독하고 다른 사용자가 고유한 사용자 별 대기엘에 베세지를 보낼 수 있는 기능을 제공
 		// 예를 들어 사용자가 "/user/queue/position-updates"에 가입을 시도하면 대상이 "/queue/position-updatesi9apdfzo"로 변환되어 시도하는 다른 사용자와 충돌하지 않는 고유한 대기열 이름을 생성할 수 있다. 이후에 메세지가 "/user/{username}/queue/position-updates"로 전송되면
 		// 대상이 "/queue/position-updatesi9oqdfzo"로 변환된다. 이러한 대상을 식별하는데 사용되는 기본 접두사는 "/user/이다.
+		registry.enableSimpleBroker("/room", "/user");
+		registry.setUserDestinationPrefix("/user");
 	}
 
 	// 채팅 클라가 서버와 연결하는 웹소켓 세팅 부분 => 웹소켓 연결 주소 => registerStompEndpoints를 이용하여 클라이언트에서 websocket에 접속하는 endpoint를 등록

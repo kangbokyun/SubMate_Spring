@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -22,6 +23,8 @@ public class ChatController {
 
 	@MessageMapping("/private-message")
 	public MessageDTO receivePrivateMessage(@Payload MessageDTO messageDTO) {
+		System.out.println("messageDTO : " + messageDTO);
+		System.out.println("messageDTO.getReceiverName() : " + messageDTO.getReceiverName());
 		// 연결된 클라에게 문자를 보낼 때 사용하는 방법
 		// 브로커를 설정하지 않은 경우 simpMessagingTemplate을 주입받아 사용
 		// /private을 구독하는 클라(들)에게 messageDTO를 받아 전송

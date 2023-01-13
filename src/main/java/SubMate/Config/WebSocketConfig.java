@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		// registry.setUserDestinationPrefix("/user") : 사용자 대상을 식별하는데 사용되는 접두사를 구성. 사용자 대상은 사용자가 자신의 세션에 고유한 대기열 이름을 구독하고 다른 사용자가 고유한 사용자 별 대기엘에 베세지를 보낼 수 있는 기능을 제공
 		// 예를 들어 사용자가 "/user/queue/position-updates"에 가입을 시도하면 대상이 "/queue/position-updatesi9apdfzo"로 변환되어 시도하는 다른 사용자와 충돌하지 않는 고유한 대기열 이름을 생성할 수 있다. 이후에 메세지가 "/user/{username}/queue/position-updates"로 전송되면
 		// 대상이 "/queue/position-updatesi9oqdfzo"로 변환된다. 이러한 대상을 식별하는데 사용되는 기본 접두사는 "/user/이다.
-		registry.enableSimpleBroker("/room", "/user");
+		registry.enableSimpleBroker("/room", "/user"); // room => topic, user => queue
 		registry.setUserDestinationPrefix("/user");
 	}
 

@@ -1,18 +1,30 @@
 package SubMate.Controller;
 
+import SubMate.Domain.DTO.ChatCallDTO;
 import SubMate.Domain.DTO.MessageDTO;
+import SubMate.Service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import java.lang.module.ResolutionException;
+import java.util.List;
+
+@RestController
 public class ChatController {
 	@Autowired
 	private SimpMessagingTemplate simpMessagingTemplate;
+	@Autowired
+	ChatService chatService;
 
 	// /app/message 어노테이션에 발행하는 경로를 @SendTo( 1 : n )와 @SendToUser( 1 : 1 ) 어노테이션에 구독 경로를 작성
 	// 예를 들어, 특정 사용자가 message라는 경로로 메세지를 보내면 /room/public 이라는 토픽을 구독하는 사용자에게 모두 메세지를 뿌린다.
@@ -31,5 +43,22 @@ public class ChatController {
 		// /private을 구독하는 클라(들)에게 messageDTO를 받아 전송
 		simpMessagingTemplate.convertAndSendToUser(messageDTO.getSenderName(), "/private", messageDTO);
 		return messageDTO;
+	}
+
+	@PostMapping("/ChatCall")
+	public ResponseEntity<?> ChatCall(@RequestParam("receivermno") int receivermno, @RequestParam("sendermno") int sendermno) {
+		ChatCallDTO chatCallDTO = ChatCallDTO.builder().callreceiverno(Integer.toString(receivermno)).callsenderno(Integer.toString(sendermno)).build();
+		boolean result = chatService.ChatCall(chatCallDTO);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/CallList")
+	public ResponseEntity<?> CallList(@RequestParam("mno") int mno) {
+		List<ChatCallDTO> chatCallDTOS = chatService.CallList(mno);
+		return ResponseEntity.ok().body(chatCallDTOS);
 	}
 }

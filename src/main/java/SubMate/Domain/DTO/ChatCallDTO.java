@@ -9,4 +9,6 @@ public class ChatCallDTO {
 	private int callno;
 	private String callsenderno;
 	private String callreceiverno;
+	private String sendername;
+	private String receivername;
 }

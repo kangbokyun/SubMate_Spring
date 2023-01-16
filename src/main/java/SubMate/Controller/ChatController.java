@@ -1,6 +1,7 @@
 package SubMate.Controller;
 
 import SubMate.Domain.DTO.ChatCallDTO;
+import SubMate.Domain.DTO.ChatRoomDTO;
 import SubMate.Domain.DTO.MessageDTO;
 import SubMate.Service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.module.ResolutionException;
 import java.util.List;
@@ -60,5 +59,24 @@ public class ChatController {
 	public ResponseEntity<?> CallList(@RequestParam("mno") int mno) {
 		List<ChatCallDTO> chatCallDTOS = chatService.CallList(mno);
 		return ResponseEntity.ok().body(chatCallDTOS);
+	}
+
+	@PostMapping("/CreateChatRoom")
+	public ResponseEntity<?> CreateChatRoom(@RequestParam("receiverno") int receiverno, @RequestParam("receivername") String receivername, @RequestParam("senderno") int senderno, @RequestParam("sendername") String sendername) {
+		System.out.println("receiverno : " + receiverno);
+		ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder().receivername(receivername).receiverno(receiverno).sendername(sendername).senderno(senderno).build();
+		boolean result = chatService.CreateChatRoom(chatRoomDTO);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping("/ChatRoom")
+	public ResponseEntity<?> ChatRoom(@RequestBody ChatRoomDTO chatRoomDTO) {
+		System.out.println("try@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		ChatRoomDTO roomDTO = chatService.ChatRoom(chatRoomDTO);
+		return ResponseEntity.ok().body(roomDTO);
 	}
 }

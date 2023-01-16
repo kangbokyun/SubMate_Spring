@@ -40,7 +40,7 @@ public class ChatController {
 		// 연결된 클라에게 문자를 보낼 때 사용하는 방법
 		// 브로커를 설정하지 않은 경우 simpMessagingTemplate을 주입받아 사용
 		// /private을 구독하는 클라(들)에게 messageDTO를 받아 전송
-		simpMessagingTemplate.convertAndSendToUser(messageDTO.getSenderName(), "/private", messageDTO);
+		simpMessagingTemplate.convertAndSendToUser(messageDTO.getReceiverName(), "/private", messageDTO);
 		return messageDTO;
 	}
 
@@ -74,9 +74,10 @@ public class ChatController {
 	}
 
 	@PostMapping("/ChatRoom")
-	public ResponseEntity<?> ChatRoom(@RequestBody ChatRoomDTO chatRoomDTO) {
+	public ResponseEntity<?> ChatRoom(@RequestParam("receiverno") int receiverno, @RequestParam("receivername") String receivername, @RequestParam("senderno") int senderno, @RequestParam("sendername") String sendername) {
 		System.out.println("try@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		ChatRoomDTO roomDTO = chatService.ChatRoom(chatRoomDTO);
+		ChatRoomDTO temp = ChatRoomDTO.builder().receivername(receivername).receiverno(receiverno).sendername(sendername).senderno(senderno).build();
+		ChatRoomDTO roomDTO = chatService.ChatRoom(temp);
 		return ResponseEntity.ok().body(roomDTO);
 	}
 }

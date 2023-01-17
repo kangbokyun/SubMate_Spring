@@ -27,12 +27,18 @@ public class ChatService {
 	ChatRoomRepository chatRoomRepository;
 
 	public boolean ChatCall(ChatCallDTO chatCallDTO) {
+		List<ChatCallEntity> chatCallEntities = chatCallRepository.findAll();
 		if(chatCallDTO != null) {
-			ChatCallEntity chatCallEntity = ChatCallEntity.builder()
-				.callreceiverno(chatCallDTO.getCallreceiverno()).callsenderno(chatCallDTO.getCallsenderno())
-				.build();
-			chatCallRepository.save(chatCallEntity);
-			return true;
+			for(ChatCallEntity chatCallEntity : chatCallEntities) {
+				if(!(chatCallEntity.getCallreceiverno() == chatCallDTO.getCallreceiverno() && chatCallEntity.getCallsenderno() == chatCallDTO.getCallsenderno())) {
+					ChatCallEntity chatCallEntity2 = ChatCallEntity.builder()
+						.callreceiverno(chatCallDTO.getCallreceiverno()).callsenderno(chatCallDTO.getCallsenderno())
+						.build();
+					chatCallRepository.save(chatCallEntity2);
+					return true;
+				}
+			}
+			return false;
 		} else {
 			return false;
 		}
@@ -65,11 +71,15 @@ public class ChatService {
 					chatRoomRepository.delete(chatRoomEntity);
 				}
 			}
+			MemberEntity memberEntity1 = memberRepository.findById(chatRoomDTO.getSenderno()).get();
+			MemberEntity memberEntity2 = memberRepository.findById(chatRoomDTO.getReceiverno()).get();
 			ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
 				.receiverno(chatRoomDTO.getReceiverno())
 				.senderno(chatRoomDTO.getSenderno())
 				.sendername(chatRoomDTO.getSendername())
 				.receivername(chatRoomDTO.getReceivername())
+				.sgender(memberEntity1.getMgender())
+				.rgender(memberEntity2.getMgender())
 				.build();
 			UUID uuid = UUID.randomUUID();
 			String roomname = uuid.toString().replace("_", "-") + (chatRoomDTO.getSenderno() * chatRoomDTO.getReceiverno() + chatRoomDTO.getReceiverno());
@@ -87,6 +97,8 @@ public class ChatService {
 		if(chatRoomDTO != null) {
 			for(ChatRoomEntity chatRoomEntity : chatRoomEntities) {
 				if(chatRoomEntity.getSenderno() == chatRoomDTO.getSenderno() && chatRoomEntity.getSendername().equals(chatRoomDTO.getSendername()) && chatRoomEntity.getReceiverno() == chatRoomDTO.getReceiverno() && chatRoomEntity.getReceivername().equals(chatRoomDTO.getReceivername())) {
+					MemberEntity memberEntity1 = memberRepository.findById(chatRoomDTO.getReceiverno()).get();
+					MemberEntity memberEntity2 = memberRepository.findById(chatRoomDTO.getSenderno()).get();
 					System.out.println("chatRoomEntity : " + chatRoomEntity);
 					roomDTO.setReceivername(chatRoomEntity.getReceivername());
 					roomDTO.setReceiverno(chatRoomEntity.getReceiverno());
@@ -94,6 +106,8 @@ public class ChatService {
 					roomDTO.setRoomno(chatRoomEntity.getRoomno());
 					roomDTO.setSendername(chatRoomEntity.getSendername());
 					roomDTO.setRoomname(chatRoomEntity.getRoomname());
+					roomDTO.setRgender(memberEntity1.getMgender());
+					roomDTO.setSgender(memberEntity2.getMgender());
 				}
 			}
 		}
@@ -111,9 +125,15 @@ public class ChatService {
 					.receiverno(chatRoomEntity.getReceiverno())
 					.receivername(chatRoomEntity.getReceivername())
 					.roomname(chatRoomEntity.getRoomname())
+					.rgender(chatRoomEntity.getRgender())
+					.sgender(chatRoomEntity.getSgender())
 					.build();
 			chatRoomDTOS.add(chatRoomDTO);
 		}
 		return chatRoomDTOS;
+	}
+
+	public boolean ChatHistorySave() {
+		return true;
 	}
 }

@@ -15,4 +15,5 @@ public class MessageDTO {
     private String date;
     private String status;
     private String roomname;
+    private String mgender;
 }

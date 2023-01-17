@@ -12,4 +12,6 @@ public class ChatRoomDTO {
     private String receivername;
     private int senderno;
     private String sendername;
+    private String sgender;
+    private String rgender;
 }

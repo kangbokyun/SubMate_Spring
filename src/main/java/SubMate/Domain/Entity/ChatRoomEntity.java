@@ -19,5 +19,10 @@ public class ChatRoomEntity extends BaseTimeEntity {
     private String receivername;
     @Column
     private int senderno;
+    @Column
     private String sendername;
+    @Column
+    private String sgender;
+    @Column
+    private String rgender;
 }

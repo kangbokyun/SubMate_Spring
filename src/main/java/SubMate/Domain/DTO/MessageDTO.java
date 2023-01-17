@@ -9,11 +9,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDTO {
-    private String senderName;
-    private String receiverName;
-    private String message;
-    private String date;
-    private String status;
-    private String roomname;
-    private String mgender;
+	private String senderName;
+	private String receiverName;
+	private String message;
+	private String date;
+	private String status;
+	private String roomname;
+	private String mgender;
 }

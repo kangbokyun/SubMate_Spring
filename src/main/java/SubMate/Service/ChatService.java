@@ -2,10 +2,13 @@ package SubMate.Service;
 
 import SubMate.Domain.DTO.ChatCallDTO;
 import SubMate.Domain.DTO.ChatRoomDTO;
+import SubMate.Domain.DTO.MessageDTO;
 import SubMate.Domain.Entity.ChatCallEntity;
+import SubMate.Domain.Entity.ChatHistoryEntity;
 import SubMate.Domain.Entity.ChatRoomEntity;
 import SubMate.Domain.Entity.MemberEntity;
 import SubMate.Domain.Repository.ChatCallRepository;
+import SubMate.Domain.Repository.ChatHistoryRepository;
 import SubMate.Domain.Repository.ChatRoomRepository;
 import SubMate.Domain.Repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,8 @@ public class ChatService {
 	MemberRepository memberRepository;
 	@Autowired
 	ChatRoomRepository chatRoomRepository;
+	@Autowired
+	ChatHistoryRepository chatHistoryRepository;
 
 	public boolean ChatCall(ChatCallDTO chatCallDTO) {
 		List<ChatCallEntity> chatCallEntities = chatCallRepository.findAll();
@@ -133,7 +138,13 @@ public class ChatService {
 		return chatRoomDTOS;
 	}
 
-	public boolean ChatHistorySave() {
+	public boolean ChatHistorySave(MessageDTO messageDTO) {
+		List<ChatHistoryEntity> chatHistoryEntities = chatHistoryRepository.findAll();
+		for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
+			if(chatHistoryEntity.getChroomname().equals(messageDTO.getReceiverName())) {
+//				chatHistoryEntity.
+			}
+		}
 		return true;
 	}
 }

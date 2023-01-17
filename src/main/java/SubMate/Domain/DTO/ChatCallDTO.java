@@ -11,4 +11,5 @@ public class ChatCallDTO {
 	private String callreceiverno;
 	private String sendername;
 	private String receivername;
+	private String callstatus;
 }

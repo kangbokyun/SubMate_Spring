@@ -80,4 +80,11 @@ public class ChatController {
 		ChatRoomDTO roomDTO = chatService.ChatRoom(temp);
 		return ResponseEntity.ok().body(roomDTO);
 	}
+
+	@PostMapping("/ChatRoomList")
+	public ResponseEntity<?> ChatRoomList() {
+		System.out.println("ChatRoomList Init");
+		List<ChatRoomDTO> chatRoomDTOS = chatService.ChatRoomList();
+		return ResponseEntity.ok().body(chatRoomDTOS);
+	}
 }

@@ -1,6 +1,7 @@
 package SubMate.Controller;
 
 import SubMate.Domain.DTO.ChatCallDTO;
+import SubMate.Domain.DTO.ChatHistoryDTO;
 import SubMate.Domain.DTO.ChatRoomDTO;
 import SubMate.Domain.DTO.MessageDTO;
 import SubMate.Service.ChatService;
@@ -40,6 +41,7 @@ public class ChatController {
 		// 연결된 클라에게 문자를 보낼 때 사용하는 방법
 		// 브로커를 설정하지 않은 경우 simpMessagingTemplate을 주입받아 사용
 		// /private을 구독하는 클라(들)에게 messageDTO를 받아 전송
+		chatService.ChatHistorySave(messageDTO);
 		simpMessagingTemplate.convertAndSendToUser(messageDTO.getReceiverName(), "/private", messageDTO);
 		return messageDTO;
 	}
@@ -86,5 +88,12 @@ public class ChatController {
 		System.out.println("ChatRoomList Init");
 		List<ChatRoomDTO> chatRoomDTOS = chatService.ChatRoomList();
 		return ResponseEntity.ok().body(chatRoomDTOS);
+	}
+
+	@PostMapping("/ChatHistoryList")
+	public ResponseEntity<?> ChatHistoryList(@RequestParam("roomname") String roomname) {
+		System.out.println("ChatHistoryList Init" + roomname);
+		List<ChatHistoryDTO> chatHistoryDTOS = chatService.ChatHistoryList(roomname);
+		return ResponseEntity.ok().body(chatHistoryDTOS);
 	}
 }

@@ -15,4 +15,8 @@ public class ChatHistoryEntity extends BaseTimeEntity {
 	private String chsenderno;
 	private String chsgender;
 	private String chroomname;
+	private String chcontents;
+
+	@ManyToOne @JoinColumn(name = "roomname")
+	ChatRoomEntity chatRoomEntity;
 }

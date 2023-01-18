@@ -4,6 +4,8 @@ import jdk.jfr.Enabled;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,4 +27,8 @@ public class ChatRoomEntity extends BaseTimeEntity {
     private String sgender;
     @Column
     private String rgender;
+
+
+    @OneToMany(mappedBy = "chatRoomEntity", cascade = CascadeType.ALL)
+    List<ChatHistoryEntity> chatHistoryEntityList = new ArrayList<>();
 }

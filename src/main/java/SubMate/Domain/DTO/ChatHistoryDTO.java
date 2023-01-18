@@ -11,4 +11,5 @@ public class ChatHistoryDTO {
     private String chsenderno;
     private String createddate;
     private String chsgender;
+    private String chcontents;
 }

@@ -1,8 +1,6 @@
 package SubMate.Service;
 
-import SubMate.Domain.DTO.ChatCallDTO;
-import SubMate.Domain.DTO.ChatRoomDTO;
-import SubMate.Domain.DTO.MessageDTO;
+import SubMate.Domain.DTO.*;
 import SubMate.Domain.Entity.ChatCallEntity;
 import SubMate.Domain.Entity.ChatHistoryEntity;
 import SubMate.Domain.Entity.ChatRoomEntity;
@@ -16,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ChatService {
@@ -122,6 +118,8 @@ public class ChatService {
 	public List<ChatRoomDTO> ChatRoomList() {
 		List<ChatRoomEntity> chatRoomEntities = chatRoomRepository.findAll();
 		List<ChatRoomDTO> chatRoomDTOS = new ArrayList<>();
+		List<ChatHistoryEntity> chatHistoryEntities = chatHistoryRepository.findAll();
+		List<ChatHistoryDTO> chatHistoryDTOS = new ArrayList<>();
 		for(ChatRoomEntity chatRoomEntity : chatRoomEntities) {
 			ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
 					.senderno(chatRoomEntity.getSenderno())
@@ -133,18 +131,66 @@ public class ChatService {
 					.rgender(chatRoomEntity.getRgender())
 					.sgender(chatRoomEntity.getSgender())
 					.build();
+			for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
+				if(chatHistoryEntity.getChroomname().equals(chatRoomDTO.getRoomname())) {
+					ChatHistoryDTO chatHistoryDTO = ChatHistoryDTO.builder()
+							.chno(chatHistoryEntity.getChno())
+							.chcontents(chatHistoryEntity.getChcontents())
+							.build();
+					chatHistoryDTOS.add(chatHistoryDTO);
+				}
+			}
+			Comparator<ChatHistoryDTO> listSort = new Comparator<ChatHistoryDTO>() {
+				@Override
+				public int compare(ChatHistoryDTO o1, ChatHistoryDTO o2) {
+					int a = o1.getChno();
+					int b = o2.getChno();
+
+					if(a > b) { return -1; } else {	return 1;	 }
+				}
+			};
+			Collections.sort(chatHistoryDTOS, listSort);
+
+			chatRoomDTO.setChlastmessage(chatHistoryDTOS.get(0).getChcontents());
+
 			chatRoomDTOS.add(chatRoomDTO);
 		}
 		return chatRoomDTOS;
 	}
 
 	public boolean ChatHistorySave(MessageDTO messageDTO) {
+		ChatRoomEntity chatRoomEntity = chatRoomRepository.findByRoomname(messageDTO.getReceiverName());
+		if(messageDTO.getReceiverName() != null && messageDTO.getStatus().equals("MESSAGE") && !messageDTO.getMessage().equals("")) {
+			ChatHistoryEntity chatHistoryEntity = ChatHistoryEntity.builder()
+				.chroomname(messageDTO.getReceiverName())
+				.chsendername(messageDTO.getSenderName())
+				.chsgender(messageDTO.getMgender())
+				.chatRoomEntity(chatRoomEntity)
+				.chcontents(messageDTO.getMessage())
+				.chsenderno(messageDTO.getSenderno())
+				.build();
+			chatHistoryRepository.save(chatHistoryEntity);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public List<ChatHistoryDTO> ChatHistoryList(String roomname) {
 		List<ChatHistoryEntity> chatHistoryEntities = chatHistoryRepository.findAll();
+		List<ChatHistoryDTO> chatHistoryDTOS = new ArrayList<>();
 		for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
-			if(chatHistoryEntity.getChroomname().equals(messageDTO.getReceiverName())) {
-//				chatHistoryEntity.
+			if(chatHistoryEntity.getChroomname().equals(roomname)) {
+				ChatHistoryDTO chatHistoryDTO = ChatHistoryDTO.builder()
+					.chsenderno(chatHistoryEntity.getChsenderno())
+					.chcontents(chatHistoryEntity.getChcontents())
+					.chsgender(chatHistoryEntity.getChsgender())
+					.chsendername(chatHistoryEntity.getChsendername())
+					.chno(chatHistoryEntity.getChno())
+					.build();
+				chatHistoryDTOS.add(chatHistoryDTO);
 			}
 		}
-		return true;
+		return chatHistoryDTOS;
 	}
 }

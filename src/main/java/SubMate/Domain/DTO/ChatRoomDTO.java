@@ -2,6 +2,8 @@ package SubMate.Domain.DTO;
 
 import lombok.*;
 
+import javax.persistence.OneToMany;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data @ToString @Builder
@@ -14,4 +16,5 @@ public class ChatRoomDTO {
     private String sendername;
     private String sgender;
     private String rgender;
+    private String chlastmessage;
 }

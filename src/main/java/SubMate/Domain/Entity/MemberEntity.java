@@ -56,6 +56,8 @@ public class MemberEntity extends BaseTimeEntity {
 	private Role role;
 	@Column
 	private String profileimg;
+	@Column
+	private String psetting;
 
 	// 회원 한 명당 여러개의 게시글 작성
 	@OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL)

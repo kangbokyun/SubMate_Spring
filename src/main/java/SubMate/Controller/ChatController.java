@@ -84,9 +84,9 @@ public class ChatController {
 	}
 
 	@PostMapping("/ChatRoomList")
-	public ResponseEntity<?> ChatRoomList() {
+	public ResponseEntity<?> ChatRoomList(@RequestParam("mno") String mno) {
 		System.out.println("ChatRoomList Init");
-		List<ChatRoomDTO> chatRoomDTOS = chatService.ChatRoomList();
+		List<ChatRoomDTO> chatRoomDTOS = chatService.ChatRoomList(Integer.parseInt(mno));
 		return ResponseEntity.ok().body(chatRoomDTOS);
 	}
 

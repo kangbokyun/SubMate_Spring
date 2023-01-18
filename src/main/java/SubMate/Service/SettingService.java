@@ -353,6 +353,13 @@ public class SettingService {
 
 			if(memberEntity.getMhobby() == null) {
 				memberEntity.setMhobby(profileDTO.getPhobby1());
+				List<ProfileEntity> profileEntities = profileRepository.findAll();
+				for(ProfileEntity profileEntity1 : profileEntities) {
+					if(profileEntity1.getMemberEntity().getMno() == memberEntity.getMno()) {
+						memberEntity.setPsetting(Integer.toString(profileEntity1.getPno()));
+					}
+				}
+				memberRepository.save(memberEntity);
 			}
 
 			return true;

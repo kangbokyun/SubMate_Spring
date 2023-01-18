@@ -28,5 +28,6 @@ public class MemberDTO  {
 	private String userheart;
 	private String userheartcnt;
 	private String heartclicker;
+	private String psetting;
 	private String token;
 }

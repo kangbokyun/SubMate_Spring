@@ -115,13 +115,14 @@ public class ChatService {
 		return roomDTO;
 	}
 
-	public List<ChatRoomDTO> ChatRoomList() {
+	public List<ChatRoomDTO> ChatRoomList(int mno) {
 		List<ChatRoomEntity> chatRoomEntities = chatRoomRepository.findAll();
 		List<ChatRoomDTO> chatRoomDTOS = new ArrayList<>();
 		List<ChatHistoryEntity> chatHistoryEntities = chatHistoryRepository.findAll();
 		List<ChatHistoryDTO> chatHistoryDTOS = new ArrayList<>();
 		for(ChatRoomEntity chatRoomEntity : chatRoomEntities) {
-			ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
+			if(mno == chatRoomEntity.getReceiverno() || mno == chatRoomEntity.getSenderno()) {
+				ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
 					.senderno(chatRoomEntity.getSenderno())
 					.roomno(chatRoomEntity.getRoomno())
 					.sendername(chatRoomEntity.getSendername())
@@ -131,29 +132,34 @@ public class ChatService {
 					.rgender(chatRoomEntity.getRgender())
 					.sgender(chatRoomEntity.getSgender())
 					.build();
-			for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
-				if(chatHistoryEntity.getChroomname().equals(chatRoomDTO.getRoomname())) {
-					ChatHistoryDTO chatHistoryDTO = ChatHistoryDTO.builder()
-							.chno(chatHistoryEntity.getChno())
-							.chcontents(chatHistoryEntity.getChcontents())
-							.build();
-					chatHistoryDTOS.add(chatHistoryDTO);
+				if(chatHistoryDTOS != null || chatHistoryDTOS.size() != 0) {
+					for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
+						if(chatHistoryEntity.getChroomname().equals(chatRoomDTO.getRoomname())) {
+							ChatHistoryDTO chatHistoryDTO = ChatHistoryDTO.builder()
+									.chno(chatHistoryEntity.getChno())
+									.chcontents(chatHistoryEntity.getChcontents())
+									.build();
+							chatHistoryDTOS.add(chatHistoryDTO);
+						}
+					}
+					Comparator<ChatHistoryDTO> listSort = new Comparator<ChatHistoryDTO>() {
+						@Override
+						public int compare(ChatHistoryDTO o1, ChatHistoryDTO o2) {
+							int a = o1.getChno();
+							int b = o2.getChno();
+
+							if(a > b) { return -1; } else {	return 1;	 }
+						}
+					};
+					Collections.sort(chatHistoryDTOS, listSort);
+
+		//			if(chatHistoryDTOS.size())
+					System.out.println("chatHistoryDTOS.size() : " + chatHistoryDTOS.size());
+					System.out.println("chatHistoryDTOS : " + chatHistoryDTOS);
+					chatRoomDTO.setChlastmessage(chatHistoryDTOS.get(0).getChcontents());
 				}
+				chatRoomDTOS.add(chatRoomDTO);
 			}
-			Comparator<ChatHistoryDTO> listSort = new Comparator<ChatHistoryDTO>() {
-				@Override
-				public int compare(ChatHistoryDTO o1, ChatHistoryDTO o2) {
-					int a = o1.getChno();
-					int b = o2.getChno();
-
-					if(a > b) { return -1; } else {	return 1;	 }
-				}
-			};
-			Collections.sort(chatHistoryDTOS, listSort);
-
-			chatRoomDTO.setChlastmessage(chatHistoryDTOS.get(0).getChcontents());
-
-			chatRoomDTOS.add(chatRoomDTO);
 		}
 		return chatRoomDTOS;
 	}

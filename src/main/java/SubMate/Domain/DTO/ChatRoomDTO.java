@@ -17,4 +17,7 @@ public class ChatRoomDTO {
     private String sgender;
     private String rgender;
     private String chlastmessage;
+    private String createdate;
+    private String simg;
+    private String rimg;
 }

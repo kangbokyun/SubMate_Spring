@@ -117,6 +117,7 @@ public class ChatService {
 
 	public List<ChatRoomDTO> ChatRoomList(int mno) {
 		List<ChatRoomEntity> chatRoomEntities = chatRoomRepository.findAll();
+		List<MemberEntity> memberEntities = memberRepository.findAll();
 		List<ChatRoomDTO> chatRoomDTOS = new ArrayList<>();
 		List<ChatHistoryEntity> chatHistoryEntities = chatHistoryRepository.findAll();
 		List<ChatHistoryDTO> chatHistoryDTOS = new ArrayList<>();
@@ -132,13 +133,23 @@ public class ChatService {
 					.rgender(chatRoomEntity.getRgender())
 					.sgender(chatRoomEntity.getSgender())
 					.build();
+				for(MemberEntity memberEntity : memberEntities) {
+					if(memberEntity.getMno() == chatRoomEntity.getSenderno()) {
+						chatRoomDTO.setSimg(memberEntity.getProfileimg().split("MemberImg/")[1]);
+					}
+					if(memberEntity.getMno() == chatRoomEntity.getReceiverno()) {
+						chatRoomDTO.setRimg(memberEntity.getProfileimg().split("MemberImg/")[1]);
+					}
+				}
 				if(chatHistoryDTOS != null || chatHistoryDTOS.size() != 0) {
 					for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
 						if(chatHistoryEntity.getChroomname().equals(chatRoomDTO.getRoomname())) {
 							ChatHistoryDTO chatHistoryDTO = ChatHistoryDTO.builder()
 									.chno(chatHistoryEntity.getChno())
 									.chcontents(chatHistoryEntity.getChcontents())
+									.createddate(chatHistoryEntity.getCreateDate().toString().split("T")[0])
 									.build();
+							chatRoomDTO.setCreatedate(chatHistoryEntity.getCreateDate().toString().split("T")[0]);
 							chatHistoryDTOS.add(chatHistoryDTO);
 						}
 					}
@@ -193,6 +204,7 @@ public class ChatService {
 					.chsgender(chatHistoryEntity.getChsgender())
 					.chsendername(chatHistoryEntity.getChsendername())
 					.chno(chatHistoryEntity.getChno())
+					.createddate(chatHistoryEntity.getCreateDate().toString().split("T")[0])
 					.build();
 				chatHistoryDTOS.add(chatHistoryDTO);
 			}

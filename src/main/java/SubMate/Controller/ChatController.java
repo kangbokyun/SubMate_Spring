@@ -59,6 +59,7 @@ public class ChatController {
 
 	@PostMapping("/CallList")
 	public ResponseEntity<?> CallList(@RequestParam("mno") int mno) {
+		System.out.println("/CallList/mno : " + mno);
 		List<ChatCallDTO> chatCallDTOS = chatService.CallList(mno);
 		return ResponseEntity.ok().body(chatCallDTOS);
 	}

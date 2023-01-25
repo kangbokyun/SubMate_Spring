@@ -28,15 +28,27 @@ public class ChatService {
 	ChatHistoryRepository chatHistoryRepository;
 
 	public boolean ChatCall(ChatCallDTO chatCallDTO) {
+		System.out.println("@@@@@@@@@@@@@@\nchatCallDTO : " + chatCallDTO);
 		List<ChatCallEntity> chatCallEntities = chatCallRepository.findAll();
 		if(chatCallDTO != null) {
-			for(ChatCallEntity chatCallEntity : chatCallEntities) {
-				if(!(chatCallEntity.getCallreceiverno() == chatCallDTO.getCallreceiverno() && chatCallEntity.getCallsenderno() == chatCallDTO.getCallsenderno())) {
-					ChatCallEntity chatCallEntity2 = ChatCallEntity.builder()
+			System.out.println("1" + chatCallEntities.size());
+			if(chatCallEntities.size() == 0) {
+				ChatCallEntity chatCallEntity2 = ChatCallEntity.builder()
 						.callreceiverno(chatCallDTO.getCallreceiverno()).callsenderno(chatCallDTO.getCallsenderno())
 						.build();
-					chatCallRepository.save(chatCallEntity2);
-					return true;
+				chatCallRepository.save(chatCallEntity2);
+				return true;
+			} else {
+				for (ChatCallEntity chatCallEntity : chatCallEntities) {
+					System.out.println("2");
+					if (!(chatCallEntity.getCallreceiverno() == chatCallDTO.getCallreceiverno() && chatCallEntity.getCallsenderno() == chatCallDTO.getCallsenderno())) {
+						System.out.println("3");
+						ChatCallEntity chatCallEntity2 = ChatCallEntity.builder()
+								.callreceiverno(chatCallDTO.getCallreceiverno()).callsenderno(chatCallDTO.getCallsenderno())
+								.build();
+						chatCallRepository.save(chatCallEntity2);
+						return true;
+					}
 				}
 			}
 			return false;
@@ -141,9 +153,9 @@ public class ChatService {
 						chatRoomDTO.setRimg(memberEntity.getProfileimg().split("MemberImg/")[1]);
 					}
 				}
-				if(chatHistoryDTOS != null && chatHistoryDTOS.size() > 0) {
-					for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
-						if(chatHistoryEntity.getChroomname().equals(chatRoomDTO.getRoomname())) {
+				if(chatHistoryEntities.size() > 0) {
+					for (ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
+						if (chatHistoryEntity.getChroomname().equals(chatRoomDTO.getRoomname())) {
 							ChatHistoryDTO chatHistoryDTO = ChatHistoryDTO.builder()
 									.chno(chatHistoryEntity.getChno())
 									.chcontents(chatHistoryEntity.getChcontents())
@@ -153,6 +165,8 @@ public class ChatService {
 							chatHistoryDTOS.add(chatHistoryDTO);
 						}
 					}
+				}
+				if(chatHistoryDTOS.size() > 0) {
 					Comparator<ChatHistoryDTO> listSort = new Comparator<ChatHistoryDTO>() {
 						@Override
 						public int compare(ChatHistoryDTO o1, ChatHistoryDTO o2) {

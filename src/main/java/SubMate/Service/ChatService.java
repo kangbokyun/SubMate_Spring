@@ -31,7 +31,6 @@ public class ChatService {
 		System.out.println("@@@@@@@@@@@@@@\nchatCallDTO : " + chatCallDTO);
 		List<ChatCallEntity> chatCallEntities = chatCallRepository.findAll();
 		if(chatCallDTO != null) {
-			System.out.println("1" + chatCallEntities.size());
 			if(chatCallEntities.size() == 0) {
 				ChatCallEntity chatCallEntity2 = ChatCallEntity.builder()
 						.callreceiverno(chatCallDTO.getCallreceiverno()).callsenderno(chatCallDTO.getCallsenderno())
@@ -40,9 +39,7 @@ public class ChatService {
 				return true;
 			} else {
 				for (ChatCallEntity chatCallEntity : chatCallEntities) {
-					System.out.println("2");
 					if (!(chatCallEntity.getCallreceiverno() == chatCallDTO.getCallreceiverno() && chatCallEntity.getCallsenderno() == chatCallDTO.getCallsenderno())) {
-						System.out.println("3");
 						ChatCallEntity chatCallEntity2 = ChatCallEntity.builder()
 								.callreceiverno(chatCallDTO.getCallreceiverno()).callsenderno(chatCallDTO.getCallsenderno())
 								.build();

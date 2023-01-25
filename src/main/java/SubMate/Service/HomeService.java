@@ -51,9 +51,6 @@ public class HomeService {
                                         sureMap.put(Integer.parseInt(heartDTO.getUserno()), 1);
                                 }
                         }
-//                        if(sureMap.size() > 5) {
-//                                break;
-//                        }
                 }
 
                 int n = 0;

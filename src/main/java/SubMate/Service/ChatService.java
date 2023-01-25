@@ -66,10 +66,10 @@ public class ChatService {
 
 	public boolean CreateChatRoom(ChatRoomDTO chatRoomDTO) {
 		if(chatRoomDTO != null) {
-			List<ChatRoomEntity> chatRoomEntities = chatRoomRepository.findAll();
-			for(ChatRoomEntity chatRoomEntity : chatRoomEntities) {
-				if(chatRoomEntity.getReceivername().equals(chatRoomEntity.getReceivername()) && chatRoomEntity.getReceiverno() == chatRoomDTO.getReceiverno() && chatRoomEntity.getSenderno() == chatRoomDTO.getSenderno() && chatRoomEntity.getSendername().equals(chatRoomDTO.getSendername())) {
-					chatRoomRepository.delete(chatRoomEntity);
+			List<ChatCallEntity> chatCallEntities = chatCallRepository.findAll();
+			for(ChatCallEntity chatCallEntity : chatCallEntities) {
+				if(Integer.parseInt(chatCallEntity.getCallsenderno()) == chatRoomDTO.getSenderno() && Integer.parseInt(chatCallEntity.getCallreceiverno()) == chatRoomDTO.getReceiverno()) {
+					chatCallRepository.delete(chatCallEntity);
 				}
 			}
 			MemberEntity memberEntity1 = memberRepository.findById(chatRoomDTO.getSenderno()).get();
@@ -141,7 +141,7 @@ public class ChatService {
 						chatRoomDTO.setRimg(memberEntity.getProfileimg().split("MemberImg/")[1]);
 					}
 				}
-				if(chatHistoryDTOS != null || chatHistoryDTOS.size() != 0) {
+				if(chatHistoryDTOS != null && chatHistoryDTOS.size() > 0) {
 					for(ChatHistoryEntity chatHistoryEntity : chatHistoryEntities) {
 						if(chatHistoryEntity.getChroomname().equals(chatRoomDTO.getRoomname())) {
 							ChatHistoryDTO chatHistoryDTO = ChatHistoryDTO.builder()

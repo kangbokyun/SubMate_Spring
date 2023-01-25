@@ -29,8 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 기반이 아님을 선언
 			.and()
 			.authorizeRequests() // Matchers에 명시된 도메인은 인증 불필요
+			.antMatchers("/AdminMain").hasRole("ADMIN")
 			.antMatchers("/Auth/SignUp", "/Auth/SignUpNoImg", "/Auth/Login", "/Auth/KakaoLogin", "/ws/**").permitAll()
-//                .antMatchers("/user/**").hasRole("ADMIN")
 			.anyRequest() // Matchers에 명시된 도메인 말고는 인증 필요
 			.authenticated();
 		// filter 등록

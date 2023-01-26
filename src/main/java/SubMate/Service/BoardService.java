@@ -288,12 +288,13 @@ public class BoardService {
 
 			List<HeartEntity> heartEntities = heartRepository.findAll();
 			for(HeartEntity heartEntity : heartEntities) {
-				if(heartEntity.getUserno() == null && heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "") &&
-					heartEntity.getBno().equals(entity.getBno() + "") && heartEntity.getRno().equals("null") && heartEntity.getHtype().equals("1")) {
+				if(mno == Integer.parseInt(heartEntity.getMno()) && Integer.parseInt(heartEntity.getHtype()) == 1 && heartEntity.getUserno() == null && heartEntity.getMno().equals(entity.getMemberEntity().getMno() + "")) {
 					boardDTO.setHeart("1");
 					boardDTO.setHrno(heartEntity.getRno());
 				}
 			}
+
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> " + boardDTO);
 
 			List<ReportEntity> reportEntities = reportRepository.findAll();
 			for(ReportEntity reportEntity : reportEntities) {

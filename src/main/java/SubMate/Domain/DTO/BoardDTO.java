@@ -23,4 +23,5 @@ public class BoardDTO {
 	private String pmdivision; // 페이징 처리를 위한 PC인지 모바일인지 체크
 	private String createdDate; // 글 작성시간
 	private String mno; // 글 작성자 번호
+	private String writerimg;
 }

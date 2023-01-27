@@ -40,8 +40,8 @@ public class BoardService {
 							UUID uuid = UUID.randomUUID();
 							uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-//							String filePath = "C:/Users/bk940/SubMate_React/src/BoardImg";
-							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
+							String filePath = "C:/Users/bk940/SubMate_React/src/BoardImg";
+//							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
 							String fileDir = filePath + "/" + uuidFile;
 							boardDTO.setBimg(fileDir);
 
@@ -276,6 +276,7 @@ public class BoardService {
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		List<BoardDTO> infinityScroll = new ArrayList<>();
 		for(BoardEntity entity : boardList) {
+			MemberEntity memberEntity = memberRepository.findById(entity.getMemberEntity().getMno()).get();
 			BoardDTO boardDTO = new BoardDTO();
 			boardDTO.setBno(entity.getBno());
 			boardDTO.setBtitle(entity.getBtitle());
@@ -285,6 +286,8 @@ public class BoardService {
 			boardDTO.setBecho(entity.getBecho());
 			boardDTO.setBechotimer(entity.getBechotimer());
 			boardDTO.setHtype("1");
+			boardDTO.setWriterimg(memberEntity.getProfileimg().split("/MemberImg/")[1]);
+			System.out.println("memberEntity.getProfileimg().split(\"/MemberImg/\")[1] : " + memberEntity.getProfileimg().split("/MemberImg/")[1]);
 
 			List<HeartEntity> heartEntities = heartRepository.findAll();
 			for(HeartEntity heartEntity : heartEntities) {

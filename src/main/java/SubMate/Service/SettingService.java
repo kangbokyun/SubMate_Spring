@@ -31,7 +31,7 @@ public class SettingService {
 	@Autowired
 	ProfileTalkRepository profileTalkRepository;
 
-	public void SubStation() {
+	public boolean SubStation() {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
 		System.out.println(subWayEntities.size());
 		if(subWayEntities.size() == 0) {
@@ -40,8 +40,8 @@ public class SettingService {
 
 			try {
 				// 파일 읽기
-				Reader reader = new FileReader("C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Data/TrainData.json");
-//				Reader reader = new FileReader("C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Data/TrainData.json");
+//				Reader reader = new FileReader("C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Data/TrainData.json");
+				Reader reader = new FileReader("C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Data/TrainData.json");
 				JSONArray jsonArray = (JSONArray) jsonParser.parse(reader);
 
 				for(int i = 0; i < jsonArray.size(); i++) {
@@ -76,13 +76,16 @@ public class SettingService {
 						.sline(trainLine).scode(trainCode).slat(trainLat).slng(trainLng).sname(trainName).build();
 					subWayRepository.save(subWayEntity);
 				}
+				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
+				return false;
 			}
 		}
+		return true;
 	}
 
-	public boolean SearchStation(MateDTO mateDTO) { // 지하철 역 경로 찾는 로직 수정해야 됨
+	public boolean SearchStation(MateDTO mateDTO) { // 지하철 역 경로 찾는 로직 및 데이터 수정해야 됨
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
 		List<SubWayDTO> subWayStartLine = new ArrayList<>();
 		List<SubWayDTO> subWayEndLine = new ArrayList<>();

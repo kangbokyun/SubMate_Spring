@@ -40,8 +40,8 @@ public class SettingService {
 
 			try {
 				// 파일 읽기
-				Reader reader = new FileReader("C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Data/TrainData.json");
-//				Reader reader = new FileReader("C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Data/TrainData.json");
+//				Reader reader = new FileReader("C:/Users/강보균/Desktop/SubMate_Spring/src/main/resources/Data/TrainData.json");
+				Reader reader = new FileReader("C:/Users/bk940/IdeaProjects/SubMate_Spring/src/main/resources/Data/TrainData.json");
 				JSONArray jsonArray = (JSONArray) jsonParser.parse(reader);
 
 				for(int i = 0; i < jsonArray.size(); i++) {

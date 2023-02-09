@@ -40,8 +40,8 @@ public class BoardService {
 							UUID uuid = UUID.randomUUID();
 							uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replace("_", "-");
 
-//							String filePath = "C:/Users/bk940/SubMate_React/src/BoardImg";
-							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
+							String filePath = "C:/Users/bk940/SubMate_React/src/BoardImg";
+//							String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/BoardImg";
 							String fileDir = filePath + "/" + uuidFile;
 							boardDTO.setBimg(fileDir);
 
@@ -438,6 +438,18 @@ public class BoardService {
 		Collections.sort(boardDTOS, listSort);
 
 		return boardDTOS;
+	}
+
+	// Infinity Scroll BoardList
+	public List<BoardDTO> IsBoardList(int mno, int page) {
+		List<BoardDTO> boardDTOS = new ArrayList<>();
+		List<BoardEntity> boardEntities = null;
+		if(page == 0) {
+			BoardEntity boardEntity = boardRepository.findAll().get(10);
+			boardEntities.add(boardEntity);
+		}
+		System.out.println("boardEntities : " + boardEntities);
+		return null;
 	}
 
 	// 댓글 등록하기

@@ -441,15 +441,43 @@ public class BoardService {
 	}
 
 	// Infinity Scroll BoardList
-	public List<BoardDTO> IsBoardList(int mno, int page) {
+	public List<BoardDTO> IsBoardList(int mno, int page, int lastno) {
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		List<BoardEntity> boardEntities = null;
 		if(page == 0) {
-			BoardEntity boardEntity = boardRepository.findAll().get(10);
-			boardEntities.add(boardEntity);
+			boardEntities = boardRepository.findTop12ByOrderByBnoDesc();
+			for(BoardEntity boardEntity : boardEntities) {
+				BoardDTO boardDTO = BoardDTO.builder()
+						.bno(boardEntity.getBno())
+						.mno(Integer.toString(boardEntity.getMemberEntity().getMno()))
+						.bview(boardEntity.getBview())
+						.bimg(boardEntity.getBimg().split("BoardImg/")[1])
+						.bcontents(boardEntity.getBcontents())
+						.becho(boardEntity.getBecho())
+						.bechotimer(boardEntity.getBechotimer())
+						.bwriter(boardEntity.getBwriter())
+						.btitle(boardEntity.getBtitle())
+						.build();
+				boardDTOS.add(boardDTO);
+			}
+		} else {
+			boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 6, lastno - 1);
+			for(BoardEntity boardEntity : boardEntities) {
+				BoardDTO boardDTO = BoardDTO.builder()
+						.bno(boardEntity.getBno())
+						.mno(Integer.toString(boardEntity.getMemberEntity().getMno()))
+						.bview(boardEntity.getBview())
+						.bimg(boardEntity.getBimg().split("BoardImg/")[1])
+						.bcontents(boardEntity.getBcontents())
+						.becho(boardEntity.getBecho())
+						.bechotimer(boardEntity.getBechotimer())
+						.bwriter(boardEntity.getBwriter())
+						.btitle(boardEntity.getBtitle())
+						.build();
+				boardDTOS.add(boardDTO);
+			}
 		}
-		System.out.println("boardEntities : " + boardEntities);
-		return null;
+		return boardDTOS;
 	}
 
 	// 댓글 등록하기

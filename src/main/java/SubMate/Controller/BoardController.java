@@ -54,9 +54,9 @@ public class BoardController {
 	}
 
 	@PostMapping("/Board/BoardList") // 글 목록
-	public ResponseEntity<?> BoardList(@RequestParam("mno") int mno) {
-		List<BoardDTO> boardDTOS = boardService.BoardList(mno);
-		boardService.IsBoardList(1, 0);
+	public ResponseEntity<?> BoardList(@RequestParam("mno") int mno, @RequestParam("page") int page, @RequestParam("lastno") int lastno) {
+//		List<BoardDTO> boardDTOS = boardService.BoardList(mno);
+		List<BoardDTO> boardDTOS = boardService.IsBoardList(mno, page, lastno);
 		if(boardDTOS != null) {
 			return ResponseEntity.ok().body(boardDTOS);
 		} else {

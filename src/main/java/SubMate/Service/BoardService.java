@@ -444,7 +444,7 @@ public class BoardService {
 	public List<BoardDTO> IsBoardList(int mno, int page, int lastno) {
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		List<BoardEntity> boardEntities = null;
-		if(page == 0) {
+		if(page == 0 && lastno == 0) {
 			boardEntities = boardRepository.findTop12ByOrderByBnoDesc();
 			for(BoardEntity boardEntity : boardEntities) {
 				BoardDTO boardDTO = BoardDTO.builder()

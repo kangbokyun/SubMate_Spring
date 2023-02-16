@@ -1,9 +1,6 @@
 package SubMate.Controller;
 
-import SubMate.Domain.DTO.BoardDTO;
-import SubMate.Domain.DTO.HeartDTO;
-import SubMate.Domain.DTO.ReplyDTO;
-import SubMate.Domain.DTO.ReportDTO;
+import SubMate.Domain.DTO.*;
 import SubMate.Domain.Entity.BoardEntity;
 import SubMate.Domain.Entity.HeartEntity;
 import SubMate.Service.BoardService;
@@ -56,14 +53,21 @@ public class BoardController {
 	@PostMapping("/Board/BoardList") // 글 목록
 	public ResponseEntity<?> BoardList(@RequestParam("mno") int mno, @RequestParam("page") int page, @RequestParam("lastno") int lastno) {
 		System.out.println("mno : " + mno + " page : " + page + " lastno : " + lastno);
-		List<BoardDTO> boardDTOS = boardService.BoardList(mno, page, lastno);
-//		List<BoardDTO> boardDTOS = boardService.IsBoardList(mno, page, lastno);
+//		List<BoardDTO> boardDTOS = boardService.BoardList(mno, page, lastno);
+		List<BoardDTO> boardDTOS = boardService.IsBoardList(mno, page, lastno);
 		if(boardDTOS != null) {
 			return ResponseEntity.ok().body(boardDTOS);
 		} else {
 			boardDTOS = null;
 			return ResponseEntity.ok().body(boardDTOS);
 		}
+	}
+
+	@PostMapping("/BoardListPaging")
+	public ResponseEntity<?> BoardListPaging() {
+		System.out.println("BoardListPaging");
+		List<PagingDTO> pagingDTOS = boardService.BoardListPaging();
+		return ResponseEntity.ok().body(pagingDTOS);
 	}
 
 	@PostMapping("/Board/ReplyWrite") // 댓글 쓰기

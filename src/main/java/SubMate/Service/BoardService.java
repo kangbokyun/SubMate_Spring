@@ -1,9 +1,6 @@
 package SubMate.Service;
 
-import SubMate.Domain.DTO.BoardDTO;
-import SubMate.Domain.DTO.HeartDTO;
-import SubMate.Domain.DTO.ReplyDTO;
-import SubMate.Domain.DTO.ReportDTO;
+import SubMate.Domain.DTO.*;
 import SubMate.Domain.Entity.*;
 import SubMate.Domain.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -447,11 +444,12 @@ public class BoardService {
 	// Infinity Scroll BoardList
 	public List<BoardDTO> IsBoardList(int mno, int page, int lastno) {
 		List<BoardDTO> boardDTOS = new ArrayList<>();
+		List<BoardEntity> boardList = boardRepository.findAll();
 		List<BoardEntity> boardEntities = null;
 		if(page == 0 && lastno == 0) {
-			boardEntities = boardRepository.findTop12ByOrderByBnoDesc();
+			boardEntities = boardRepository.findTop10ByOrderByBnoDesc();
 		} else {
-			boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 6, lastno - 1);
+			boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 10, lastno - 1);
 		}
 		for(BoardEntity boardEntity : boardEntities) {
 			BoardDTO boardDTO = BoardDTO.builder()
@@ -468,6 +466,17 @@ public class BoardService {
 			boardDTOS.add(boardDTO);
 		}
 		return boardDTOS;
+	}
+
+	// 페이징 갯수
+	public List<PagingDTO> BoardListPaging() {
+		List<BoardEntity> boardList = boardRepository.findAll();
+		List<PagingDTO> pagingDTOS = new ArrayList<>();
+		for(int i = 1; i <= boardList.size() / 10; i++) {
+			PagingDTO pagingDTO = PagingDTO.builder().pageno(i).build();
+			pagingDTOS.add(pagingDTO);
+		}
+		return pagingDTOS;
 	}
 
 	// 댓글 등록하기

@@ -271,10 +271,14 @@ public class BoardService {
 //	}
 
 	// 모든 게시글 가져오기
-	public List<BoardDTO> BoardList(int mno) {
-		List<BoardEntity> boardList = boardRepository.findAll();
+	public List<BoardDTO> BoardList(int mno, int page, int lastno) {
+		List<BoardEntity> boardList;
 		List<BoardDTO> boardDTOS = new ArrayList<>();
-		List<BoardDTO> infinityScroll = new ArrayList<>();
+		if(page == 0 && lastno == 0) {
+			boardList = boardRepository.findTop12ByOrderByBnoDesc();
+		} else {
+			boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 6, lastno - 1);
+		}
 		for(BoardEntity entity : boardList) {
 			MemberEntity memberEntity = memberRepository.findById(entity.getMemberEntity().getMno()).get();
 			BoardDTO boardDTO = new BoardDTO();
@@ -446,36 +450,22 @@ public class BoardService {
 		List<BoardEntity> boardEntities = null;
 		if(page == 0 && lastno == 0) {
 			boardEntities = boardRepository.findTop12ByOrderByBnoDesc();
-			for(BoardEntity boardEntity : boardEntities) {
-				BoardDTO boardDTO = BoardDTO.builder()
-						.bno(boardEntity.getBno())
-						.mno(Integer.toString(boardEntity.getMemberEntity().getMno()))
-						.bview(boardEntity.getBview())
-						.bimg(boardEntity.getBimg().split("BoardImg/")[1])
-						.bcontents(boardEntity.getBcontents())
-						.becho(boardEntity.getBecho())
-						.bechotimer(boardEntity.getBechotimer())
-						.bwriter(boardEntity.getBwriter())
-						.btitle(boardEntity.getBtitle())
-						.build();
-				boardDTOS.add(boardDTO);
-			}
 		} else {
 			boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 6, lastno - 1);
-			for(BoardEntity boardEntity : boardEntities) {
-				BoardDTO boardDTO = BoardDTO.builder()
-						.bno(boardEntity.getBno())
-						.mno(Integer.toString(boardEntity.getMemberEntity().getMno()))
-						.bview(boardEntity.getBview())
-						.bimg(boardEntity.getBimg().split("BoardImg/")[1])
-						.bcontents(boardEntity.getBcontents())
-						.becho(boardEntity.getBecho())
-						.bechotimer(boardEntity.getBechotimer())
-						.bwriter(boardEntity.getBwriter())
-						.btitle(boardEntity.getBtitle())
-						.build();
-				boardDTOS.add(boardDTO);
-			}
+		}
+		for(BoardEntity boardEntity : boardEntities) {
+			BoardDTO boardDTO = BoardDTO.builder()
+					.bno(boardEntity.getBno())
+					.mno(Integer.toString(boardEntity.getMemberEntity().getMno()))
+					.bview(boardEntity.getBview())
+					.bimg(boardEntity.getBimg().split("BoardImg/")[1])
+					.bcontents(boardEntity.getBcontents())
+					.becho(boardEntity.getBecho())
+					.bechotimer(boardEntity.getBechotimer())
+					.bwriter(boardEntity.getBwriter())
+					.btitle(boardEntity.getBtitle())
+					.build();
+			boardDTOS.add(boardDTO);
 		}
 		return boardDTOS;
 	}

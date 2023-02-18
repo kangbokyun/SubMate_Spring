@@ -446,10 +446,11 @@ public class BoardService {
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		List<BoardEntity> boardList = boardRepository.findAll();
 		List<BoardEntity> boardEntities = null;
-		if(page == 0 && lastno == 0) {
+		if(page == 1) {
 			boardEntities = boardRepository.findTop10ByOrderByBnoDesc();
 		} else {
 			boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 10, lastno - 1);
+			System.out.println("boardEntities : " + boardEntities);
 		}
 		for(BoardEntity boardEntity : boardEntities) {
 			BoardDTO boardDTO = BoardDTO.builder()
@@ -472,7 +473,7 @@ public class BoardService {
 	public List<PagingDTO> BoardListPaging() {
 		List<BoardEntity> boardList = boardRepository.findAll();
 		List<PagingDTO> pagingDTOS = new ArrayList<>();
-		for(int i = 1; i <= boardList.size() / 10; i++) {
+		for(int i = 1; i <= (boardList.size() / 10) + 1; i++) {
 			PagingDTO pagingDTO = PagingDTO.builder().pageno(i).build();
 			pagingDTOS.add(pagingDTO);
 		}

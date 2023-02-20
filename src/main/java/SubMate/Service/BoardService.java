@@ -442,15 +442,23 @@ public class BoardService {
 	}
 
 	// Infinity Scroll BoardList
-	public List<BoardDTO> IsBoardList(int mno, int page, int lastno) {
+	public List<BoardDTO> IsBoardList(int mno, int page, int lastno, String status) {
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		List<BoardEntity> boardList = boardRepository.findAll();
 		List<BoardEntity> boardEntities = null;
-		if(page == 1) {
+		if(page == 1 && lastno == 0) {
 			boardEntities = boardRepository.findTop10ByOrderByBnoDesc();
 		} else {
-			boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 10, lastno - 1);
-			System.out.println("boardEntities : " + boardEntities);
+			if(status.equals("prev")) {
+				boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno + 10, lastno + 20);
+				System.out.println("prevBoardEntities : " + boardEntities);
+			} else if(status.equals("next")) {
+				boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 10, lastno - 1);
+				System.out.println("nextBoardEntities : " + boardEntities);
+			} else {
+				boardEntities = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - ((page * 10) - 1), lastno - ((page * 10) - 10));
+				System.out.println("nullBoardEntities : " + boardEntities);
+			}
 		}
 		for(BoardEntity boardEntity : boardEntities) {
 			BoardDTO boardDTO = BoardDTO.builder()

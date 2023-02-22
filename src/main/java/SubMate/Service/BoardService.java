@@ -268,13 +268,40 @@ public class BoardService {
 //	}
 
 	// 모든 게시글 가져오기
-	public List<BoardDTO> BoardList(int mno, int page, int lastno) {
+	public List<BoardDTO> BoardList(int mno, int page, int lastno, String status, String device) {
+		if(device.equals("pc") && status.equals("prev")) { page--; } else if(device.equals("pc") && status.equals("next")) { page++; }
 		List<BoardEntity> boardList;
 		List<BoardDTO> boardDTOS = new ArrayList<>();
-		if(page == 0 && lastno == 0) {
-			boardList = boardRepository.findTop12ByOrderByBnoDesc();
+		if(device.equals("mobile")) {
+			System.out.println("mobile Init");
+			if (page == 0 && lastno == 0) {
+				boardList = boardRepository.findTop12ByOrderByBnoDesc();
+			} else {
+				boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 6, lastno - 1);
+			}
 		} else {
-			boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 6, lastno - 1);
+			System.out.println("pc Init");
+			List<BoardEntity> boardEntities = null;
+			boardEntities = boardRepository.findAll();
+			if(page == 1 && lastno == 0) {
+				boardList = boardRepository.findTop10ByOrderByBnoDesc();
+			} else {
+				if(status.equals("prev")) {
+					if(page == (boardEntities.size() / 10)) {
+						boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno + 1, lastno + 10);
+						System.out.println("lastno: " + lastno);
+					} else {
+						boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno + 10, lastno + 19);
+						System.out.println("prevBoardEntities : " + boardEntities);
+					}
+				} else if(status.equals("next")) {
+					boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 10, lastno - 1);
+					System.out.println("nextBoardEntities : " + boardEntities);
+				} else {
+					boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - ((page * 10) - 1), lastno - ((page * 10) - 10));
+					System.out.println("nullBoardEntities : " + boardEntities);
+				}
+			}
 		}
 		for(BoardEntity entity : boardList) {
 			MemberEntity memberEntity = memberRepository.findById(entity.getMemberEntity().getMno()).get();
@@ -298,7 +325,6 @@ public class BoardService {
 				}
 			}
 
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> " + boardDTO);
 
 			List<ReportEntity> reportEntities = reportRepository.findAll();
 			for(ReportEntity reportEntity : reportEntities) {
@@ -442,8 +468,8 @@ public class BoardService {
 	}
 
 	// Infinity Scroll BoardList
-	public List<BoardDTO> IsBoardList(int mno, int page, int lastno, String status) {
-		if(status.equals("prev")) { page--; } else if(status.equals("next")) { page++; }
+	public List<BoardDTO> IsBoardList(int mno, int page, int lastno, String status, String device) {
+
 		List<BoardDTO> boardDTOS = new ArrayList<>();
 		List<BoardEntity> boardList = boardRepository.findAll();
 //		System.out.println("boardList.size() / 10 :" + boardList.size() / 10);

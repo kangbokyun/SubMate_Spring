@@ -297,6 +297,10 @@ public class BoardService {
 				} else if(status.equals("backPage")) {
 					boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 9, lastno);
 					System.out.println("nextBoardEntities : " + boardEntities);
+				} else if(status.equals("returnPage")) {
+					System.out.println("page : " + page + " lastno : " + lastno + " status : " + status + " device : " + device);
+					boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 10, lastno - 1);
+					System.out.println("nextBoardEntities : " + boardEntities);
 				} else if(status.equals("next")) {
 					boardList = boardRepository.findByBnoBetweenOrderByBnoDesc(lastno - 10, lastno - 1);
 					System.out.println("nextBoardEntities : " + boardEntities);

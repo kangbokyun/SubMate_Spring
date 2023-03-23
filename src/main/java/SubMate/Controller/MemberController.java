@@ -63,8 +63,10 @@ public class MemberController {
 	public ResponseEntity<?> Login(@RequestBody MemberDTO memberDTO) {
 		MemberEntity user = memberService.Login(memberDTO.getMid(), memberDTO.getMpw());
 		try {
+			System.out.println("1");
 			// user 정보 받아오고 롤이 NOTUSER가 아니면 토큰 생성
 			if (user != null && user.getRole() != Role.NOTUSER) {
+			System.out.println("2");
 				String jwtToken = tokenProvider.create(user);
 				MemberDTO memberDTO1 = MemberDTO.builder().mno(user.getMno()).mid(user.getMid())
 					.mname(user.getMname()).maddress(user.getMaddress()).profileimg(user.getProfileimg())
@@ -72,16 +74,20 @@ public class MemberController {
 					.mager(user.getMager()).mbirth(user.getMbirth()).mhobby(user.getMhobby()).mbti(user.getMbti())
 					.token(jwtToken).mrole(user.getRole()).createddate(user.getCreateDate()).mbti(user.getMbti()).mgender(user.getMgender())
 					.build();
+			System.out.println("3");
 				return ResponseEntity.ok().body(memberDTO1);
 			} else if(user == null) {
+			System.out.println("4");
 //				System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@user : " + user);
 				ResponseDTO responseDTO = ResponseDTO.builder().error("Login Failed").build();
 				return ResponseEntity.badRequest().body(responseDTO);
 			} else {
+			System.out.println("5");
 				ResponseDTO responseDTO = ResponseDTO.builder().error("NOTUSER").build();
 				return ResponseEntity.badRequest().body(responseDTO);
 			}
 		} catch (Exception e) {
+			System.out.println("6");
 			ResponseDTO responseDTO = ResponseDTO.builder().error("Login Failed").build();
 			return ResponseEntity.badRequest().body(responseDTO);
 		}

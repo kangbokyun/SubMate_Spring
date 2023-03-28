@@ -285,8 +285,7 @@ public class BoardService {
 					boardList = boardRepository.findTop12ByOrderByBnoDesc();
 				} else {
 					int temp = 0;
-					temp = ((page) * 5) + 12;
-					System.out.println(">>>>>>>>>>>>>>>>>>>\n" + (lastno - temp) + "\n<<<<<<<<<<<<<<<<<<");
+					temp = (page * 5) + 12;
 					boardList = boardRepository.findByBnoBetweenOrderByBnoDesc((lastno - temp), lastno);
 				}
 				System.out.println("page : " + page + " lastno : " + lastno + " status : " + status + " device : " + device);

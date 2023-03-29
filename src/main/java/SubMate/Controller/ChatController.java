@@ -48,6 +48,7 @@ public class ChatController {
 
 	@PostMapping("/ChatCall")
 	public ResponseEntity<?> ChatCall(@RequestParam("receivermno") int receivermno, @RequestParam("sendermno") int sendermno) {
+		System.out.println("/ChatCall InIt");
 		ChatCallDTO chatCallDTO = ChatCallDTO.builder().callreceiverno(Integer.toString(receivermno)).callsenderno(Integer.toString(sendermno)).build();
 		boolean result = chatService.ChatCall(chatCallDTO);
 		if(result) {

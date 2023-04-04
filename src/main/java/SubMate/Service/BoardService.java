@@ -737,4 +737,19 @@ public class BoardService {
 			return false;
 		}
 	}
+
+	public List<WritedDTO> WritedBoard(int mno) {
+		List<WritedDTO> writedDTOS = new ArrayList<>();
+		List<BoardEntity> boardEntities = boardRepository.findAll();
+		for(BoardEntity boardEntity : boardEntities) {
+			if(boardEntity.getMemberEntity().getMno() == mno) {
+				WritedDTO writedDTO = new WritedDTO();
+				writedDTO.setWname(boardEntity.getBtitle());
+				writedDTO.setWdate(boardEntity.getCreateDate().toString().split("T")[0]);
+				writedDTO.setWno(boardEntity.getBno());
+				writedDTOS.add(writedDTO);
+			}
+		}
+		return writedDTOS;
+	}
 }

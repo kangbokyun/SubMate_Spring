@@ -136,4 +136,11 @@ public class BoardController {
 		boolean result = boardService.BoardReport(reportDTO);
 		return ResponseEntity.ok().body(HttpStatus.OK);
 	}
+
+
+	@PostMapping("/MyInfo/WritedBoard")
+	public ResponseEntity<?> MyInfoWB(@RequestParam int mno) {
+		List<WritedDTO> writedDTOS = boardService.WritedBoard(mno);
+		return ResponseEntity.ok().body(writedDTOS);
+	}
 }

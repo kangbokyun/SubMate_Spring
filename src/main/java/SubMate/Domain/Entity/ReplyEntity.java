@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data @ToString @Builder
+@Data @ToString(exclude = { "boardReplyEntity" }) @Builder
 @Entity @Table(name = "reply")
 public class ReplyEntity extends BaseTimeEntity {
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

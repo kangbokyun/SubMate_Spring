@@ -117,12 +117,12 @@ public class BoardController {
 
 	@PostMapping("/Board/Report")
 	public ResponseEntity<?> BoardReport(
-					     @RequestParam("reportbno") int reportbno,
-					     @RequestParam("reportkind") int reportkind,
-					     @RequestParam("mno") int mno,
-					     @RequestParam("reportclickvalue") int clickvalue,
-					     @RequestParam("reportvalue") String reportvalue,
-					     @RequestParam("reportcontents") String reportcontents) {
+		@RequestParam("reportbno") int reportbno,
+		@RequestParam("reportkind") int reportkind,
+		@RequestParam("mno") int mno,
+		@RequestParam("reportclickvalue") int clickvalue,
+		@RequestParam("reportvalue") String reportvalue,
+		@RequestParam("reportcontents") String reportcontents) {
 		System.out.println("/Board/Report/Init");
 		System.out.println("reportvalue : " + reportvalue);
 		System.out.println("reportcontents : " + reportcontents);
@@ -137,10 +137,21 @@ public class BoardController {
 		return ResponseEntity.ok().body(HttpStatus.OK);
 	}
 
+      @PostMapping("/MyInfo/WritedBoard")
+     public ResponseEntity<?> MyInfoWB(@RequestParam int mno) {
+            List<WritedDTO> writedDTOS = boardService.WritedBoard(mno);
+            return ResponseEntity.ok().body(writedDTOS);
+     }
 
-	@PostMapping("/MyInfo/WritedBoard")
-	public ResponseEntity<?> MyInfoWB(@RequestParam int mno) {
-		List<WritedDTO> writedDTOS = boardService.WritedBoard(mno);
-		return ResponseEntity.ok().body(writedDTOS);
-	}
+     @PostMapping("/MyInfo/WritedReply")
+     public ResponseEntity<?> MyInfoWR(@RequestParam int mno) {
+            List<WritedDTO> writedDTOS = boardService.WritedReply(mno);
+            return ResponseEntity.ok().body(writedDTOS);
+     }
+
+     @PostMapping("/MyInfo/TakeHeart")
+     public ResponseEntity<?> TakeHeart(@RequestParam int mno) {
+            WritedDTO writedDTO = boardService.TakeHeart(mno);
+            return ResponseEntity.ok().body(writedDTO);
+     }
 }

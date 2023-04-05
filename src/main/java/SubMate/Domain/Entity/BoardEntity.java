@@ -8,7 +8,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data @Builder @ToString
+@Data @Builder @ToString(exclude = { "replyEntityList" })
 @Entity @Table(name = "board")
 public class BoardEntity extends BaseTimeEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)

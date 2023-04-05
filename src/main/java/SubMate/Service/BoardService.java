@@ -344,7 +344,7 @@ public class BoardService {
 			List<ReportEntity> reportEntities = reportRepository.findAll();
 			for(ReportEntity reportEntity : reportEntities) {
 				if(reportEntity != null && reportEntity.getMemberEntity().getMno() == entity.getMemberEntity().getMno()
-				&& reportEntity.getReportbno() == entity.getBno() && mno == reportEntity.getMemberEntity().getMno()) {
+					&& reportEntity.getReportbno() == entity.getBno() && mno == reportEntity.getMemberEntity().getMno()) {
 					System.out.println("reportEntity : " + reportEntity);
 				}
 			}
@@ -510,16 +510,16 @@ public class BoardService {
 		}
 		for(BoardEntity boardEntity : boardEntities) {
 			BoardDTO boardDTO = BoardDTO.builder()
-					.bno(boardEntity.getBno())
-					.mno(Integer.toString(boardEntity.getMemberEntity().getMno()))
-					.bview(boardEntity.getBview())
-					.bimg(boardEntity.getBimg().split("BoardImg/")[1])
-					.bcontents(boardEntity.getBcontents())
-					.becho(boardEntity.getBecho())
-					.bechotimer(boardEntity.getBechotimer())
-					.bwriter(boardEntity.getBwriter())
-					.btitle(boardEntity.getBtitle())
-					.build();
+				.bno(boardEntity.getBno())
+				.mno(Integer.toString(boardEntity.getMemberEntity().getMno()))
+				.bview(boardEntity.getBview())
+				.bimg(boardEntity.getBimg().split("BoardImg/")[1])
+				.bcontents(boardEntity.getBcontents())
+				.becho(boardEntity.getBecho())
+				.bechotimer(boardEntity.getBechotimer())
+				.bwriter(boardEntity.getBwriter())
+				.btitle(boardEntity.getBtitle())
+				.build();
 			boardDTOS.add(boardDTO);
 		}
 		return boardDTOS;
@@ -670,7 +670,7 @@ public class BoardService {
 			List<HeartEntity> heartEntity = heartRepository.findAll();
 			for(HeartEntity heartEntity1 : heartEntity) {
 				if(heartEntity1.getUserno() == null && heartEntity1.getBno().equals(heartDTO.getBno()) && heartEntity1.getHkind().equals("0")
-				&& heartEntity1.getHtype().equals(heartDTO.getHtype()) && heartEntity1.getMno().equals(heartDTO.getMno()) && heartEntity1.getRno().equals(heartDTO.getRno())) {
+					&& heartEntity1.getHtype().equals(heartDTO.getHtype()) && heartEntity1.getMno().equals(heartDTO.getMno()) && heartEntity1.getRno().equals(heartDTO.getRno())) {
 					heartRepository.delete(heartEntity1);
 				}
 			}
@@ -738,33 +738,56 @@ public class BoardService {
 		}
 	}
 
-	public List<WritedDTO> WritedBoard(int mno) {
-		List<WritedDTO> writedDTOS = new ArrayList<>();
-		List<BoardEntity> boardEntities = boardRepository.findAll();
-		List<HeartEntity> heartEntities = heartRepository.findAll();
-		List<ReplyEntity> replyEntities = replyRepository.findAll();
-		for(BoardEntity boardEntity : boardEntities) {
-			WritedDTO writedDTO = new WritedDTO();
-			if(boardEntity.getMemberEntity().getMno() == mno) {
-				writedDTO.setWname(boardEntity.getBtitle());
-				writedDTO.setWdate(boardEntity.getCreateDate().toString().split("T")[0]);
-				writedDTO.setWno(boardEntity.getBno());
-			}
-			for(HeartEntity heartEntity : heartEntities) {
-				if(Integer.parseInt(heartEntity.getUserno()) == mno) {
-					writedDTO.setHno(heartEntity.getUserno());
-					writedDTO.setHtype(heartEntity.getHtype());
-				}
-			}
-			for(ReplyEntity replyEntity : replyEntities) {
-				if(replyEntity.getMemberReplyEntity().getMno() == mno) {
-					writedDTO.setRcontents(replyEntity.getRcontents());
-				}
-			}
-			writedDTOS.add(writedDTO);
-		}
-		// htype
-		// 1 => 게시글 하트, 2=> 댓글 하트, 3 => 대댓글 하트, 4 => 유저 하트
-		return writedDTOS;
-	}
+      public List<WritedDTO> WritedBoard(int mno) {
+            List<WritedDTO> writedDTOS = new ArrayList<>();
+            List<BoardEntity> boardEntities = boardRepository.findAll();
+            List<HeartEntity> heartEntities = heartRepository.findAll();
+            List<ReplyEntity> replyEntities = replyRepository.findAll();
+            for(BoardEntity boardEntity : boardEntities) {
+                   WritedDTO writedDTO = new WritedDTO();
+                   if(boardEntity.getMemberEntity().getMno() == mno) {
+                          writedDTO.setWname(boardEntity.getBtitle());
+                          writedDTO.setWdate(boardEntity.getCreateDate().toString().split("T")[0]);
+                          writedDTO.setWno(boardEntity.getBno());
+                          writedDTOS.add(writedDTO);
+                   }
+            }
+            return writedDTOS;
+     }
+
+     public List<WritedDTO> WritedReply(int mno) {
+            List<WritedDTO> writedDTOS = new ArrayList<>();
+            List<ReplyEntity> replyEntities = replyRepository.findAll();
+            for(ReplyEntity replyEntity : replyEntities) {
+                   if(replyEntity.getMemberReplyEntity().getMno() == mno) {
+                          WritedDTO writedDTO = new WritedDTO();
+                          writedDTO.setRcontents(replyEntity.getRcontents());
+                          writedDTO.setRno(replyEntity.getRno());
+                          writedDTO.setWdate(replyEntity.getCreateDate().toString().split("T")[0]);
+                          writedDTOS.add(writedDTO);
+                   }
+            }
+            return writedDTOS;
+     }
+
+     public WritedDTO TakeHeart(int mno) {
+            WritedDTO writedDTO = new WritedDTO();
+            int mateH = 0; int boardH = 0; int replyH = 0; int rereplyH = 0;
+            List<HeartEntity> heartEntities = heartRepository.findAll();
+            for(HeartEntity heartEntity : heartEntities) {
+                   if(heartEntity.getUserno() != null && Integer.parseInt(heartEntity.getUserno()) == mno) {
+                          // htype
+                          // 1 => 게시글 하트, 2=> 댓글 하트, 3 => 대댓글 하트, 4 => 유저 하트
+                          if(Integer.parseInt(heartEntity.getHtype()) == 1) { boardH++; // 1 => 게시글 하트
+                          } else if(Integer.parseInt(heartEntity.getHtype()) == 2) { replyH++; // 2=> 댓글 하트
+                          } else if(Integer.parseInt(heartEntity.getHtype()) == 3) { rereplyH++; // 3 => 대댓글 하트
+                          } else if(Integer.parseInt(heartEntity.getHtype()) == 4) { mateH++; } // 4 => 유저 하트
+                   }
+            }
+	   writedDTO.setHtypeb(boardH + "");
+	   writedDTO.setHtyper(replyH + "");
+	   writedDTO.setHtyperr(rereplyH + "");
+	   writedDTO.setHtypem(mateH + "");
+           return writedDTO;
+     }
 }

@@ -741,15 +741,30 @@ public class BoardService {
 	public List<WritedDTO> WritedBoard(int mno) {
 		List<WritedDTO> writedDTOS = new ArrayList<>();
 		List<BoardEntity> boardEntities = boardRepository.findAll();
+		List<HeartEntity> heartEntities = heartRepository.findAll();
+		List<ReplyEntity> replyEntities = replyRepository.findAll();
 		for(BoardEntity boardEntity : boardEntities) {
+			WritedDTO writedDTO = new WritedDTO();
 			if(boardEntity.getMemberEntity().getMno() == mno) {
-				WritedDTO writedDTO = new WritedDTO();
 				writedDTO.setWname(boardEntity.getBtitle());
 				writedDTO.setWdate(boardEntity.getCreateDate().toString().split("T")[0]);
 				writedDTO.setWno(boardEntity.getBno());
-				writedDTOS.add(writedDTO);
 			}
+			for(HeartEntity heartEntity : heartEntities) {
+				if(Integer.parseInt(heartEntity.getUserno()) == mno) {
+					writedDTO.setHno(heartEntity.getUserno());
+					writedDTO.setHtype(heartEntity.getHtype());
+				}
+			}
+			for(ReplyEntity replyEntity : replyEntities) {
+				if(replyEntity.getMemberReplyEntity().getMno() == mno) {
+					writedDTO.setRcontents(replyEntity.getRcontents());
+				}
+			}
+			writedDTOS.add(writedDTO);
 		}
+		// htype
+		// 1 => 게시글 하트, 2=> 댓글 하트, 3 => 대댓글 하트, 4 => 유저 하트
 		return writedDTOS;
 	}
 }

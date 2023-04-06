@@ -154,4 +154,10 @@ public class BoardController {
             WritedDTO writedDTO = boardService.TakeHeart(mno);
             return ResponseEntity.ok().body(writedDTO);
      }
+
+	 @PostMapping("/ChangeMyInfo")
+	 public ResponseEntity<?> ChangeInfo(@RequestBody MemberDTO memberDTO) {
+		 System.out.println("memberDTO===============================\n" + memberDTO + "\n======================================================");
+		return ResponseEntity.ok().body(HttpStatus.OK);
+	 }
 }

@@ -157,7 +157,11 @@ public class BoardController {
 
 	 @PostMapping("/ChangeMyInfo")
 	 public ResponseEntity<?> ChangeInfo(@RequestBody MemberDTO memberDTO) {
-		 System.out.println("memberDTO===============================\n" + memberDTO + "\n======================================================");
-		return ResponseEntity.ok().body(HttpStatus.OK);
+		boolean result = boardService.ChangeMyInfo(memberDTO);
+		if(result) {
+			return ResponseEntity.ok().body(HttpStatus.OK);
+		} else {
+			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
+		}
 	 }
 }

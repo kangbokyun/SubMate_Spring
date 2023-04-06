@@ -790,4 +790,13 @@ public class BoardService {
 	   writedDTO.setHtypem(mateH + "");
            return writedDTO;
      }
+
+     public boolean ChangeMyInfo(MemberDTO memberDTO) {
+		MemberEntity memberEntity = memberRepository.findById(memberDTO.getMno()).get();
+		if(memberDTO.getMnickname() != null) { memberEntity.setMnickname(memberDTO.getMnickname()); memberRepository.save(memberEntity); }
+		if(memberDTO.getMphone() != null) { memberEntity.setMphone(memberDTO.getMphone()); memberRepository.save(memberEntity); }
+		if(memberDTO.getMbti() != null) { memberEntity.setMbti(memberDTO.getMbti()); memberRepository.save(memberEntity); }
+		if(memberDTO.getMaddress() != null) { memberEntity.setMaddress(memberDTO.getMaddress()); memberRepository.save(memberEntity); }
+		return true;
+     }
 }

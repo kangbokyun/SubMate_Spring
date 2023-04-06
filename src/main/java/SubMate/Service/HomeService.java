@@ -43,7 +43,10 @@ public class HomeService {
                 Map<Integer, Integer> sureMap = new HashMap<>();
                 for(int i = 0; i < heartEntities.size(); i++) {
                         MateEntity tempMate = mateRepository.findByMemberEntity_Mno(Integer.parseInt(heartEntities.get(i).getMno()));
-                        if(heartEntities.get(i).getUserno() != null && targetMateEntity.getMatestartstation().equals(tempMate.getMatestartstation())) {
+			System.out.println("targetMateEntity.getMatestartstation() : " +  targetMateEntity.getMatestartstation());
+			System.out.println("heartEntities.get(i).getUserno() : " + heartEntities.get(i).getUserno());
+			System.out.println("tempMate.getMatestartstation() : " + tempMate);
+                        if(heartEntities.get(i).getUserno() != null && tempMate != null &&  targetMateEntity.getMatestartstation().equals(tempMate.getMatestartstation())) {
                                 HeartDTO heartDTO = HeartDTO.builder().userno(heartEntities.get(i).getUserno()).mno(heartEntities.get(i).getMno()).build();
                                 if(sureMap.size() != 0 && sureMap.containsKey(Integer.parseInt(heartDTO.getUserno()))) {
                                         sureMap.put(Integer.parseInt(heartDTO.getUserno()), sureMap.get(Integer.parseInt(heartDTO.getUserno())) + 1);

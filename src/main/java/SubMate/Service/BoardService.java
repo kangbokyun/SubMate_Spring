@@ -799,4 +799,8 @@ public class BoardService {
 		if(memberDTO.getMaddress() != null) { memberEntity.setMaddress(memberDTO.getMaddress()); memberRepository.save(memberEntity); }
 		return true;
      }
+
+	 public boolean ChangeMyInfo_Img(File file) {
+		return true;
+	 }
 }

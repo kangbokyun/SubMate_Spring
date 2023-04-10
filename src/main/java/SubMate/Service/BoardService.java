@@ -800,7 +800,25 @@ public class BoardService {
 		return true;
      }
 
-	 public boolean ChangeMyInfo_Img(File file) {
-		return true;
-	 }
+		public MemberDTO ChangeMyInfo_Img(int mno, MultipartFile file) {
+			System.out.println("file.getName() : " + file.getOriginalFilename());
+			MemberEntity memberEntity = memberRepository.findById(mno).get();
+			MemberDTO memberDTO = new MemberDTO();
+			if(file != null && !file.getOriginalFilename().equals("")) {
+				UUID uuid = UUID.randomUUID();
+				String uuidFile = uuid.toString() + "_" + file.getOriginalFilename().replaceAll("-", "_");
+
+				String filePath = "C:/Users/bk940/SubMate_React/src/MemberImg";
+//				String filePath = "C:/Users/강보균/Desktop/SubMate_React/src/MemberImg";
+
+				String fileDirectory = filePath + "/" + uuidFile;
+				memberEntity.setProfileimg(fileDirectory);
+				memberRepository.save(memberEntity);
+				try { file.transferTo(new File(fileDirectory)); } catch(IOException e) { System.out.println(e.getMessage()); }
+				memberDTO.setProfileimg(memberEntity.getProfileimg());
+				return memberDTO;
+			} else {
+				return null;
+			}
+		}
 }

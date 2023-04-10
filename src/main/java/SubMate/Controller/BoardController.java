@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -163,5 +164,11 @@ public class BoardController {
 		} else {
 			return ResponseEntity.ok().body(HttpStatus.BAD_REQUEST);
 		}
+	 }
+
+	 @PostMapping("/ChangeMyInfoImg")
+	public ResponseEntity<?> ChangeMyInfoImg(@RequestParam("profileImg") MultipartFile file, @RequestParam("mno") int mno) {
+		MemberDTO memberDTO = boardService.ChangeMyInfo_Img(mno, file);
+		return ResponseEntity.ok().body(memberDTO);
 	 }
 }

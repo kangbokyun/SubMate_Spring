@@ -4,12 +4,17 @@ import SubMate.Domain.DTO.*;
 import SubMate.Domain.Entity.*;
 import SubMate.Domain.Repository.*;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URL;
 import java.util.*;
 
 @Service
@@ -33,7 +38,6 @@ public class SettingService {
 
 	public boolean SubStation() {
 		List<SubWayEntity> subWayEntities = subWayRepository.findAll();
-		System.out.println(subWayEntities.size());
 		if(subWayEntities.size() == 0) {
 			System.out.println("subWayEntities : " + subWayEntities);
 			JSONParser jsonParser = new JSONParser();
@@ -214,7 +218,6 @@ public class SettingService {
 			}
 
 			List<MateEntity> mateEntityCheck = mateRepository.findAll();
-			System.out.println(mateEntityCheck.size());
 			boolean flag = true;
 			if(mateEntityCheck.size() != 0) {
 				for(MateEntity mateEntity : mateEntityCheck) {
@@ -259,6 +262,82 @@ public class SettingService {
 			}
 		}
 		return false;
+	}
+
+	// OpenAPI 1 ~ 8 호선 역사 좌표
+	public void getTrainInfo() {
+		try {
+			List<SubWayDTO> subWayDTOS = new ArrayList<>();
+
+			for(int a = 0; a < 12; a++) {
+				String otherLines = "";
+				if(a == 0) { // 1호선
+					otherLines = "https://api.odcloud.kr/api/15041300/v1/uddi:90c8cf16-7bc9-42a4-a219-9a54f47768ed?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 1) { // 2호선
+					otherLines = "https://api.odcloud.kr/api/15041301/v1/uddi:3ecd8bc2-34ea-4860-a788-bf2578754ad9?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 2) { // 3호선
+					otherLines = "https://api.odcloud.kr/api/15041302/v1/uddi:e654fca8-d6d5-4977-bf0d-a4ebea52d5b6?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 3) { // 4호선
+					otherLines = "https://api.odcloud.kr/api/15041303/v1/uddi:c49053c3-6900-46c9-9615-cf5cc51c0dcc?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 4) { // 5호선
+					otherLines = "https://api.odcloud.kr/api/15041304/v1/uddi:8717c1fd-0d93-465e-93fb-f34dda9612d5?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 5) { // 6호선
+					otherLines = "https://api.odcloud.kr/api/15041305/v1/uddi:e405b333-40e8-44f3-b918-d0fd7e7dd7b4?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 6) { // 7호선
+					otherLines = "https://api.odcloud.kr/api/15041306/v1/uddi:25014d49-e302-4157-a95d-b09a383a4774?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 7) { // 8호선
+					otherLines = "https://api.odcloud.kr/api/15041334/v1/uddi:d7bacdad-8a49-4d47-8d96-b3a226db4efc?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 8) { // 9호선
+					otherLines = "https://api.odcloud.kr/api/15041335/v1/uddi:515ee279-c88f-47cc-9f94-a4dac970894c?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 9) { // 인천1호선
+					otherLines = "https://api.odcloud.kr/api/15041338/v1/uddi:a7d7eb6c-dd76-44ad-8132-a9c41880a9b0?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 10) { // 인천2호선
+					otherLines = "https://api.odcloud.kr/api/15041339/v1/uddi:f9119403-9bad-4a3e-94e0-dfaddfd48f36?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 11) { // 수인분당선
+					otherLines = "https://api.odcloud.kr/api/15041336/v1/uddi:97b7dfab-9734-4b79-8b18-e5ef46f2cc12?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				} else if(a == 12) { // 신분당선
+					otherLines = "https://api.odcloud.kr/api/15041334/v1/uddi:d7bacdad-8a49-4d47-8d96-b3a226db4efc?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
+				}
+				URL url = new URL(otherLines);
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+				String resultBuffer = bufferedReader.readLine();
+
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(resultBuffer);
+				JSONArray dataArray = (JSONArray) jsonObject.get("data");
+
+				jsonObject = (JSONObject) jsonParser.parse(resultBuffer);
+				dataArray = (JSONArray) jsonObject.get("data");
+				for(int i = 0; i < dataArray.size(); i++) {
+					SubWayDTO subWayDTO = new SubWayDTO();
+					subWayDTO.setSname(dataArray.get(i).toString().split("역명\":\"")[1].split("\",\"")[0]); // 역명
+					if(dataArray.get(i).toString().split("경도\":")[1].split(",\"")[0].equals("null")) {
+						for(int j = 0; j < subWayDTOS.size(); j++) {
+							if(subWayDTOS.get(j).getSname().equals(subWayDTO.getSname())) { subWayDTO.setSlng(subWayDTOS.get(j).getSlng()); break;
+							} else { subWayDTO.setSlng("0"); }
+						}
+					} else {
+						subWayDTO.setSlng(dataArray.get(i).toString().split("경도\":\"")[1].split("\",\"")[0]); // 경도
+					}
+					if(dataArray.get(i).toString().split("위도\":")[1].split(",\"")[0].equals("null")) {
+						for(int j = 0; j < subWayDTOS.size(); j++) {
+							if(subWayDTOS.get(j).getSname().equals(subWayDTO.getSname())) { subWayDTO.setSlat(subWayDTOS.get(j).getSlat()); break;
+							} else { subWayDTO.setSlat("0"); }
+						}
+					} else {
+						subWayDTO.setSlat(dataArray.get(i).toString().split("위도\":\"")[1].split("\",\"")[0]); // 위도
+					}
+					subWayDTO.setSline(dataArray.get(i).toString().split("선명\":\"")[1].split("\"}")[0]); // 호선
+					subWayDTOS.add(subWayDTO);
+					if(a == 8 && i == 28) { break; }
+				}
+			}
+
+			System.out.println("ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ\n" + subWayDTOS + "\nㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗ");
+			System.out.println("ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ\n" + subWayDTOS.size() + "\nㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗ");
+		} catch(Exception e) {
+			System.out.println("getTrainInfo_Exception : " + e.getMessage());
+		}
 	}
 
 	public List<MemberDTO> MateData(int mno) {

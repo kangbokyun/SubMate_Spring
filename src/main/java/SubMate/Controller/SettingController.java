@@ -72,7 +72,7 @@ public class SettingController {
             }
         }
 
-        @PostMapping("/Set/Customer/Tendinous")
+        @PostMapping("/Set/Customer/Tendinous") 
         public ResponseEntity<?> Tendinous(@RequestBody TendinousDTO tendinousDTO) {
             System.out.println("/Set/Customer/Tendinous/TendinousDTO" + tendinousDTO);
             boolean result = settingService.Tendinous(tendinousDTO);

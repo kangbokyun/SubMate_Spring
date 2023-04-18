@@ -266,27 +266,7 @@ public class SettingService {
 
 	// OpenAPI 1 ~ 8 호선 역사 좌표
 	public void getTrainInfo() {
-		String[] line1 = {"소요산", "동두천", "보산", "동두천중앙", "지행", "덕계", "양주", "녹양", "가능", "의정부", "회룡", "망월사", "도봉산", "도봉", "방학", "창동", "녹천", "월계", "광운대", "석계", "신이문", "외대앞", "회기", "청량리", "제기동", "신설동", "동묘앞", "동대문", "종로5가", "종로3가", "종각", "시청", "서울역", "남영", "용산", "노량진", "대방", "신길", "영등포", "신도림", "구로"};
-		String[] line1_1 = {"구로", "구일", "개봉", "오류동", "온수", "역곡", "소사", "부천", "중동", "송내", "부개", "부평", "백운", "동암", "간석", "주안", "도화", "제물포", "도원", "동인천", "인천"};
-		String[] line1_2 = {"구로", "가산디지털단지", "독산", "금천구청", "금천구청->광명", "석수", "관악", "안양", "명학", "금정", "군포", "당정", "의왕", "성균관대", "화서", "수원", "세류", "병점", "병점->서동탄", "세마", "오산대", "오산", "진위", "송탄", "서정리", "평택지제", "평택", "성환", "직산", "두정", "천안", "봉명", "쌍용", "아산", "탕정", "배방", "온양온천", "신창"};
-		String[] line2 = {"시청", "을지로입구", "을지로3가", "을지로4가", "동대문역사문화공원", "신당", "상왕십리", "왕십리", "한양대", "뚝섬", "성수", "건대입구", "구의", "강변", "잠실나루", "잠실", "신천", "종합운동장", "삼성", "선릉", "역삼", "강남", "교대", "서초", "방배", "사당", "낙성대", "서울대입구", "봉천", "신림", "신대방", "구로디지털단지", "대림", "신도림", "문래", "영등포구청", "당산" , "합정", "홍대입구", "신촌", "이대", "아현", "충정로", "시청"};
-		String[] line2_1 = {"신도림", "도림천", "양천구청", "신정네거리", "까치산"};
-		String[] line2_2 = {"성수", "용답", "신답", "용두", "신설동"};
-		String[] line3 = {"대화", "주엽", "정발산", "마두", "백석", "대곡", "화정", "원당", "삼송", "지축", "구파발", "연신내", "불광", "녹번", "홍제", "무악재", "독립문", "경복궁", "안국", "종로3가", "을지로3가", "충무로", "동대입구", "약수", "금호", "옥수", "압구정", "신사", "잠원", "고속터미널", "교대", "남부터미널", "양재", "매봉", "도곡", "대치", "학여울", "대청", "일원", "수서", "가락시장", "경찰병원", "오금"};
-		String[] line4 = {"당고개", "상계", "노원", "창동", "쌍문", "수유", "미아", "미아삼거리", "길음", "성신여대입구", "한성대입구", "혜화", "동대문", "동대문역사문화공원", "충무로", "명동", "회현", "서울역", "숙대입구", "삼각지", "신용산", "이촌", "동작", "이수","사당", "남태령", "경마공원", "과천", "정부과천청사", "인덕원", "평촌", "범계", "금정", "산본", "수리산", "대야미", "반월", "상록수", "한대앞", "중앙", "고잔", "공단", "안산", "신길온천", "정왕", "오이도"};
-		String[] line5 = {"방화역", "개화산역", "김포공항역", "송정역", "마곡역", "발산역", "우장산역", "화곡역", "까치산역", "신정역", "목동역", "오목교역", "양평역", "영등포구청역", "영등포시장역", "신길역", "여의도역", "여의나루역", "마포역", "공덕역", "애오개역", "충정로역", "서대문역", "광화문역", "종로3가역", "을지로4가역", "동대문역사문화공원역", "청구역", "신금호역", "행당역", "왕십리역", "마장역", "답십리역", "장한평역", "군자역", "아차산역", "광나루역", "천호역", "강동역"};
-		String[] line5_1 = {"강동역", "길동역", "굽은다리", "명일역", "고덕역", "상일동역"};
-		String[] line5_2 = {"강동역", "둔춘동역", "올림픽공원역", "방이역", "오금역", "개롱역", "거여역", "마천역"};
-		String[] line6 = {"응암", "새절", "증산", "디지털미디어시티", "월드컵경기장", "마포구청", "망원", "합정", "상수", "광흥창", "대흥", "공덕", "효창공원앞", "삼각지", "녹사평", "이태원", "한강진", "버티고개", "약수", "청구", "신당", "동묘앞", "창신", "보문", "안암", "고려대", "월곡", "상월곡", "돌곶이", "석계", "태릉입구", "화랑대", "봉화산"};
-		String[] line6_1 = {"응암", "역촌", "불광", "독바위", "연신내", "구산"};
-		String[] line7 = {"장암", "도봉산", "수락산", "마들", "노원", "중계", "하계", "공릉", "태릉입구", "먹골", "중화", "상봉", "면목", "사가정", "용마산", "중곡", "군자", "어린이대공원", "건대입구", "뚝섬유원지", "청담", "강남구청", "학동", "논현", "반포", "고속터미널", "내방", "이수", "남성", "숭실대입구", "상도", "장승배기", "신대방삼거리", "보라매", "신풍", "대림", "남구로", "가산디지털단지", "철산", "광명사거리", "천왕", "온수", "까치울", "부천종합운동장", "춘의", "신중동", "부천시청", "상동", "삼산체육관", "굴포천", "부평구청"};
-		String[] line8 = {"암사", "천호", "강동구청", "몽촌토성", "잠실", "석촌", "송파", "가락시장", "문정", "장지", "복정", "산성", "남한산성입구", "단대오거리", "신흥", "수진", "모란"};
-		String[] line9 = {"개화", "김포공항", "공항시장", "신방화", "양천향교", "가양", "증미", "등촌", "염창", "신목동", "선유도", "당산", "국회의사당", "여의도", "샛강", "노량진", "노들", "흑석", "동작", "구반포", "신반포", "고속터미널", "사평", "신논현", "언주", "선정릉", "삼성중앙", "봉은사", "종합운동장"};
-		String[] sinBundang = {"강남", "양재", "양재시민의숲", "청계산입구", "판교", "정자", "미금", "동천", "수지구청", "성복", "상현", "광교중앙", "광교"};
-		String[] suinBundang = {"청량리", "왕십리", "서울숲", "압구정로데오", "강남구청", "선정릉", "선릉", "한티", "도곡", "구룡", "개포동", "대모산입구", "복정", "가천대", "태평", "모란", "야탑", "이매", "서현", "수내", "정자", "미금", "오리", "죽전", "보정", "구성", "신갈", "기흥", "상갈", "청명", "영통", "망포", "매탄권선", "수원시청", "매교", "수원", "고색", "오목천", "어천", "야목", "사리", "한대앞", "중앙", "고잔", "초지", "안산", "신길온천", "정왕", "오이도", "달월", "월곶", "소래포구", "인천논현", "호구포", "남동인더스파크", "원인재", "연수", "송도", "인하대", "숭의", "신포", "인천"};
-		String[] incheonLine1 = {"국제업무지구", "센트럴파크", "인천대입구", "지식정보단지", "테크노파크", "캠퍼스타운", "동막", "동춘", "원인재", "신연수", "선학", "문학경기장", "인천터미널", "예술회관", "인천시청", "간석오거리", "부평삼거리", "동수", "부평", "부평시장", "부평구청", "갈산", "작전", "경인교대입구", "계산", "임학", "박촌", "귤현", "계양"};
-		String[] incheonLine2 = {"운연", "인천대공원", "남동구청", "만수", "모래내시장", "석천사거리", "인천시청", "석바위시장", "시민공원", "주안", "주안국가산단", "가재울", "인천가좌", "서부여성회관", "석남", "가정중앙시장", "가정", "서구청", "아시아드경기장", "검바위", "검암", "독정", "완정", "마전", "검단사거리", "왕길", "검단오류"};
-
+		System.out.println("SubWay.line1[0][1] : " + SubWay.line1[0][1]);
 		String[][] nullData = new String[][] {
 				// sname, slat, slng
 				{"도봉", "37.6795", "127.0456"}, {"보산", "37.6795", "127.0455"}, {"광운대", "37.6238", "127.0618"}, {"반월", "37.3123", "126.9037"},
@@ -295,10 +275,6 @@ public class SettingService {
 				{"산곡", "37.5086", "126.7035"}, {"석남", "37.5002", "126.6758"}, {"수내", "37.3785", "127.1143"}, {"구룡", "37.4869", "127.0595"},
 				{"상현", "37.2978", "127.0693"}, {"춘의", "37.5037", "126.0787"}
 		};
-
-		for(int i = 0; i < line1.length; i++) {
-			System.out.println(line1[i] + " " + i);
-		}
 
 		try {
 			List<SubWayDTO> subWayDTOS = new ArrayList<>();
@@ -323,20 +299,18 @@ public class SettingService {
 
 				jsonObject = (JSONObject) jsonParser.parse(resultBuffer);
 				dataArray = (JSONArray) jsonObject.get("data");
+				subWayDTOS.add(new SubWayDTO("", "2호선", "0234-04", "까치산", "126.8467", "37.5318")); // 공공데이터에 아예 없어서 추가
+				subWayDTOS.add(new SubWayDTO("", "3호선", "0309", "원흥", "126.8732", "37.6506")); // 공공데이터에 아예 없어서 추가
 				for(int i = 0; i < dataArray.size(); i++) {
 					SubWayDTO subWayDTO = new SubWayDTO();
 					subWayDTO.setSname(dataArray.get(i).toString().split("역명\":\"")[1].split("\",\"")[0]); // 역명
+					if(subWayDTO.getSname().equals("잠실새내")) { subWayDTO.setSname("신천"); }
 					if(dataArray.get(i).toString().split("경도\":")[1].split(",\"")[0].equals("null")) {
 						for(int j = 0; j < subWayDTOS.size(); j++) {
 							if(subWayDTOS.get(j).getSname().equals(subWayDTO.getSname())) { subWayDTO.setSlng(subWayDTOS.get(j).getSlng()); break;
 							} else {
 								for(int k = 0; k < nullData.length; k++) {
-									if (subWayDTO.getSname().contains(nullData[k][0])) {
-										subWayDTO.setSlng(nullData[k][2]);
-										break;
-									} else {
-										subWayDTO.setSlng("0");
-									}
+									if(subWayDTO.getSname().contains(nullData[k][0])) { subWayDTO.setSlng(nullData[k][2]); break; } else { subWayDTO.setSlng("0"); }
 								}
 							}
 						}
@@ -348,12 +322,8 @@ public class SettingService {
 							if(subWayDTOS.get(j).getSname().equals(subWayDTO.getSname())) { subWayDTO.setSlat(subWayDTOS.get(j).getSlat()); break;
 							} else {
 								for(int k = 0; k < nullData.length; k++) {
-									if (subWayDTO.getSname().contains(nullData[k][0])) {
-										subWayDTO.setSlat(nullData[k][1]);
-										break;
-									} else {
-										subWayDTO.setSlat("0");
-									}
+									if(subWayDTO.getSname().contains(nullData[k][0])) { subWayDTO.setSlat(nullData[k][1]); break;
+									} else { subWayDTO.setSlat("0"); }
 								}
 							}
 						}
@@ -361,6 +331,46 @@ public class SettingService {
 						subWayDTO.setSlat(dataArray.get(i).toString().split("위도\":\"")[1].split("\",\"")[0]); // 위도
 					}
 					subWayDTO.setSline(dataArray.get(i).toString().split("선명\":\"")[1].split("\"}")[0]); // 호선
+					if(subWayDTO.getSline().equals("1호선")) {
+						for(int n = 0; n < SubWay.line1.length; n++) { if(subWayDTO.getSname().contains(SubWay.line1[n][0])) { subWayDTO.setScode(SubWay.line1[n][1]); } }
+						for(int n = 0; n < SubWay.line1_1.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line1_1[n][0])) { subWayDTO.setScode(SubWay.line1_1[n][1]); } }
+						for(int n = 0; n < SubWay.line1_2.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line1_2[n][0])) { subWayDTO.setScode(SubWay.line1_2[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("2호선")) {
+						for(int n = 0; n < SubWay.line2.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line2[n][0])) { subWayDTO.setScode(SubWay.line2[n][1]); } }
+						for(int n = 0; n < SubWay.line2_1.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line2_1[n][0])) { subWayDTO.setScode(SubWay.line2_1[n][1]); } }
+						for(int n = 0; n < SubWay.line2_2.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line2_2[n][0])) { subWayDTO.setScode(SubWay.line2_2[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("3호선")) {
+						for(int n = 0; n < SubWay.line3.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line3[n][0])) { subWayDTO.setScode(SubWay.line3[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("4호선")) {
+						for(int n = 0; n < SubWay.line4.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line4[n][0])) { subWayDTO.setScode(SubWay.line4[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("5호선")) {
+						for(int n = 0; n < SubWay.line5.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line5[n][0])) { subWayDTO.setScode(SubWay.line5[n][1]); } }
+						for(int n = 0; n < SubWay.line5_1.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line5_1[n][0])) { subWayDTO.setScode(SubWay.line5_1[n][1]); } }
+						for(int n = 0; n < SubWay.line5_2.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line5_2[n][0])) { subWayDTO.setScode(SubWay.line5_2[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("6호선")) {
+						for(int n = 0; n < SubWay.line6.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line6[n][0])) { subWayDTO.setScode(SubWay.line6[n][1]); } }
+						for(int n = 0; n < SubWay.line6_1.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line6_1[n][0])) { subWayDTO.setScode(SubWay.line6_1[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("7호선")) {
+						for(int n = 0; n < SubWay.line7.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line7[n][0])) { subWayDTO.setScode(SubWay.line7[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("8호선")) {
+						for(int n = 0; n < SubWay.line8.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line8[n][0])) { subWayDTO.setScode(SubWay.line8[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("9호선")) {
+						for(int n = 0; n < SubWay.line9.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.line9[n][0])) { subWayDTO.setScode(SubWay.line9[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("수인분당")) {
+						for(int n = 0; n < SubWay.suinBundang.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.suinBundang[n][0])) { subWayDTO.setScode(SubWay.suinBundang[n][1]); } }
+					}
+					if(subWayDTO.getSline().equals("신분당선")) {
+						for(int n = 0; n < SubWay.sinBundang.length; n++) { if(subWayDTO.getSname().split("\\(")[0].equals(SubWay.sinBundang[n][0])) { subWayDTO.setScode(SubWay.sinBundang[n][1]); } }
+					}
 					subWayDTOS.add(subWayDTO);
 					if(a == 8 && i == 28) { break; }
 				}

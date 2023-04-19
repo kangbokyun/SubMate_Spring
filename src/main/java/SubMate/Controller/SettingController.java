@@ -17,8 +17,8 @@ public class SettingController {
         @PostMapping("/Setting/Mate")
         public ResponseEntity<?> CheckSubWay() {
             System.out.println("Init Setting Mate");
-            settingService.getTrainInfo();
-            boolean result = settingService.SubStation();
+//            boolean result = settingService.SubStation();
+		boolean result = settingService.getTrainInfo();
             if(result) {
                 return ResponseEntity.ok().body(HttpStatus.OK);
             } else {

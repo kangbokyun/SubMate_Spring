@@ -93,10 +93,64 @@ public class SettingService {
 		System.out.println("mateDTO : " + mateDTO);
 		if(mateDTO.getMateendstation().startsWith("0")) { mateDTO.setMateendstation(mateDTO.getMateendstation().substring(1)); }
 		if(mateDTO.getMatestartstation().startsWith("0")) { mateDTO.setMatestartstation(mateDTO.getMatestartstation().substring(1)); }
-		List<SubWayEntity> subWayEntities = subWayRepository.findBySlineOrderByScodeDesc(mateDTO.getMatestartstation());
-		for(SubWayEntity subWayEntity : subWayEntities) {
-			System.out.println("ㅜㅜㅜㅜㅜ\n" + subWayEntity + "\nㅗㅗㅗㅗㅗ");
+
+		if(!mateDTO.getMatestartstation().equals(mateDTO.getMateendstation())) { // 같은 노선 이용
+			int cntStartStation = 0;/* 동일 노선 배열 중 출발 역이 몇번째인지 */ int cntEndStation = 0; /* 동일 노선 배열 중 도착 역이 몇번째인지 */
+			int startPlus = 0; /* 출발역과 환승역까지의 거리 */ int endPlus = 0; /* 도착역과 환승역까지의 거리 */
+			List<Map<Integer, String>> cntStartStationLine = new ArrayList<>();
+			List<Map<Integer, String>> cntEndStationLine = new ArrayList<>();
+			List<SubWayEntity> startSubWayEntities = subWayRepository.findBySlineOrderByScodeAsc(mateDTO.getMatestartstation());
+			List<SubWayEntity> endSubWayEntities = subWayRepository.findBySlineOrderByScodeAsc(mateDTO.getMateendstation());
+
+			// 받아온 역(출발/도착)의 배열 내 순서 가져오기
+			for(int i = 0; i < startSubWayEntities.size(); i++) {
+				for(int j = 0; j < endSubWayEntities.size(); j++) {
+					if(startSubWayEntities.get(i).getSname().equals(mateDTO.getMatestartstationname())) { cntStartStation = i; }
+					if(endSubWayEntities.get(j).getSname().equals(mateDTO.getMateendstationname())) { cntEndStation = j; }
+				}
+			}
+			// 받아온 역의 역 별 노선에 겹치는 역 찾기
+			for(int i = 0; i < startSubWayEntities.size(); i++) {
+				for(int j = 0; j < endSubWayEntities.size(); j++) {
+					if(startSubWayEntities.get(i).getSname().equals(endSubWayEntities.get(j).getSname())) {
+						startPlus = cntStartStation - i; endPlus = cntEndStation - j;
+//						System.out.println("Same >>>>>>>>>>>>>>>\n" + startSubWayEntities.get(i).getSname() + " ::: " + endSubWayEntities.get(j).getSname() + "\n<<<<<<<<<<<<<<<<<<<<");
+						if(startPlus < 0) { startPlus = startPlus * (-1); }
+						if(endPlus < 0) { endPlus = endPlus * (-1); }
+
+						Map<Integer, String> startTempMap = new HashMap<>();
+						Map<Integer, String> endTempMap = new HashMap<>();
+
+						startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
+						endTempMap.put(endPlus, endSubWayEntities.get(j).getSname());
+
+						cntStartStationLine.add(startTempMap);
+						cntEndStationLine.add(endTempMap);
+					}
+				}
+			}
+
+			Map<Integer, String> tempMap = new HashMap<>();
+			for(int i = 0; i < cntEndStationLine.size(); i++) { // 여기 수정해야댐
+				for(int j = 0; j < cntStartStationLine.size(); j++) {
+					if(Integer.parseInt(cntStartStationLine.get(i).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")) < Integer.parseInt(cntStartStationLine.get(j).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", ""))) {
+//						System.out.println("Same1 >>>>>>>>>>>>>>>\n" + cntStartStationLine.get(i).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "") + "\n<<<<<<<<<<<<<<<<<<<<");
+						tempMap.put(Integer.parseInt(cntStartStationLine.get(i).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")), cntStartStationLine.get(i).values().toString());
+						cntStartStationLine.get(i).remove(cntStartStationLine.get(i).keySet());
+						cntStartStationLine.get(i).put(Integer.parseInt(cntStartStationLine.get(j).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")), cntStartStationLine.get(j).values().toString());
+						cntStartStationLine.get(j).put(Integer.parseInt(tempMap.keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")), tempMap.values().toString());
+					}
+				}
+			}
+
+//			System.out.println("Same1 >>>>>>>>>>>>>>>\n" + cntStartStationLine + "\n<<<<<<<<<<<<<<<<<<<<");
+//			System.out.println("Same2 >>>>>>>>>>>>>>>\n" + cntEndStationLine + "\n<<<<<<<<<<<<<<<<<<<<");
+			// 겹치는 역 중 가장 가까운 역 찾기
+//			System.out.println(cntStartStation + " : " + cntEndStation);
+		} else { // 다른 노선 이용
+
 		}
+
 		return true;
 	}
 

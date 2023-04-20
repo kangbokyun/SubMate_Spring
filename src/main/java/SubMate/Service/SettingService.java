@@ -97,10 +97,13 @@ public class SettingService {
 		if(!mateDTO.getMatestartstation().equals(mateDTO.getMateendstation())) { // 같은 노선 이용
 			int cntStartStation = 0;/* 동일 노선 배열 중 출발 역이 몇번째인지 */ int cntEndStation = 0; /* 동일 노선 배열 중 도착 역이 몇번째인지 */
 			int startPlus = 0; /* 출발역과 환승역까지의 거리 */ int endPlus = 0; /* 도착역과 환승역까지의 거리 */
-			List<Map<Integer, String>> cntStartStationLine = new ArrayList<>();
-			List<Map<Integer, String>> cntEndStationLine = new ArrayList<>();
+			Map<Integer, String> startTempMap = new HashMap<>();
+			Map<Integer, String> endTempMap = new HashMap<>();
 			List<SubWayEntity> startSubWayEntities = subWayRepository.findBySlineOrderByScodeAsc(mateDTO.getMatestartstation());
 			List<SubWayEntity> endSubWayEntities = subWayRepository.findBySlineOrderByScodeAsc(mateDTO.getMateendstation());
+
+//			int hipenCount = 0;
+//				hipenCount = endSubWayEntities.get(i).getScode().length() - endSubWayEntities.get(i).getScode().replace("-", "").length(); break;
 
 			// 받아온 역(출발/도착)의 배열 내 순서 가져오기
 			for(int i = 0; i < startSubWayEntities.size(); i++) {
@@ -118,34 +121,73 @@ public class SettingService {
 						if(startPlus < 0) { startPlus = startPlus * (-1); }
 						if(endPlus < 0) { endPlus = endPlus * (-1); }
 
-						Map<Integer, String> startTempMap = new HashMap<>();
-						Map<Integer, String> endTempMap = new HashMap<>();
-
 						startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
 						endTempMap.put(endPlus, endSubWayEntities.get(j).getSname());
-
-						cntStartStationLine.add(startTempMap);
-						cntEndStationLine.add(endTempMap);
 					}
 				}
 			}
 
-			Map<Integer, String> tempMap = new HashMap<>();
-			for(int i = 0; i < cntEndStationLine.size(); i++) { // 여기 수정해야댐
-				for(int j = 0; j < cntStartStationLine.size(); j++) {
-					if(Integer.parseInt(cntStartStationLine.get(i).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")) < Integer.parseInt(cntStartStationLine.get(j).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", ""))) {
-//						System.out.println("Same1 >>>>>>>>>>>>>>>\n" + cntStartStationLine.get(i).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "") + "\n<<<<<<<<<<<<<<<<<<<<");
-						tempMap.put(Integer.parseInt(cntStartStationLine.get(i).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")), cntStartStationLine.get(i).values().toString());
-						cntStartStationLine.get(i).remove(cntStartStationLine.get(i).keySet());
-						cntStartStationLine.get(i).put(Integer.parseInt(cntStartStationLine.get(j).keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")), cntStartStationLine.get(j).values().toString());
-						cntStartStationLine.get(j).put(Integer.parseInt(tempMap.keySet().toString().replaceAll("\\[", "").replaceAll("\\]", "")), tempMap.values().toString());
-					}
-				}
-			}
-
-//			System.out.println("Same1 >>>>>>>>>>>>>>>\n" + cntStartStationLine + "\n<<<<<<<<<<<<<<<<<<<<");
-//			System.out.println("Same2 >>>>>>>>>>>>>>>\n" + cntEndStationLine + "\n<<<<<<<<<<<<<<<<<<<<");
 			// 겹치는 역 중 가장 가까운 역 찾기
+			Map<Integer, String> transferLine = new HashMap<>();
+			List<Integer> sortingStartMap = new ArrayList<>(startTempMap.keySet());
+			List<Integer> sortingEndMap = new ArrayList<>(endTempMap.keySet());
+			sortingStartMap.sort((s1, s2) -> s1.compareTo(s2));
+			sortingEndMap.sort((s1, s2) -> s1.compareTo(s2));
+			for(int i = 0; i < sortingStartMap.size(); i++) {
+				transferLine.put(sortingStartMap.get(i) + sortingEndMap.get(i), startTempMap.get(sortingStartMap.get(i)));
+			}
+			List<Integer> transferLineMap = new ArrayList<>(transferLine.keySet());
+			transferLineMap.sort((s1, s2) -> s1.compareTo(s2));
+
+			// 출발역과 환승역 사이의 역
+			int startStationI = 0; /* 출발역 */ int transferStationI = 0; /* 환승역 */
+			for(int i = 0; i < startSubWayEntities.size(); i++) {
+				if(mateDTO.getMatestartstationname().equals(startSubWayEntities.get(i).getSname())) { startStationI = i; }
+				if(transferLine.get(transferLineMap.get(0)).equals(startSubWayEntities.get(i).getSname())) { transferStationI = i; }
+			}
+			for(int i = 0; i < startSubWayEntities.size(); i++) {
+				if(startStationI != 0 && transferStationI != 0) {
+					if(startStationI > transferStationI) {
+						if(i >= transferStationI && i <= startStationI) {
+							System.out.println(startSubWayEntities.get(i).getSname());
+						}
+					} else {
+						if(i <= transferStationI && i >= startStationI) {
+							System.out.println(startSubWayEntities.get(i).getSname());
+						}
+					}
+				}
+			}
+
+			// 환승역과 도착역 사이의 역
+			int endStationI = 0; /* 도착역 */ int transferStationII = 0; /* 환승역 */
+			for(int i = 0; i < endSubWayEntities.size(); i++) {
+				if(mateDTO.getMateendstationname().equals(endSubWayEntities.get(i).getSname())) { endStationI = i; }
+				if(transferLine.get(transferLineMap.get(0)).equals(endSubWayEntities.get(i).getSname())) { transferStationII = i; }
+			}
+			for(int i = 0; i < endSubWayEntities.size(); i++) {
+				if(endStationI != 0 && transferStationII != 0) {
+					if(endStationI > transferStationII) {
+						if(i >= transferStationII && i <= endStationI) {
+							System.out.println(endSubWayEntities.get(i).getSname());
+						}
+					} else {
+						if(i <= transferStationII && i >= endStationI) {
+							if(endSubWayEntities.get(transferStationII).getScode().contains("-")) {
+								if(Integer.parseInt(endSubWayEntities.get(transferStationII).getScode().split("-")[1]) > 20) {
+									if(endSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(endSubWayEntities.get(i).getScode().split("-")[1]) > 20 || !endSubWayEntities.get(i).getScode().contains("-")) {
+							System.out.println("1 : " + endSubWayEntities.get(i).getSname());
+
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+//			System.out.println("Same >>>>>>>>>>>>>>>\n" + cntStartStationLine + "\n<<<<<<<<<<<<<<<<<<<<");
+//			System.out.println("Same >>>>>>>>>>>>>>>\n" + cntEndStationLine + "\n<<<<<<<<<<<<<<<<<<<<");
 //			System.out.println(cntStartStation + " : " + cntEndStation);
 		} else { // 다른 노선 이용
 

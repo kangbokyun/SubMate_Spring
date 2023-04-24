@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -111,143 +112,240 @@ public class SettingService {
 					if(endSubWayEntities.get(j).getSname().equals(mateDTO.getMateendstationname())) { cntEndStation = j; }
 				}
 			}
-			// 받아온 역의 역 별 노선에 겹치는 역 찾기(몽가 문제가 있음)
+			// 받아온 역의 역 별 노선에 겹치는 역 찾기(역코드에 따라 분류가 필요)
+			System.out.println("ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ\n" + startSubWayEntities.get(cntStartStation) + "\n" + endSubWayEntities.get(cntEndStation) + "\nㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛ");
 			for(int i = 0; i < startSubWayEntities.size(); i++) {
 				for(int j = 0; j < endSubWayEntities.size(); j++) {
-					if(startSubWayEntities.get(i).getSname().equals(endSubWayEntities.get(j).getSname())) {
-						 endPlus = cntEndStation - j;
-						System.out.println("Same >>>>>>>>>>>>>>>\n" + startSubWayEntities.get(i).getSname() + " ::: " + endSubWayEntities.get(j).getSname() + "\n<<<<<<<<<<<<<<<<<<<<");
-						if(startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
-							startPlus = cntStartStation - i - 20;
-							if(startPlus < 0) { startPlus = startPlus * (-1); }
-							startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
-							System.out.println("1 : " + startPlus);
-						} else {
-							startPlus = cntStartStation - i;
-							if(startPlus < 0) { startPlus = startPlus * (-1); }
-							startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
-							System.out.println("2 : " + startPlus);
-						}
-
+					if(startSubWayEntities.get(i).getSname().equals(endSubWayEntities.get(j).getSname())) { // 겹치는 역(환승역)
+						startPlus = cntStartStation - i; // 출발역부터 환승역까지의 거리
+						endPlus = cntEndStation - j; // 환승역부터 도착역까지의 거리
+						if(startPlus < 0) { startPlus = startPlus * (-1); }
 						if(endPlus < 0) { endPlus = endPlus * (-1); }
-
+						if(startSubWayEntities.get(i).getScode().contains("-") && startSubWayEntities.get(i).getSline().equals("1호선") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+							startPlus -= 20;
+						}
+						if(endSubWayEntities.get(j).getScode().contains("-") && (!startSubWayEntities.get(i).getSline().equals("1호선") && endSubWayEntities.get(j).getSline().equals("1호선")) && Integer.parseInt(endSubWayEntities.get(j).getScode().split("-")[1]) > 20) {
+							endPlus -= 20;
+						}
+						startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
 						endTempMap.put(endPlus, endSubWayEntities.get(j).getSname());
-						System.out.println("3 : " + endPlus);
 					}
 				}
 			}
 
 			// 겹치는 역 중 가장 가까운 역 찾기
-			Map<Integer, String> transferLine = new HashMap<>();
-			List<Integer> sortingStartMap = new ArrayList<>(startTempMap.keySet());
-			List<Integer> sortingEndMap = new ArrayList<>(endTempMap.keySet());
-			sortingStartMap.sort((s1, s2) -> s1.compareTo(s2));
-			sortingEndMap.sort((s1, s2) -> s1.compareTo(s2));
-			for(int i = 0; i < sortingStartMap.size(); i++) {
-				transferLine.put(sortingStartMap.get(i) + sortingEndMap.get(i), startTempMap.get(sortingStartMap.get(i)));
-			}
-			List<Integer> transferLineMap = new ArrayList<>(transferLine.keySet());
-			transferLineMap.sort((s1, s2) -> s1.compareTo(s2));
-			System.out.println("startTempMap : " + startTempMap + " : " + "endTempMap : " +  endTempMap);
-			System.out.println("환승역" + transferLine.get(transferLineMap.get(0)));
+			int startStation = 0; /* 출발역 */ int transferStartStation = 0; /* 환승역 */
+			int endStation = 0; /* 출발역 */ int transferEndStation = 0; /* 환승역 */
+			List<Integer> startMapList = new ArrayList<>(startTempMap.keySet()); // 출발역 노선 중 환승역
+			List<Integer> endMapList = new ArrayList<>(endTempMap.keySet()); // 도착역 노선 중 환승역
+			Map<Integer, String> transferLineMap = new HashMap<>();
+			startMapList.sort((s1, s2) -> s1.compareTo(s2));
+			endMapList.sort((s1, s2) -> s1.compareTo(s2));
 
-			// 출발역과 환승역 사이의 역
-			int startStationI = 0; /* 출발역 */ int transferStationI = 0; /* 환승역 */
-			for(int i = 0; i < startSubWayEntities.size(); i++) {
-				if(mateDTO.getMatestartstationname().equals(startSubWayEntities.get(i).getSname())) { startStationI = i; }
-				if(transferLine.get(transferLineMap.get(0)).equals(startSubWayEntities.get(i).getSname())) { transferStationI = i; }
-			}
-			for(int i = 0; i < startSubWayEntities.size(); i++) {
-				if(startStationI != 0 && transferStationI != 0) {
-					if(startStationI > transferStationI) {
-						if(i >= transferStationI && i <= startStationI) {
-							if(startSubWayEntities.get(transferStationI).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(transferStationI).getScode().split("-")[1]) > 20) {
-								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
-									System.out.println("@@5 " + startSubWayEntities.get(i).getSname());
-								} else {
-									System.out.println("@@6 " + startSubWayEntities.get(i).getSname());
-								}
-							} else {
-								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
-									System.out.println("@@7 " + startSubWayEntities.get(i).getSname());
-								} else {
-									System.out.println("@@8 " + startSubWayEntities.get(i).getSname());
-								}
-							}
-						}
-					} else {
-						if(i <= transferStationI && i >= startStationI) {
-							if(startSubWayEntities.get(transferStationI).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(transferStationI).getScode().split("-")[1]) > 20) {
-								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
-									System.out.println("@@1 " + startSubWayEntities.get(i).getSname());
-								} else {
-									System.out.println("@@3 " + startSubWayEntities.get(i).getSname());
-								}
-							} else {
-								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
-									System.out.println("@@2 " + startSubWayEntities.get(i).getSname());
-								} else {
-									System.out.println("@@4 " + startSubWayEntities.get(i).getSname());
-								}
-							}
-						}
+			// 출발->환승과 환승->도착 두 맵 데이터 정렬 후 값 합침
+			for(int i = 0; i < startMapList.size(); i++) {
+				for(int j = 0; j < endMapList.size(); j++) {
+					if(startTempMap.get(startMapList.get(i)).equals(endTempMap.get(endMapList.get(j)))) {
+//						System.out.println(":::::::::::::::::::::::::\n" + startTempMap.get(startMapList.get(i)) + " : " + startMapList.get(i) + "\n" + endTempMap.get(endMapList.get(j)) + " : " + endMapList.get(j) + "\n:::::::::::::::::::::::::");
+//						System.out.println("=> " + (startMapList.get(i) + endMapList.get(j)));
+						transferLineMap.put((startMapList.get(i) + endMapList.get(j)), startTempMap.get(startMapList.get(i)));
 					}
 				}
 			}
+			List<Integer> transferLine = new ArrayList<>(transferLineMap.keySet()); // 최단거리 환승역 리스트
+			transferLine.sort((s1, s2) -> s1.compareTo(s2));
+
+			System.out.println("...\n환승역 : " + transferLineMap.get(transferLine.get(0)) + "\n...");
+
+			// 배열 내 출발역과 환승역의 인덱스 추출
+			for(int i = 0; i < startSubWayEntities.size(); i++) {
+				if(startSubWayEntities.get(i).getSname().equals(mateDTO.getMatestartstationname())) { startStation = i; }
+				if(startSubWayEntities.get(i).getSname().equals(transferLineMap.get(transferLine.get(0)))) { transferStartStation = i; }
+			}
+
+			// 배열 내 도착역과 환승역의 인덱스 추출
+			for(int i = 0; i < endSubWayEntities.size(); i++) {
+				if(endSubWayEntities.get(i).getSname().equals(mateDTO.getMateendstationname())) { endStation = i; }
+				if(endSubWayEntities.get(i).getSname().equals(transferLineMap.get(transferLine.get(0)))) { transferEndStation = i; }
+			}
+
+//			System.out.println("출발역 No : " + startStation + "\n환승역 No : " + transferStartStation);
+
+			// 추출한 인덱스로 출발역과 환승역 사이 역 데이터 추출
+			for(int i = 0; i < startSubWayEntities.size(); i++) {
+				if(startStation > transferStartStation) {
+					if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           1          " + startSubWayEntities.get(i));
+					} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           2          " + startSubWayEntities.get(i));
+					}
+				} else {
+					if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           3          " + startSubWayEntities.get(i));
+					} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           4          " + startSubWayEntities.get(i));
+					}
+				}
+			}
+
+			// 추출한 인덱스로 도착역과 환승역 사이 역 데이터 추출
+			for(int i = 0; i < endSubWayEntities.size(); i++) {
+				if(endStation > transferEndStation) {
+					if(endStation >= i && transferEndStation <= i) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           5          " + endSubWayEntities.get(i));
+					} else if(endStation <= i && transferEndStation >= i) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           6          " + endSubWayEntities.get(i));
+					}
+				} else {
+					if(endStation >= i && transferEndStation <= i) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           7          " + endSubWayEntities.get(i));
+					} else if(endStation <= i && transferEndStation >= i) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+						System.out.println("           8          " + endSubWayEntities.get(i));
+					}
+				}
+			}
+
+
+
+//			for(int i = 0; i < startSubWayEntities.size(); i++) {
+//				for(int j = 0; j < endSubWayEntities.size(); j++) {
+//					if(startSubWayEntities.get(i).getSname().equals(endSubWayEntities.get(j).getSname())) {
+//						System.out.println("Same >>>>>>>>>>>>>>>\n" + startSubWayEntities.get(i).getSname() + " ::: " + endSubWayEntities.get(j).getSname() + "\n<<<<<<<<<<<<<<<<<<<<");
+//						if(startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+//							startPlus = cntStartStation - i - 20;
+//						 	endPlus = cntEndStation - j;
+//							if(startPlus < 0) { startPlus = startPlus * (-1); }
+//							if(endPlus < 0) { endPlus = endPlus * (-1); }
+//							startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
+//							endTempMap.put(endPlus, endSubWayEntities.get(j).getSname());
+//							System.out.println("1 : " + startPlus);
+//						} else {
+//							startPlus = cntStartStation - i;
+//						 	endPlus = cntEndStation - j + 20;
+//							if(startPlus < 0) { startPlus = startPlus * (-1); }
+//							if(endPlus < 0) { endPlus = endPlus * (-1); }
+//							startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
+//							endTempMap.put(endPlus, endSubWayEntities.get(j).getSname());
+//							System.out.println("2 : " + startPlus);
+//						}
+//
+//
+//						System.out.println("3 : " + endPlus);
+//					}
+//				}
+//			}
+
+			// 겹치는 역 중 가장 가까운 역 찾기
+//			Map<Integer, String> transferLine = new HashMap<>();
+//			List<Integer> sortingStartMap = new ArrayList<>(startTempMap.keySet());
+//			List<Integer> sortingEndMap = new ArrayList<>(endTempMap.keySet());
+//			sortingStartMap.sort((s1, s2) -> s1.compareTo(s2));
+//			sortingEndMap.sort((s1, s2) -> s1.compareTo(s2));
+//			for(int i = 0; i < sortingStartMap.size(); i++) {
+//				transferLine.put(sortingStartMap.get(i) + sortingEndMap.get(i), startTempMap.get(sortingStartMap.get(i)));
+//			}
+//			List<Integer> transferLineMap = new ArrayList<>(transferLine.keySet());
+//			transferLineMap.sort((s1, s2) -> s1.compareTo(s2));
+//			System.out.println("startTempMap : " + startTempMap + " : " + "endTempMap : " +  endTempMap);
+//			System.out.println("환승역" + transferLine.get(transferLineMap.get(0)));
+//
+//			// 출발역과 환승역 사이의 역
+//			int startStationI = 0; /* 출발역 */ int transferStationI = 0; /* 환승역 */
+//			for(int i = 0; i < startSubWayEntities.size(); i++) {
+//				if(mateDTO.getMatestartstationname().equals(startSubWayEntities.get(i).getSname())) { startStationI = i; }
+//				if(transferLine.get(transferLineMap.get(0)).equals(startSubWayEntities.get(i).getSname())) { transferStationI = i; }
+//			}
+//			for(int i = 0; i < startSubWayEntities.size(); i++) {
+//				if(startStationI != 0 && transferStationI != 0) {
+//					if(startStationI > transferStationI) {
+//						if(i >= transferStationI && i <= startStationI) {
+//							if(startSubWayEntities.get(transferStationI).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(transferStationI).getScode().split("-")[1]) > 20) {
+//								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+//									System.out.println("@@5 " + startSubWayEntities.get(i).getSname());
+//								} else {
+//									System.out.println("@@6 " + startSubWayEntities.get(i).getSname());
+//								}
+//							} else {
+//								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+//									System.out.println("@@7 " + startSubWayEntities.get(i).getSname());
+//								} else {
+//									System.out.println("@@8 " + startSubWayEntities.get(i).getSname());
+//								}
+//							}
+//						}
+//					} else {
+//						if(i <= transferStationI && i >= startStationI) {
+//							if(startSubWayEntities.get(transferStationI).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(transferStationI).getScode().split("-")[1]) > 20) {
+//								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+//									System.out.println("@@1 " + startSubWayEntities.get(i).getSname());
+//								} else {
+//									System.out.println("@@3 " + startSubWayEntities.get(i).getSname());
+//								}
+//							} else {
+//								if(startSubWayEntities.get(i).getSline().equals("1호선") && startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+//									System.out.println("@@2 " + startSubWayEntities.get(i).getSname());
+//								} else {
+//									System.out.println("@@4 " + startSubWayEntities.get(i).getSname());
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
 
 			// 환승역과 도착역 사이의 역
-			int endStationI = 0; /* 도착역 */ int transferStationII = 0; /* 환승역 */
-			for(int i = 0; i < endSubWayEntities.size(); i++) {
-				if(mateDTO.getMateendstationname().equals(endSubWayEntities.get(i).getSname())) { endStationI = i; }
-				if(transferLine.get(transferLineMap.get(0)).equals(endSubWayEntities.get(i).getSname())) { transferStationII = i; }
-			}
-			for(int i = 0; i < endSubWayEntities.size(); i++) {
-				if(endStationI != 0 && transferStationII != 0) {
-					if(endStationI > transferStationII) {
-						if(i >= transferStationII && i <= endStationI) {
-							if(endSubWayEntities.get(i).getSline().equals("1호선")) {
-								if(endSubWayEntities.get(transferStationII).getScode().contains("-")) {
-									int linePoint = endSubWayEntities.get(i).getScode().length() - endSubWayEntities.get(i).getScode().replace("-", "").length();
-									int endPoint = endSubWayEntities.get(endStationI).getScode().length() - endSubWayEntities.get(endStationI).getScode().replace("-", "").length();
-									if(endPoint + 1 == linePoint && endPoint == 0) {
-										System.out.println(">> " + endSubWayEntities.get(i).getSname() + "\n>> " + endPoint + " : " + linePoint);
-									} else if (endPoint == linePoint && endPoint == 1) {
-										System.out.println(">>> " + endSubWayEntities.get(i).getSname() + "\n>>> " + endPoint + " : " + linePoint);
-									} else if (endPoint - 1 == linePoint || endPoint == 2) {
-										System.out.println(">>>> " + endSubWayEntities.get(i).getSname() + "\n>>>> " + endPoint + " : " + linePoint);
-									}
-								}
-							} else {
-								System.out.println(">>>>>1 " + endSubWayEntities.get(i).getSname());
-							}
-						}
-					} else {
-						if(i <= transferStationII && i >= endStationI) {
-							// 도착역이 1호선이면서 환승역 코드에 '-'가 포함되어 있을 때(분리되는 노선)
-							if(endSubWayEntities.get(i).getSline().equals(mateDTO.getMateendstation()) && mateDTO.getMateendstation().equals("1호선") && endSubWayEntities.get(transferStationII).getScode().contains("-")) {
-								// 환승역 '-' 역코드가 20이 넘어가는지 확인(20을 기준으로 선로가 두개로 갈라짐)
-								if(Integer.parseInt(endSubWayEntities.get(transferStationII).getScode().split("-")[1]) > 20) {
-									// 조건에 맞는 값의 역코드에 '-'이 포함되어 있고, '-' 이후 역코드가 20이 넘거나, '-'이 역코드에 없는 경우
-									// (ex. 환승역 금정, 도착역 구로 = 금정 -> 가산디지털단지(여기까지는 '-'이 붙은 역코드를 가짐) -> 구로('-'이 역코드에 없음)를 가야하기 때문)
-									if(endSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(endSubWayEntities.get(i).getScode().split("-")[1]) > 20 || !endSubWayEntities.get(i).getScode().contains("-")) {
-										int linePoint = endSubWayEntities.get(i).getScode().length() - endSubWayEntities.get(i).getScode().replace("-", "").length();
-										int endPoint = endSubWayEntities.get(endStationI).getScode().length() - endSubWayEntities.get(endStationI).getScode().replace("-", "").length();
-										if(endPoint + 1 == linePoint && endPoint == 0) {
-											System.out.println(">> " + endSubWayEntities.get(i).getSname() + "\n>> " + endPoint + " : " + linePoint);
-										} else if (endPoint == linePoint && endPoint == 1) {
-											System.out.println(">>> " + endSubWayEntities.get(i).getSname() + "\n>>> " + endPoint + " : " + linePoint);
-										} else if (endPoint - 1 == linePoint || endPoint == 2) {
-											System.out.println(">>>> " + endSubWayEntities.get(i).getSname() + "\n>>>> " + endPoint + " : " + linePoint);
-										}
-									}
-								}
-							} else {
-								System.out.println(endSubWayEntities.get(i).getSname() + " <<");
-							}
-						}
-					}
-				}
-			}
+//			int endStationI = 0; /* 도착역 */ int transferStationII = 0; /* 환승역 */
+//			for(int i = 0; i < endSubWayEntities.size(); i++) {
+//				if(mateDTO.getMateendstationname().equals(endSubWayEntities.get(i).getSname())) { endStationI = i; }
+//				if(transferLine.get(transferLineMap.get(0)).equals(endSubWayEntities.get(i).getSname())) { transferStationII = i; }
+//			}
+//			for(int i = 0; i < endSubWayEntities.size(); i++) {
+//				if(endStationI != 0 && transferStationII != 0) {
+//					if(endStationI > transferStationII) {
+//						if(i >= transferStationII && i <= endStationI) {
+//							if(endSubWayEntities.get(i).getSline().equals("1호선")) {
+//								if(endSubWayEntities.get(transferStationII).getScode().contains("-")) {
+//									int linePoint = endSubWayEntities.get(i).getScode().length() - endSubWayEntities.get(i).getScode().replace("-", "").length();
+//									int endPoint = endSubWayEntities.get(endStationI).getScode().length() - endSubWayEntities.get(endStationI).getScode().replace("-", "").length();
+//									if(endPoint + 1 == linePoint && endPoint == 0) {
+//										System.out.println(">> " + endSubWayEntities.get(i).getSname() + "\n>> " + endPoint + " : " + linePoint);
+//									} else if (endPoint == linePoint && endPoint == 1) {
+//										System.out.println(">>> " + endSubWayEntities.get(i).getSname() + "\n>>> " + endPoint + " : " + linePoint);
+//									} else if (endPoint - 1 == linePoint || endPoint == 2) {
+//										System.out.println(">>>> " + endSubWayEntities.get(i).getSname() + "\n>>>> " + endPoint + " : " + linePoint);
+//									}
+//								}
+//							} else {
+//								System.out.println(">>>>>1 " + endSubWayEntities.get(i).getSname());
+//							}
+//						}
+//					} else {
+//						if(i <= transferStationII && i >= endStationI) {
+//							// 도착역이 1호선이면서 환승역 코드에 '-'가 포함되어 있을 때(분리되는 노선)
+//							if(endSubWayEntities.get(i).getSline().equals(mateDTO.getMateendstation()) && mateDTO.getMateendstation().equals("1호선") && endSubWayEntities.get(transferStationII).getScode().contains("-")) {
+//								// 환승역 '-' 역코드가 20이 넘어가는지 확인(20을 기준으로 선로가 두개로 갈라짐)
+//								if(Integer.parseInt(endSubWayEntities.get(transferStationII).getScode().split("-")[1]) > 20) {
+//									// 조건에 맞는 값의 역코드에 '-'이 포함되어 있고, '-' 이후 역코드가 20이 넘거나, '-'이 역코드에 없는 경우
+//									// (ex. 환승역 금정, 도착역 구로 = 금정 -> 가산디지털단지(여기까지는 '-'이 붙은 역코드를 가짐) -> 구로('-'이 역코드에 없음)를 가야하기 때문)
+//									if(endSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(endSubWayEntities.get(i).getScode().split("-")[1]) > 20 || !endSubWayEntities.get(i).getScode().contains("-")) {
+//										int linePoint = endSubWayEntities.get(i).getScode().length() - endSubWayEntities.get(i).getScode().replace("-", "").length();
+//										int endPoint = endSubWayEntities.get(endStationI).getScode().length() - endSubWayEntities.get(endStationI).getScode().replace("-", "").length();
+//										if(endPoint + 1 == linePoint && endPoint == 0) {
+//											System.out.println(">> " + endSubWayEntities.get(i).getSname() + "\n>> " + endPoint + " : " + linePoint);
+//										} else if (endPoint == linePoint && endPoint == 1) {
+//											System.out.println(">>> " + endSubWayEntities.get(i).getSname() + "\n>>> " + endPoint + " : " + linePoint);
+//										} else if (endPoint - 1 == linePoint || endPoint == 2) {
+//											System.out.println(">>>> " + endSubWayEntities.get(i).getSname() + "\n>>>> " + endPoint + " : " + linePoint);
+//										}
+//									}
+//								}
+//							} else {
+//								System.out.println(endSubWayEntities.get(i).getSname() + " <<");
+//							}
+//						}
+//					}
+//				}
+//			}
 
 //			System.out.println("Same >>>>>>>>>>>>>>>\n" + cntStartStationLine + "\n<<<<<<<<<<<<<<<<<<<<");
 //			System.out.println("Same >>>>>>>>>>>>>>>\n" + cntEndStationLine + "\n<<<<<<<<<<<<<<<<<<<<");

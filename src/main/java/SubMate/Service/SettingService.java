@@ -172,6 +172,7 @@ public class SettingService {
 //			System.out.println("출발역 No : " + startStation + "\n환승역 No : " + transferStartStation);
 
 			// 추출한 인덱스로 출발역과 환승역 사이 역 데이터 추출
+			List<SubWayDTO> subWayDTOS = new ArrayList<>();
 			for(int i = 0; i < startSubWayEntities.size(); i++) {
 				if(startStation > transferStartStation) {
 					if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
@@ -183,7 +184,28 @@ public class SettingService {
 					if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
 						System.out.println("           3          " + startSubWayEntities.get(i));
 					} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
-						System.out.println("           4          " + startSubWayEntities.get(i));
+						int cntHipen = startSubWayEntities.get(transferStartStation).getScode().length() - startSubWayEntities.get(transferStartStation).getScode().replaceAll("-", "").length();
+						int temp = 0;
+						if(cntHipen > 0) {
+							if(startSubWayEntities.get(i).getScode().contains("-")) {
+								if(Integer.parseInt(startSubWayEntities.get(transferStartStation).getScode().split("-")[1]) > 20 // 환승역 역 코드 21 이상일 때 역 코드 20 이상인 데이터만
+										&& Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+									if(endSubWayEntities.get(endStation).getScode().length() - endSubWayEntities.get(endStation).getScode().replace("-", "").length() == 0) {
+										if(startSubWayEntities.get(i).getScode().length() - startSubWayEntities.get(i).getScode().replaceAll("-", "").length() < 2) {
+											System.out.println("          4-1         " + startSubWayEntities.get(i));
+										}
+									} else {
+										System.out.println("          4-2         " + startSubWayEntities.get(i));
+									}
+								}
+							} else {
+								System.out.println("          4-3         " + startSubWayEntities.get(i));
+							}
+						} else {
+							System.out.println("          4-4         " + startSubWayEntities.get(i));
+						}
+//						System.out.println("cntHipen : " + cntHipen);
+//						if(startSubWayEntities.get(transferStartStation).getScode())
 					}
 				}
 			}

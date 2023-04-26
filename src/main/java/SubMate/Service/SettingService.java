@@ -174,38 +174,35 @@ public class SettingService {
 			// 추출한 인덱스로 출발역과 환승역 사이 역 데이터 추출
 			List<SubWayDTO> subWayDTOS = new ArrayList<>();
 			for(int i = 0; i < startSubWayEntities.size(); i++) {
-				if(startStation > transferStartStation) {
-					if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
-						System.out.println("           1          " + startSubWayEntities.get(i));
-					} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
-						System.out.println("           2          " + startSubWayEntities.get(i));
-					}
-				} else {
-					if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
-						System.out.println("           3          " + startSubWayEntities.get(i));
-					} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
-						int cntHipen = startSubWayEntities.get(transferStartStation).getScode().length() - startSubWayEntities.get(transferStartStation).getScode().replaceAll("-", "").length();
-						int temp = 0;
-						if(cntHipen > 0) {
-							if(startSubWayEntities.get(i).getScode().contains("-")) {
-								if(Integer.parseInt(startSubWayEntities.get(transferStartStation).getScode().split("-")[1]) > 20 // 환승역 역 코드 21 이상일 때 역 코드 20 이상인 데이터만
-										&& Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
-									if(endSubWayEntities.get(endStation).getScode().length() - endSubWayEntities.get(endStation).getScode().replace("-", "").length() == 0) {
-										if(startSubWayEntities.get(i).getScode().length() - startSubWayEntities.get(i).getScode().replaceAll("-", "").length() < 2) {
-											System.out.println("          4-1         " + startSubWayEntities.get(i));
-										}
-									} else {
-										System.out.println("          4-2         " + startSubWayEntities.get(i));
-									}
-								}
-							} else {
-								System.out.println("          4-3         " + startSubWayEntities.get(i));
-							}
-						} else {
-							System.out.println("          4-4         " + startSubWayEntities.get(i));
+				if(startSubWayEntities.get(startStation).getSline().equals("1호선")) {
+					if(startStation > transferStartStation) {
+						if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							System.out.println("           1          " + startSubWayEntities.get(i));
+						} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							System.out.println("           2          " + startSubWayEntities.get(i));
 						}
-//						System.out.println("cntHipen : " + cntHipen);
-//						if(startSubWayEntities.get(transferStartStation).getScode())
+					} else {
+						if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							System.out.println("           3          " + startSubWayEntities.get(i));
+						} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							int cntTransferHipen = startSubWayEntities.get(transferStartStation).getScode().length() - startSubWayEntities.get(transferStartStation).getScode().replace("-", "").length();
+							int cntStartHipen = startSubWayEntities.get(startStation).getScode().length() - startSubWayEntities.get(startStation).getScode().replace("-", "").length();
+							int cntEndHipen = endSubWayEntities.get(endStation).getScode().length() - endSubWayEntities.get(endStation).getScode().replace("-", "").length();
+							if(cntStartHipen >= 2) { // 출발역이 갈래길(광명 / 서동탄)
+								System.out.println("          4-1         " + startSubWayEntities.get(i));
+							} else {
+								if(Integer.parseInt(startSubWayEntities.get(transferStartStation).getScode().split("-")[1]) > 20) { // 환승역 코드가 0000-20을 넘는 경우
+									// i 번째의 역코드가 '-'을 갖고 있고, 0000-20을 넘거나 '-'이 없을 때(출발역은 갈래길이 아니나, 갈래길도 들어가야 할 때)
+									if(startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20 || !startSubWayEntities.get(i).getScode().contains("-")) {
+										if(startSubWayEntities.get(i).getScode().length() - startSubWayEntities.get(i).getScode().replace("-", "").length() <= 1) {
+											System.out.println("          4-2         " + startSubWayEntities.get(i) + " : " + startSubWayEntities.get(i).getScode());
+										}
+									}
+								} else {
+									System.out.println("          4-3         " + startSubWayEntities.get(i));
+								}
+							}
+						}
 					}
 				}
 			}
@@ -403,6 +400,8 @@ public class SettingService {
 					/* 인천2호선 */{"15041339", "f9119403-9bad-4a3e-94e0-dfaddfd48f36"}, /* 수인분당 */{"15041336", "97b7dfab-9734-4b79-8b18-e5ef46f2cc12"},
 					/* 신분당선 */{"15041337", "256d7380-e813-4155-a286-bdcf306f111c"}
 				};
+				subWayDTOS.add(new SubWayDTO("", "2호선", "0234-04", "까치산", "126.8467", "37.5318")); // 공공데이터에 아예 없어서 추가
+				subWayDTOS.add(new SubWayDTO("", "3호선", "0309", "원흥", "126.8732", "37.6506")); // 공공데이터에 아예 없어서 추가
 				for (int a = 0; a < trainAPIData.length; a++) {
 					String otherLines = "https://api.odcloud.kr/api/" + trainAPIData[a][0] + "/v1/uddi:" + trainAPIData[a][1] + "?page=1&perPage=100&serviceKey=HECNY5QN6CQD7qu%2BwHHkPELwmRonryzFFC%2F19jU5jFMu9pT34DW66NlYrxVUnw%2BwBtTQvt7RxBbPo3RR9Y9pQQ%3D%3D";
 					URL url = new URL(otherLines);
@@ -415,8 +414,6 @@ public class SettingService {
 
 					jsonObject = (JSONObject) jsonParser.parse(resultBuffer);
 					dataArray = (JSONArray) jsonObject.get("data");
-					subWayDTOS.add(new SubWayDTO("", "2호선", "0234-04", "까치산", "126.8467", "37.5318")); // 공공데이터에 아예 없어서 추가
-					subWayDTOS.add(new SubWayDTO("", "3호선", "0309", "원흥", "126.8732", "37.6506")); // 공공데이터에 아예 없어서 추가
 					for (int i = 0; i < dataArray.size(); i++) {
 						SubWayDTO subWayDTO = new SubWayDTO();
 						subWayDTO.setSname(dataArray.get(i).toString().split("역명\":\"")[1].split("\",\"")[0]); // 역명

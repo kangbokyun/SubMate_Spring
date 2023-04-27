@@ -113,12 +113,14 @@ public class SettingService {
 				}
 			}
 			// 받아온 역의 역 별 노선에 겹치는 역 찾기(역코드에 따라 분류가 필요)
-			System.out.println("ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ\n" + startSubWayEntities.get(cntStartStation) + "\n" + endSubWayEntities.get(cntEndStation) + "\nㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛ");
+//			System.out.println("ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ\n" + startSubWayEntities.get(cntStartStation) + "\n" + endSubWayEntities.get(cntEndStation) + "\nㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛ");
 			for(int i = 0; i < startSubWayEntities.size(); i++) {
 				for(int j = 0; j < endSubWayEntities.size(); j++) {
 					if(startSubWayEntities.get(i).getSname().equals(endSubWayEntities.get(j).getSname())) { // 겹치는 역(환승역)
 						startPlus = cntStartStation - i; // 출발역부터 환승역까지의 거리
 						endPlus = cntEndStation - j; // 환승역부터 도착역까지의 거리
+//						System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-\ncntStartStation : " + cntStartStation + "\n22222 i : " + i + "\n???? : " + startPlus +  "\n/// " + startSubWayEntities.get(i) + "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+//						System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-\ncntEndStation : " + cntEndStation + "\n22222 i : " + j + "\n???? : " + endPlus +  "\n/// " + endSubWayEntities.get(j) + "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 						if(startPlus < 0) { startPlus = startPlus * (-1); }
 						if(endPlus < 0) { endPlus = endPlus * (-1); }
 						if(startSubWayEntities.get(i).getScode().contains("-") && startSubWayEntities.get(i).getSline().equals("1호선") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
@@ -131,6 +133,7 @@ public class SettingService {
 						endTempMap.put(endPlus, endSubWayEntities.get(j).getSname());
 					}
 				}
+//				System.out.println("TransferData : " + startTempMap + " : " + endTempMap);
 			}
 
 			// 겹치는 역 중 가장 가까운 역 찾기
@@ -155,7 +158,7 @@ public class SettingService {
 			List<Integer> transferLine = new ArrayList<>(transferLineMap.keySet()); // 최단거리 환승역 리스트
 			transferLine.sort((s1, s2) -> s1.compareTo(s2));
 
-			System.out.println("...\n환승역 : " + transferLineMap.get(transferLine.get(0)) + "\n...");
+			System.out.println("......................................\n환승역 : " + transferLineMap.get(transferLine.get(0)) + "\n......................................");
 
 			// 배열 내 출발역과 환승역의 인덱스 추출
 			for(int i = 0; i < startSubWayEntities.size(); i++) {
@@ -191,7 +194,7 @@ public class SettingService {
 							if(cntStartHipen >= 2) { // 출발역이 갈래길(광명 / 서동탄)
 								System.out.println("          4-1         " + startSubWayEntities.get(i));
 							} else {
-								if(Integer.parseInt(startSubWayEntities.get(transferStartStation).getScode().split("-")[1]) > 20) { // 환승역 코드가 0000-20을 넘는 경우
+								if(startSubWayEntities.get(transferStartStation).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(transferStartStation).getScode().split("-")[1]) > 20) { // 환승역 코드가 0000-20을 넘는 경우
 									// i 번째의 역코드가 '-'을 갖고 있고, 0000-20을 넘거나 '-'이 없을 때(출발역은 갈래길이 아니나, 갈래길도 들어가야 할 때)
 									if(startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20 || !startSubWayEntities.get(i).getScode().contains("-")) {
 										if(startSubWayEntities.get(i).getScode().length() - startSubWayEntities.get(i).getScode().replace("-", "").length() <= 1) {
@@ -202,6 +205,23 @@ public class SettingService {
 									System.out.println("          4-3         " + startSubWayEntities.get(i));
 								}
 							}
+						}
+					}
+				} else {
+					if(startStation > transferStartStation) {
+						if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							System.out.println("          4-4         " + startSubWayEntities.get(i));
+						} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							System.out.println("          4-5         " + startSubWayEntities.get(i));
+						}
+					} else {
+						if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							System.out.println("          4-6         " + startSubWayEntities.get(i));
+						} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
+							int cntTransferHipen = startSubWayEntities.get(transferStartStation).getScode().length() - startSubWayEntities.get(transferStartStation).getScode().replace("-", "").length();
+							int cntStartHipen = startSubWayEntities.get(startStation).getScode().length() - startSubWayEntities.get(startStation).getScode().replace("-", "").length();
+							int cntEndHipen = endSubWayEntities.get(endStation).getScode().length() - endSubWayEntities.get(endStation).getScode().replace("-", "").length();
+							System.out.println("          4-7         " + startSubWayEntities.get(i));
 						}
 					}
 				}

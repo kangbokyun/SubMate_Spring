@@ -123,17 +123,25 @@ public class SettingService {
 //						System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-\ncntEndStation : " + cntEndStation + "\n22222 i : " + j + "\n???? : " + endPlus +  "\n/// " + endSubWayEntities.get(j) + "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 						if(startPlus < 0) { startPlus = startPlus * (-1); }
 						if(endPlus < 0) { endPlus = endPlus * (-1); }
-						if(startSubWayEntities.get(i).getScode().contains("-") && startSubWayEntities.get(i).getSline().equals("1호선") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20) {
+						if(!startSubWayEntities.get(i).getScode().contains("-") ||
+								startSubWayEntities.get(i).getScode().contains("-") &&
+								startSubWayEntities.get(i).getSline().equals("1호선") &&
+								Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20 &&
+								(startPlus - 20) > 0) {
 							startPlus -= 20;
 						}
-						if(endSubWayEntities.get(j).getScode().contains("-") && (!startSubWayEntities.get(i).getSline().equals("1호선") && endSubWayEntities.get(j).getSline().equals("1호선")) && Integer.parseInt(endSubWayEntities.get(j).getScode().split("-")[1]) > 20) {
+						if(!endSubWayEntities.get(j).getScode().contains("-") ||
+								endSubWayEntities.get(j).getScode().contains("-") &&
+								(!startSubWayEntities.get(i).getSline().equals("1호선") && endSubWayEntities.get(j).getSline().equals("1호선")) &&
+								Integer.parseInt(endSubWayEntities.get(j).getScode().split("-")[1]) > 20 &&
+								(endPlus - 20) > 0) {
 							endPlus -= 20;
 						}
 						startTempMap.put(startPlus, startSubWayEntities.get(i).getSname());
 						endTempMap.put(endPlus, endSubWayEntities.get(j).getSname());
 					}
 				}
-//				System.out.println("TransferData : " + startTempMap + " : " + endTempMap);
+				System.out.println("TransferData =====\nstart : " + startTempMap + "\nend : " + endTempMap + "\n=====================");
 			}
 
 			// 겹치는 역 중 가장 가까운 역 찾기
@@ -180,7 +188,22 @@ public class SettingService {
 				if(startSubWayEntities.get(startStation).getSline().equals("1호선")) {
 					if(startStation > transferStartStation) {
 						if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
-							System.out.println("           1          " + startSubWayEntities.get(i));
+							int cntStartHipen = startSubWayEntities.get(startStation).getScode().length() - startSubWayEntities.get(startStation).getScode().replace("-", "").length();
+							if(cntStartHipen >= 2) { // 출발역이 갈래길(광명 / 서동탄)
+								System.out.println("          1-1         " + startSubWayEntities.get(i));
+							} else {
+								if(startSubWayEntities.get(transferStartStation).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(transferStartStation).getScode().split("-")[1]) > 20) { // 환승역 코드가 0000-20을 넘는 경우
+									// i 번째의 역코드가 '-'을 갖고 있고, 0000-20을 넘거나 '-'이 없을 때(출발역은 갈래길이 아니나, 갈래길도 들어가야 할 때)
+									if(startSubWayEntities.get(i).getScode().contains("-") && Integer.parseInt(startSubWayEntities.get(i).getScode().split("-")[1]) > 20 || !startSubWayEntities.get(i).getScode().contains("-")) {
+										if(startSubWayEntities.get(i).getScode().length() - startSubWayEntities.get(i).getScode().replace("-", "").length() <= 1) {
+											System.out.println("          1-2         " + startSubWayEntities.get(i) + " : " + startSubWayEntities.get(i).getScode());
+										}
+									}
+								} else {
+									System.out.println("          1-3         " + startSubWayEntities.get(i));
+								}
+							}
+//							System.out.println("           1          " + startSubWayEntities.get(i));
 						} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
 							System.out.println("           2          " + startSubWayEntities.get(i));
 						}
@@ -188,9 +211,7 @@ public class SettingService {
 						if(i <= startStation && i >= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
 							System.out.println("           3          " + startSubWayEntities.get(i));
 						} else if(i >= startStation && i <= transferStartStation) { // 갈래 선로 제외하거나 조건에 맞지 않는 선로 제외 할 곳
-							int cntTransferHipen = startSubWayEntities.get(transferStartStation).getScode().length() - startSubWayEntities.get(transferStartStation).getScode().replace("-", "").length();
 							int cntStartHipen = startSubWayEntities.get(startStation).getScode().length() - startSubWayEntities.get(startStation).getScode().replace("-", "").length();
-							int cntEndHipen = endSubWayEntities.get(endStation).getScode().length() - endSubWayEntities.get(endStation).getScode().replace("-", "").length();
 							if(cntStartHipen >= 2) { // 출발역이 갈래길(광명 / 서동탄)
 								System.out.println("          4-1         " + startSubWayEntities.get(i));
 							} else {
